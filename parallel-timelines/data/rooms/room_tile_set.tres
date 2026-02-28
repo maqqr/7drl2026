@@ -1,0 +1,25 @@
+[gd_resource type="TileSet" format=3 uid="uid://y4d1iqpcy23s"]
+
+[ext_resource type="Texture2D" uid="uid://8lvwhljlwwin" path="res://data/rooms/plan_tile_atlas.png" id="1_uugys"]
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_v3o5e"]
+texture = ExtResource("1_uugys")
+0:0/0 = 0
+1:0/0 = 0
+1:0/0/custom_data_0 = 1
+2:0/0 = 0
+2:0/0/custom_data_0 = 2
+3:0/0 = 0
+3:0/0/custom_data_0 = 3
+4:0/0 = 0
+4:0/0/custom_data_0 = 4
+5:0/0 = 0
+5:0/0/custom_data_0 = 5
+6:0/0 = 0
+6:0/0/custom_data_0 = 6
+7:0/0 = 0
+
+[resource]
+custom_data_layer_0/name = "type_enum"
+custom_data_layer_0/type = 2
+sources/1 = SubResource("TileSetAtlasSource_v3o5e")

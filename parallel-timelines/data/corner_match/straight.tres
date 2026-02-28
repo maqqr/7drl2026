@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="CornerMatch" format=3 uid="uid://bke8b25buryom"]
+
+[ext_resource type="Script" uid="uid://dwykuqxbljwae" path="res://scripts/map/corner_match.gd" id="1_jakem"]
+[ext_resource type="ArrayMesh" uid="uid://bt5walxgtgowr" path="res://models/hull/walls/straight_mesh.res" id="1_y6m2y"]
+
+[resource]
+script = ExtResource("1_jakem")
+matching_tiles = PackedByteArray(0, 0, 0, 1, 1, 1, 0, 2, 0)
+allowed_rotations = 1
+mesh = ExtResource("1_y6m2y")
+metadata/_custom_type_script = "uid://dwykuqxbljwae"

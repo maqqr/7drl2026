@@ -1,0 +1,9 @@
+[gd_scene format=3 uid="uid://63dib0s4rav6"]
+
+[node name="CornerMatchGridContainer" type="GridContainer" unique_id=738891440]
+columns = 3
+
+[node name="Button" type="Button" parent="." unique_id=1566255430]
+custom_minimum_size = Vector2(45, 45)
+layout_mode = 2
+text = "A"

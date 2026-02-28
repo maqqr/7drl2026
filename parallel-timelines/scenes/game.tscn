@@ -1,0 +1,27 @@
+[gd_scene format=3 uid="uid://dbm16gkqqs62h"]
+
+[ext_resource type="Script" uid="uid://dh4ult0jy8bc4" path="res://scripts/game/game_manager.gd" id="1_uwrxv"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_8cj0n"]
+size = Vector3(0.1, 0.1, 1)
+
+[node name="Game" type="Node3D" unique_id=1579276341]
+script = ExtResource("1_uwrxv")
+
+[node name="Cursor" type="Node3D" parent="." unique_id=1711315370]
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Cursor" unique_id=2072606377]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.5, 0, 0)
+mesh = SubResource("BoxMesh_8cj0n")
+
+[node name="MeshInstance3D2" type="MeshInstance3D" parent="Cursor" unique_id=192617281]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.5, 0, 0)
+mesh = SubResource("BoxMesh_8cj0n")
+
+[node name="MeshInstance3D3" type="MeshInstance3D" parent="Cursor" unique_id=667091077]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 2.1855694e-08, 0, 0.5)
+mesh = SubResource("BoxMesh_8cj0n")
+
+[node name="MeshInstance3D4" type="MeshInstance3D" parent="Cursor" unique_id=107463367]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -2.1855694e-08, 0, -0.5)
+mesh = SubResource("BoxMesh_8cj0n")

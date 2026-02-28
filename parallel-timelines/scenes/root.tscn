@@ -1,0 +1,152 @@
+[gd_scene format=3 uid="uid://bpx25rgxyxxwd"]
+
+[ext_resource type="PackedScene" uid="uid://dbm16gkqqs62h" path="res://scenes/game.tscn" id="1_jh1ax"]
+[ext_resource type="Shader" uid="uid://bpdji7sc7r6i" path="res://shaders/extract_emission.gdshader" id="1_sqa0i"]
+[ext_resource type="Shader" uid="uid://rivm26f0vwbu" path="res://shaders/blur_x.gdshader" id="2_jh1ax"]
+[ext_resource type="Shader" uid="uid://dehpq8aqecjog" path="res://shaders/blur_y.gdshader" id="3_kycxp"]
+[ext_resource type="Shader" uid="uid://c8fyamgl2l2r4" path="res://shaders/colorrect_dither_glow.gdshader" id="4_j287u"]
+
+[sub_resource type="Gradient" id="Gradient_lbhrr"]
+colors = PackedColorArray(0.07983647, 0.08684586, 0.1875, 1, 1, 1, 1, 1)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_iywne"]
+gradient = SubResource("Gradient_lbhrr")
+fill_from = Vector2(1, 0)
+
+[sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_p57ef"]
+panorama = SubResource("GradientTexture2D_iywne")
+
+[sub_resource type="Sky" id="Sky_u5sy4"]
+sky_material = SubResource("PanoramaSkyMaterial_p57ef")
+
+[sub_resource type="Environment" id="Environment_gee14"]
+background_mode = 1
+sky = SubResource("Sky_u5sy4")
+ambient_light_source = 3
+reflected_light_source = 2
+ssao_enabled = true
+ssao_radius = 4.0
+ssao_intensity = 8.0
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_gee14"]
+render_priority = 0
+shader = ExtResource("1_sqa0i")
+shader_parameter/threshold = 0.8999999798832
+
+[sub_resource type="QuadMesh" id="QuadMesh_0tnpc"]
+flip_faces = true
+size = Vector2(2, 2)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_vtaks"]
+shader = ExtResource("2_jh1ax")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_kvpfn"]
+shader = ExtResource("3_kycxp")
+
+[sub_resource type="ViewportTexture" id="ViewportTexture_dinhu"]
+viewport_path = NodePath("PostProcessing/Control/SubViewportContainer/SubViewport")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_kvuet"]
+resource_local_to_scene = true
+shader = ExtResource("4_j287u")
+shader_parameter/quantize_size = 2.0
+shader_parameter/handle_scale = false
+shader_parameter/handle_subpixels = true
+shader_parameter/dither_enabled = false
+shader_parameter/bayer_pattern = 2.0
+shader_parameter/divisions = 8.0
+shader_parameter/contrast = 1.0
+shader_parameter/shift = 0.0
+shader_parameter/grayscale = false
+shader_parameter/use_palette = false
+shader_parameter/glow_texture = SubResource("ViewportTexture_dinhu")
+shader_parameter/glow_strength = 0.2
+
+[node name="Root" type="Node3D" unique_id=1229380050]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1172231745]
+environment = SubResource("Environment_gee14")
+
+[node name="Game" parent="." unique_id=1579276341 instance=ExtResource("1_jh1ax")]
+
+[node name="Camera3D" type="Camera3D" parent="." unique_id=1474577654]
+transform = Transform3D(1, 0, 0, 0, 0.39073107, 0.92050487, 0, -0.92050487, 0.39073107, 7.8, 7.8, 8)
+cull_mask = 1047583
+
+[node name="RemoteTransform3D" type="RemoteTransform3D" parent="Camera3D" unique_id=426359186]
+remote_path = NodePath("../../PostProcessing/Control/SubViewportContainer/SubViewport/Camera3D")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=804060558]
+transform = Transform3D(-0.55697703, -0.49102902, 0.66982615, 0, 0.8065065, 0.5912252, -0.8305279, 0.32929885, -0.4492056, 0, 4.84497, 0)
+light_color = Color(0.7163558, 0.6778824, 1, 1)
+light_energy = 0.05
+
+[node name="PostProcessing" type="Node" parent="." unique_id=1705565781]
+
+[node name="Control" type="Control" parent="PostProcessing" unique_id=676576855]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="SubViewportContainer" type="SubViewportContainer" parent="PostProcessing/Control" unique_id=129741043]
+self_modulate = Color(1, 1, 1, 0)
+visibility_layer = 32
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+stretch = true
+
+[node name="SubViewport" type="SubViewport" parent="PostProcessing/Control/SubViewportContainer" unique_id=1627362151]
+handle_input_locally = false
+use_hdr_2d = true
+size = Vector2i(800, 500)
+render_target_update_mode = 4
+
+[node name="Quad" type="MeshInstance3D" parent="PostProcessing/Control/SubViewportContainer/SubViewport" unique_id=452969207]
+layers = 32
+material_override = SubResource("ShaderMaterial_gee14")
+mesh = SubResource("QuadMesh_0tnpc")
+
+[node name="Camera3D" type="Camera3D" parent="PostProcessing/Control/SubViewportContainer/SubViewport" unique_id=44427725]
+transform = Transform3D(1, 0, 0, 0, 0.39073107, 0.92050487, 0, -0.92050487, 0.39073107, 7.8, 7.8, 8)
+
+[node name="CanvasLayer" type="CanvasLayer" parent="PostProcessing/Control/SubViewportContainer/SubViewport" unique_id=1825013091]
+
+[node name="ColorRect_BlurX" type="ColorRect" parent="PostProcessing/Control/SubViewportContainer/SubViewport/CanvasLayer" unique_id=1117228513]
+material = SubResource("ShaderMaterial_vtaks")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="CanvasLayer2" type="CanvasLayer" parent="PostProcessing/Control/SubViewportContainer/SubViewport" unique_id=1842637883]
+
+[node name="ColorRect_BlurY" type="ColorRect" parent="PostProcessing/Control/SubViewportContainer/SubViewport/CanvasLayer2" unique_id=1541675367]
+material = SubResource("ShaderMaterial_kvpfn")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="CanvasLayer" type="CanvasLayer" parent="PostProcessing" unique_id=1878145449]
+
+[node name="ColorRect_Dither" type="ColorRect" parent="PostProcessing/CanvasLayer" unique_id=1292034214]
+material = SubResource("ShaderMaterial_kvuet")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2

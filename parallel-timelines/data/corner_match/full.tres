@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="CornerMatch" format=3 uid="uid://nvdwu1qytl56"]
+
+[ext_resource type="ArrayMesh" uid="uid://dhkbgxjgiflp1" path="res://models/hull/walls/full_mesh.res" id="1_wdq1m"]
+[ext_resource type="Script" uid="uid://dwykuqxbljwae" path="res://scripts/map/corner_match.gd" id="1_wyysw"]
+
+[resource]
+script = ExtResource("1_wyysw")
+matching_tiles = PackedByteArray(1, 1, 1, 1, 1, 1, 1, 1, 1)
+mesh = ExtResource("1_wdq1m")
+metadata/_custom_type_script = "uid://dwykuqxbljwae"
