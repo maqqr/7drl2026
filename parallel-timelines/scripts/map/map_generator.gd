@@ -1,12 +1,68 @@
 extends Node
 class_name MapGenerator
 
+static var SMALL: Dictionary[String, int] = {
+	"width": 31,
+	"height": 40,
+	"extra_corridor_count": 2,
+	"keycard_count": 4,
+}
+static var LARGE: Dictionary[String, int] = {
+	"width": 41,
+	"height": 70,
+	"extra_corridor_count": 10,
+	"keycard_count": 4,
+}
+
 enum RoomPlanTile {
 	EMPTY = 0,
 	WALL = 1,
 	FLOOR = 2,
 	DOOR = 3,
+	BED = 4,
+	BLOCKING_OBJECT = 5,
+	SHUTTLE = 6,
 }
+
+const PLAN_TO_OBJECT: Dictionary[RoomPlanTile, PackedScene] = {
+	RoomPlanTile.BED: preload("res://scenes/gameobjects/bed.tscn"),
+	RoomPlanTile.SHUTTLE: preload("res://scenes/gameobjects/shuttle.tscn"),
+}
+
+const KEYCARD_ITEMS: Array[ItemType] = [
+	preload("res://data/items/keycards/green_keycard.tres"),
+	preload("res://data/items/keycards/red_keycard.tres"),
+	preload("res://data/items/keycards/cyan_keycard.tres"),
+	preload("res://data/items/keycards/purple_keycard.tres"),
+]
+
+class PlannedObject:
+	var packed_scene: PackedScene
+	var tile_position: Vector2i
+
+	func _init(p_packed_scene: PackedScene, p_tile_position: Vector2i) -> void:
+		packed_scene = p_packed_scene
+		tile_position = p_tile_position
+
+class PlannedItem:
+	var item_type: ItemType
+	var tile_position: Vector2i
+
+	func _init(p_item_type: ItemType, p_tile_position: Vector2i) -> void:
+		item_type = p_item_type
+		tile_position = p_tile_position
+
+static func _convert_plan_tile(plan_tile: RoomPlanTile) -> Enum.TileType:
+	match plan_tile:
+		RoomPlanTile.EMPTY: return Enum.TileType.EMPTY
+		RoomPlanTile.WALL: return Enum.TileType.WALL
+		RoomPlanTile.FLOOR: return Enum.TileType.FLOOR
+		RoomPlanTile.DOOR: return Enum.TileType.DOOR
+		RoomPlanTile.BED: return Enum.TileType.OBJECT_NONBLOCKING_TRANSPARENT
+		RoomPlanTile.BLOCKING_OBJECT: return Enum.TileType.OBJECT_BLOCKING_TRANSPARENT
+		RoomPlanTile.SHUTTLE: return Enum.TileType.OBJECT_BLOCKING_TRANSPARENT
+	assert(false) # Missing tile handling
+	return Enum.TileType.FLOOR
 
 enum Direction { LEFT, UP, RIGHT, DOWN }
 
@@ -28,6 +84,7 @@ static func _dir_to_side(dir: Vector2i) -> Side:
 
 var task_id = null
 var rng: RandomNumberGenerator
+var parameters: Dictionary[String, int]
 signal completed
 
 var cockpit: PremadeRoom
@@ -35,6 +92,7 @@ var main_corridor: PremadeRoom
 var main_corridor_split: PremadeRoom
 var main_corridor_end: PremadeRoom
 var escape_pod: PremadeRoom
+var bunk_room: PremadeRoom
 
 var tile_map: TileMap2D
 var fail = false
@@ -43,6 +101,13 @@ var premade_room_rects: Array[Rect2i]
 var random_room_rects: Array[Rect2i]
 var door_positions: Array[Vector2i]
 var escape_pod_position: Vector2i
+var spawn_room_position: Vector2i
+var spawn_room_rect: Rect2i
+
+var planned_objects: Array[PlannedObject]
+var planned_items: Array[PlannedItem]
+var keycard_positions: Array[Vector2i]
+var turns_until_game_over: int = 0
 
 class PremadeRoom:
 	var plan_tiles: Array2D
@@ -54,23 +119,27 @@ func _init() -> void:
 	main_corridor_split = _read_premade_room("main_corridor_split.tscn")
 	main_corridor_end = _read_premade_room("main_corridor_end.tscn")
 	escape_pod = _read_premade_room("escape_pod.tscn")
+	bunk_room = _read_premade_room("bunk_room.tscn")
 
 func _process(_delta: float) -> void:
 	if task_id != null and WorkerThreadPool.is_task_completed(task_id):
-		completed.emit()
 		task_id = null
+		completed.emit()
 
-func generate(width: int, height: int) -> void:
+func generate(param: Dictionary[String, int]) -> void:
 	assert(task_id == null)
 	if task_id != null:
 		return
 
-	tile_map = TileMap2D.new(width, height, Enum.TileType.EMPTY)
+	parameters = param
+	tile_map = TileMap2D.new(parameters.width, parameters.height, Enum.TileType.EMPTY)
 	fail = false
 	corridor_rects.clear()
 	premade_room_rects.clear()
 	random_room_rects.clear()
 	door_positions.clear()
+	planned_objects.clear()
+	planned_items.clear()
 	task_id = WorkerThreadPool.add_task(_run_task, true, "MapGenerator")
 
 func _run_task() -> void:
@@ -122,7 +191,7 @@ func _run_task() -> void:
 
 	# Randomly place more corridors branching from existing corridors
 	var placed_count = 0
-	while placed_count < 10:
+	while placed_count < parameters.extra_corridor_count:
 		var pos = corridor_positions[rng.randi_range(0, corridor_positions.size() - 1)]
 		var dir: Vector2i = DIR_VECTORS[randi_range(0, DIR_VECTORS.size() - 1)]
 		var dir_cw = Vector2i(dir.y, -dir.x)
@@ -146,7 +215,21 @@ func _run_task() -> void:
 				c_rect = c_rect.grow_side(_dir_to_side(dir), actual_length - 1)
 			corridor_rects.push_back(c_rect)
 
-	# Place randomly sized rooms
+	# Place spawn room
+	var bunk_result = _find_position_for_premade_room(bunk_room)
+	if bunk_result[&"success"]:
+		_place_premade_room(bunk_result[&"position"], bunk_room)
+	else:
+		fail = true
+		return
+	spawn_room_rect = Rect2i(bunk_result[&"position"], Vector2i(bunk_room.plan_tiles.width, bunk_room.plan_tiles.height))
+	spawn_room_position = bunk_result[&"position"] + Vector2i(bunk_room.plan_tiles.width / 2, bunk_room.plan_tiles.height / 2)
+	# Randomly choose the mirrored room
+	if rng.randf() < 0.5:
+		spawn_room_rect = _mirror_rect(spawn_room_rect)
+		spawn_room_position.x = tile_map.width - 1 - spawn_room_position.x
+
+	# Fill the rest of the map with random rooms
 	var consecutive_fails = 0
 	var placed_room_count = 0
 	while placed_room_count < 20 && consecutive_fails < 200:
@@ -177,14 +260,41 @@ func _run_task() -> void:
 
 	_cover_floors()
 	_make_doors_for_rooms()
+	_cover_floors()
 	_mirror_map()
+	_make_keycards()
+	_calculate_allowed_turns()
+
+	if turns_until_game_over == 0:
+		# Something went wrong
+		fail = true
+		return
 
 	door_positions = _find_tiles_by_type(Enum.TileType.DOOR)
 	@warning_ignore_restore("integer_division")
 
-func _place_premade_room(pos: Vector2i, room: PremadeRoom) -> void:
-	_place_tiles(pos, room.plan_tiles)
-	premade_room_rects.push_back(Rect2i(pos, Vector2i(room.plan_tiles.width, room.plan_tiles.height)))
+# Returns { "success": bool, "position": Vector2i }
+func _find_position_for_premade_room(room: PremadeRoom) -> Dictionary[StringName, Variant]:
+	var result: Dictionary[StringName, Variant] = { &"success": false, &"position": Vector2i.ZERO }
+	@warning_ignore("integer_division")
+	var potential_rect = Rect2i(
+		Vector2i(tile_map.width / 2, rng.randi_range(5, tile_map.height - room.plan_tiles.height)),
+		Vector2i(room.plan_tiles.width, room.plan_tiles.height))
+	var attempts = 0
+	while _rect_intersects(potential_rect):
+		# Slide the room left until it fits
+		potential_rect.position.x -= 1
+		if potential_rect.position.x < 0:
+			# Try another position
+			@warning_ignore("integer_division")
+			potential_rect.position = Vector2i(tile_map.width / 2, rng.randi_range(5, tile_map.height - room.plan_tiles.height))
+		attempts += 1
+		if attempts > 150:
+			return result
+
+	result[&"success"] = true
+	result[&"position"] = potential_rect.position
+	return result
 
 func _make_room(room: Rect2i) -> void:
 	for y in range(room.size.y):
@@ -192,17 +302,19 @@ func _make_room(room: Rect2i) -> void:
 			var tile = Enum.TileType.WALL if y == 0 || x == 0 || y == room.size.y - 1 || x == room.size.x - 1 else Enum.TileType.FLOOR
 			tile_map.set_tile(Vector2i(room.position.x + x, room.position.y + y), tile)
 
-func _convert_plan_tile(plan_tile: RoomPlanTile) -> Enum.TileType:
-	match plan_tile:
-		RoomPlanTile.EMPTY: return Enum.TileType.EMPTY
-		RoomPlanTile.WALL: return Enum.TileType.WALL
-		RoomPlanTile.DOOR: return Enum.TileType.DOOR
-	return Enum.TileType.FLOOR
+func _place_premade_room(pos: Vector2i, room: PremadeRoom) -> void:
+	_place_plan_tiles(pos, room.plan_tiles)
+	premade_room_rects.push_back(Rect2i(pos, Vector2i(room.plan_tiles.width, room.plan_tiles.height)))
 
-func _place_tiles(pos: Vector2i, tiles: Array2D):
-	for y in range(tiles.height):
-		for x in range(tiles.width):
-			tile_map.set_tile(pos + Vector2i(x, y), _convert_plan_tile(tiles.get_value(Vector2i(x, y))))
+func _place_plan_tiles(pos: Vector2i, plan_tiles: Array2D):
+	for y in range(plan_tiles.height):
+		for x in range(plan_tiles.width):
+			var plan_tile = plan_tiles.get_value(Vector2i(x, y))
+			var tile_pos = pos + Vector2i(x, y)
+			tile_map.set_tile(tile_pos, _convert_plan_tile(plan_tile))
+			var packed_scene: PackedScene = PLAN_TO_OBJECT.get(plan_tile)
+			if packed_scene != null:
+				planned_objects.push_back(PlannedObject.new(packed_scene, tile_pos))
 
 func _read_premade_room(path: StringName) -> PremadeRoom:
 	var packed_scene = load("res://data/rooms/" + path)
@@ -221,6 +333,18 @@ func _read_premade_room(path: StringName) -> PremadeRoom:
 	room.plan_tiles = array
 	return room
 
+func _make_keycards() -> void:
+	var potential_rooms: Array[Rect2i] = []
+	potential_rooms.append_array(random_room_rects)
+	while keycard_positions.size() < 4 and not potential_rooms.is_empty():
+		var index = rng.randi_range(0, potential_rooms.size() - 1)
+		keycard_positions.push_back(potential_rooms[index].get_center())
+		potential_rooms.remove_at(index)
+
+	assert(KEYCARD_ITEMS.size() >= keycard_positions.size())
+	for i in range(keycard_positions.size()):
+		planned_items.push_back(PlannedItem.new(KEYCARD_ITEMS[i], keycard_positions[i]))
+
 func _find_tiles_by_type(tile_type: Enum.TileType) -> Array[Vector2i]:
 	var result: Array[Vector2i] = []
 	for y in range(tile_map.height):
@@ -231,6 +355,10 @@ func _find_tiles_by_type(tile_type: Enum.TileType) -> Array[Vector2i]:
 	return result
 
 func _is_empty_for_corridor(pos: Vector2i) -> bool:
+	# Too left
+	if pos.x <= 1:
+		return false
+	# Too high
 	if pos.y < cockpit.plan_tiles.height + 2:
 		return false
 	if tile_map.is_point_inside(pos):
@@ -254,12 +382,8 @@ func _cover_floors() -> void:
 					var empty_pos = pos + delta
 					if tile_map.get_tile(empty_pos) == Enum.TileType.EMPTY:
 						tile_map.set_tile(empty_pos, Enum.TileType.WALL)
-			#if tile_map.get_tile(pos) == Enum.TileType.FLOOR:
-				#for dx in range(-1, 2):
-					#for dy in range(-1, 2):
-						#var empty_pos = pos + Vector2i(dx, dy)
-						#if tile_map.get_tile(empty_pos) == Enum.TileType.EMPTY:
-							#tile_map.set_tile(empty_pos, Enum.TileType.WALL)
+						if x == 0 or y == 0 or y == tile_map.height - 1:
+							tile_map.set_tile(pos, Enum.TileType.WALL)
 
 func _make_doors_for_rooms() -> void:
 	var astar = AStarGrid2D.new()
@@ -274,11 +398,17 @@ func _make_doors_for_rooms() -> void:
 			elif tile_map.get_tile(pos) == Enum.TileType.WALL:
 				astar.set_point_weight_scale(pos, 30.0)
 
-	# Make sure there is a way from every room to escape pod
+	var room_centers = []
 	for room_rect in random_room_rects:
-		var start = room_rect.get_center()
+		room_centers.push_back(room_rect.get_center())
+
+	for room_rect in premade_room_rects:
+		room_centers.push_back(room_rect.get_center())
+
+	# Make sure there is a way from every room to escape pod
+	for room_center in room_centers:
 		var end = escape_pod_position
-		var path: Array[Vector2i] = astar.get_id_path(start, end)
+		var path: Array[Vector2i] = astar.get_id_path(room_center, end)
 		for pos in path:
 			# Make a door at every wall on the path
 			if tile_map.get_tile(pos) == Enum.TileType.WALL:
@@ -292,9 +422,59 @@ func _make_doors_for_rooms() -> void:
 				var tile = Enum.TileType.DOOR if not found_existing_door else Enum.TileType.FLOOR
 				tile_map.set_tile(pos, tile)
 
+func _mirror_rect(r: Rect2i) -> Rect2i:
+	return Rect2i(Vector2i(tile_map.width - r.position.x - r.size.x, r.position.y), r.size)
+
 func _mirror_map() -> void:
+	# Mirror tiles
 	for y in range(0, tile_map.height):
 		@warning_ignore("integer_division")
 		for x in range(0, tile_map.width / 2):
 			var tile = tile_map.get_tile(Vector2i(x, y))
 			tile_map.set_tile(Vector2i(tile_map.width - 1 - x, y), tile)
+
+	# Mirror objects
+	var new_objs = []
+	for obj in planned_objects:
+		# Do not mirror objects in the center
+		@warning_ignore("integer_division")
+		if obj.tile_position.x == tile_map.width / 2:
+			continue
+
+		var mirrored_pos = Vector2i(tile_map.width - 1 - obj.tile_position.x, obj.tile_position.y)
+		new_objs.push_back(PlannedObject.new(obj.packed_scene, mirrored_pos))
+		print("Mirroring obj ", obj.packed_scene.resource_path)
+	planned_objects.append_array(new_objs)
+
+	# Mirror room rects
+	var new_rects = []
+	for rect in random_room_rects:
+		new_rects.push_back(_mirror_rect(rect))
+	random_room_rects.append_array(new_rects)
+	new_rects.clear()
+	for rect in premade_room_rects:
+		new_rects.push_back(_mirror_rect(rect))
+	premade_room_rects.append_array(new_rects)
+
+func _calculate_allowed_turns() -> void:
+	var astar = AStarGrid2D.new()
+	astar.region = Rect2i(0, 0, tile_map.width, tile_map.height)
+	astar.diagonal_mode = AStarGrid2D.DIAGONAL_MODE_NEVER
+	astar.update()
+	for y in range(0, tile_map.height):
+		for x in range(0, tile_map.width):
+			var pos = Vector2i(x, y)
+			match tile_map.get_tile(pos):
+				Enum.TileType.EMPTY: astar.set_point_solid(pos, true)
+				Enum.TileType.WALL: astar.set_point_solid(pos, true)
+				Enum.TileType.OBJECT_BLOCKING_OPAQUE: astar.set_point_solid(pos, true)
+				Enum.TileType.OBJECT_BLOCKING_TRANSPARENT: astar.set_point_solid(pos, true)
+
+	assert(not keycard_positions.is_empty())
+	var most_turns = 0
+	for keycard_pos in keycard_positions:
+		var path_to_keycard: Array[Vector2i] = astar.get_id_path(spawn_room_position, keycard_pos)
+		var path_to_shuttle: Array[Vector2i] = astar.get_id_path(keycard_pos, escape_pod_position)
+		most_turns = max(most_turns, path_to_keycard.size() + path_to_shuttle.size())
+
+	turns_until_game_over = floor(most_turns * 1.5)

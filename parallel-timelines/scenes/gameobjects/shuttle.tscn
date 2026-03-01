@@ -1,0 +1,57 @@
+[gd_scene format=3 uid="uid://bilettslyekt3"]
+
+[ext_resource type="Script" uid="uid://do6ipld3vj0uq" path="res://scripts/game/shuttle.gd" id="1_3tpoc"]
+
+[sub_resource type="QuadMesh" id="QuadMesh_j74qf"]
+size = Vector2(3, 3)
+orientation = 1
+
+[sub_resource type="BoxMesh" id="BoxMesh_3tpoc"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_j74qf"]
+albedo_color = Color(0.51054823, 0.7666094, 1, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_3w0pd"]
+material = SubResource("StandardMaterial3D_j74qf")
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_3w0pd"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_3tpoc"]
+albedo_color = Color(0.546875, 0.1976291, 0.24264456, 1)
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_ddl2m"]
+material = SubResource("StandardMaterial3D_3tpoc")
+
+[node name="Shuttle" type="Node3D" unique_id=192380544]
+script = ExtResource("1_3tpoc")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=1626556189]
+mesh = SubResource("QuadMesh_j74qf")
+
+[node name="MeshInstance3D2" type="MeshInstance3D" parent="." unique_id=443009905]
+transform = Transform3D(1.698437, 0, 0, 0, 0.68222237, 0, 0, 0, 1, 0, 0.61789197, -0.8220395)
+mesh = SubResource("BoxMesh_3tpoc")
+
+[node name="MeshInstance3D3" type="MeshInstance3D" parent="." unique_id=2005672648]
+transform = Transform3D(1.0152336, 0, 0, 0, 0.4298971, -0.2376523, 0, 0.04699028, 2.1741955, 0, 0.61789197, 0.29908073)
+mesh = SubResource("BoxMesh_3tpoc")
+
+[node name="MeshInstance3D6" type="MeshInstance3D" parent="." unique_id=819630799]
+transform = Transform3D(0.5917697, 0, 0, 0, 0.119393446, -0.06600214, 0, 0.013050405, 0.60382986, 0, 0.7913607, 0.8246783)
+mesh = SubResource("BoxMesh_3w0pd")
+
+[node name="MeshInstance3D4" type="MeshInstance3D" parent="." unique_id=1261562122]
+transform = Transform3D(0.5439183, 0, 0, 0, 2.766221e-08, -0.5439183, 0, 0.92818975, 1.6210029e-08, 1.1011009, 0.6742853, -0.53473836)
+mesh = SubResource("CylinderMesh_3w0pd")
+
+[node name="MeshInstance3D7" type="MeshInstance3D" parent="." unique_id=1469161295]
+transform = Transform3D(0.6266197, 0, 0, 0, 2.9872764e-09, -0.6266197, 0, 0.10023636, 1.8674722e-08, 1.1011009, 0.6742853, -1.5040741)
+mesh = SubResource("CylinderMesh_ddl2m")
+
+[node name="MeshInstance3D8" type="MeshInstance3D" parent="." unique_id=265466588]
+transform = Transform3D(0.6266197, 0, 0, 0, 2.9872764e-09, -0.6266197, 0, 0.10023636, 1.8674722e-08, -1.0875971, 0.6742853, -1.5040741)
+mesh = SubResource("CylinderMesh_ddl2m")
+
+[node name="MeshInstance3D5" type="MeshInstance3D" parent="." unique_id=214169596]
+transform = Transform3D(0.5439183, 0, 0, 0, 2.766221e-08, -0.5439183, 0, 0.92818975, 1.6210029e-08, -1.0871394, 0.6742853, -0.53473836)
+mesh = SubResource("CylinderMesh_3w0pd")

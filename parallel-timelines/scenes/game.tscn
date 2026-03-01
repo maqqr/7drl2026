@@ -1,6 +1,7 @@
 [gd_scene format=3 uid="uid://dbm16gkqqs62h"]
 
 [ext_resource type="Script" uid="uid://dh4ult0jy8bc4" path="res://scripts/game/game_manager.gd" id="1_uwrxv"]
+[ext_resource type="Script" uid="uid://bwstuco036cun" path="res://scripts/game/message_buffer.gd" id="2_yqjtg"]
 
 [sub_resource type="BoxMesh" id="BoxMesh_8cj0n"]
 size = Vector3(0.1, 0.1, 1)
@@ -25,3 +26,30 @@ mesh = SubResource("BoxMesh_8cj0n")
 [node name="MeshInstance3D4" type="MeshInstance3D" parent="Cursor" unique_id=107463367]
 transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -2.1855694e-08, 0, -0.5)
 mesh = SubResource("BoxMesh_8cj0n")
+
+[node name="CanvasLayer_GUI" type="CanvasLayer" parent="." unique_id=144319471]
+
+[node name="MessageBuffer" type="Control" parent="CanvasLayer_GUI" unique_id=1617653440]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+script = ExtResource("2_yqjtg")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer_GUI/MessageBuffer" unique_id=1284961034]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="RichTextLabel_Turns" type="RichTextLabel" parent="CanvasLayer_GUI" unique_id=1721962737]
+custom_minimum_size = Vector2(160, 28)
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_top = -28.0
+offset_right = 160.0
+grow_vertical = 0
+mouse_filter = 2
+bbcode_enabled = true
+scroll_active = false
+autowrap_mode = 0

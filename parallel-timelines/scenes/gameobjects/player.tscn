@@ -10,9 +10,25 @@ material = SubResource("StandardMaterial3D_l7kf8")
 radius = 0.4
 height = 1.6
 
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_3b1c8"]
+emission_enabled = true
+emission = Color(0, 0.68235296, 0, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_2s7gj"]
+material = SubResource("StandardMaterial3D_3b1c8")
+
 [node name="Player" type="Node3D" unique_id=1395660931]
 script = ExtResource("1_l7kf8")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=2013637082]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.80045015, 0)
 mesh = SubResource("CapsuleMesh_rlgfs")
+
+[node name="MeshInstance3D2" type="MeshInstance3D" parent="." unique_id=553795514]
+transform = Transform3D(0.40981513, 0, 0, 0, 0.43203276, 0, 0, 0, 0.17000067, 0, 1.2387772, 0.3179893)
+mesh = SubResource("BoxMesh_2s7gj")
+
+[node name="SpotLight3D" type="SpotLight3D" parent="." unique_id=2017693619]
+transform = Transform3D(-1, 0, 8.742278e-08, 3.4548854e-08, 0.9185982, 0.3951928, -8.030641e-08, 0.3951928, -0.9185982, 0, 1.3545687, 0.43466663)
+light_energy = 0.0
+spot_angle = 63.837288

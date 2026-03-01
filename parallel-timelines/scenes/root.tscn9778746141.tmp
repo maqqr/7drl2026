@@ -67,6 +67,9 @@ shader_parameter/glow_strength = 0.2
 [node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1172231745]
 environment = SubResource("Environment_gee14")
 
+[node name="Game" parent="." unique_id=1579276341 instance=ExtResource("1_jh1ax")]
+camera_offset = Vector3(0, 12, 6.5)
+
 [node name="Camera3D" type="Camera3D" parent="." unique_id=1474577654]
 transform = Transform3D(1, 0, 0, 0, 0.39073107, 0.92050487, 0, -0.92050487, 0.39073107, 7.8, 7.8, 8)
 cull_mask = 1047583
@@ -148,6 +151,3 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
-
-[node name="Game" parent="." unique_id=1579276341 instance=ExtResource("1_jh1ax")]
-camera_offset = Vector3(0, 12, 6.5)

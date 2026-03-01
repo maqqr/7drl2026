@@ -86,3 +86,9 @@ func rotate_ccw() -> void:
 	height = temp_width
 
 	_data = new_data
+
+func copy_to(other: TileMap2D) -> void:
+	other.width = width
+	other.height = height
+	other._data.clear()
+	other._data.append_array(_data)

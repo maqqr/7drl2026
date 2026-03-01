@@ -1,0 +1,13 @@
+[gd_scene format=3 uid="uid://bujaryki0ro0a"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_d86ha"]
+albedo_color = Color(1, 0.05207616, 0.11928123, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_d86ha"]
+material = SubResource("StandardMaterial3D_d86ha")
+
+[node name="GreenKeycard" type="Node3D" unique_id=281275327]
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=1918364650]
+transform = Transform3D(0.39083153, 0, 0, 0, 0.22046205, 0.025735037, 0, -0.12465525, 0.045514323, 0, 0.12733844, 0)
+mesh = SubResource("BoxMesh_d86ha")

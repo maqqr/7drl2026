@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="ItemType" format=3 uid="uid://b72ssfg0nxurc"]
+
+[ext_resource type="Script" uid="uid://bvcrglxmuimbn" path="res://scripts/item/item_type.gd" id="1_lecuo"]
+[ext_resource type="PackedScene" uid="uid://kr51cex7rtlj" path="res://scenes/items/green_keycard.tscn" id="2_7pc3c"]
+
+[resource]
+script = ExtResource("1_lecuo")
+name = "green keycard"
+visual_scene = ExtResource("2_7pc3c")
+metadata/_custom_type_script = "uid://bvcrglxmuimbn"
