@@ -2,6 +2,7 @@ extends Node
 class_name GameState
 
 const LOS_ANGLE = deg_to_rad(45.0)
+const LOS_PERMISSIVE_ANGLE = deg_to_rad(95.0)
 const LOS_RADIUS = 6
 
 var tile_map: TileMap2D
@@ -45,6 +46,8 @@ func _ready() -> void:
 	assert(game_manager != null and game_manager is GameManager)
 
 	player = create_character_at(player_spawn_position)
+	player.inventory_changed.connect(game_manager.inventory_ui.update)
+	game_manager.inventory_ui.update(player)
 
 	# Create door objects
 	for y in range(tile_map.height):
@@ -77,11 +80,7 @@ func _ready() -> void:
 
 	# Create items
 	for planned_item in planned_items:
-		var item_on_ground = ItemOnGround.new()
-		item_on_ground.item = planned_item.item_type
-		item_on_ground.map_position = planned_item.tile_position
-		items.push_back(item_on_ground)
-		add_child(item_on_ground)
+		create_item_at(planned_item.item_type, planned_item.tile_position)
 
 	is_initialized = true
 	initialized.emit()
@@ -100,6 +99,14 @@ func remove_character(character: Character):
 	past_players.erase(character)
 	remove_child(character)
 
+func create_item_at(item_type: ItemType, pos: Vector2i) -> ItemOnGround:
+	var item_on_ground = ItemOnGround.new()
+	item_on_ground.item = item_type
+	item_on_ground.map_position = pos
+	items.push_back(item_on_ground)
+	add_child(item_on_ground)
+	return item_on_ground
+
 func remove_item(item_on_ground: ItemOnGround):
 	items.erase(item_on_ground)
 	remove_child(item_on_ground)
@@ -115,7 +122,8 @@ func can_see(character: Character, pos: Vector2i, more_permissive = false):
 	if more_permissive and character.map_position.distance_squared_to(pos) < 4.0:
 		return true
 
-	if abs(Vector2(character.look_direction).angle_to(dir)) >= LOS_ANGLE:
+	var angle = LOS_PERMISSIVE_ANGLE if more_permissive else LOS_ANGLE
+	if abs(Vector2(character.look_direction).angle_to(dir)) >= angle:
 		return false
 
 	var line_positions = Geometry2D.bresenham_line(character.map_position, pos)

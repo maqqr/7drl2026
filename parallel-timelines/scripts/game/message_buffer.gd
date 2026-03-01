@@ -6,10 +6,11 @@ const FADE_DELAY = 0.07
 
 const MSG_NEW_GAME: String = "The self-destruct alarm wakes you up. Find and deliver {count} keycards to the escape shuttle."
 const MSG_PICKUP: String = "[i]You pick up {a} {item}.[/i]"
-const MSG_KEY_DELIVER: String = "[i]{item} was delivered to the escape shuttle, {remain_count} remaining.[/i]"
-const MSG_KEY_SELF_DELIVER: String = "[i]You deliver {item} to the escape shuttle, {remain_count} remaining.[/i]"
+const MSG_KEY_DELIVER: String = "[i]The {item} was delivered to the escape shuttle, {remain_count} remaining.[/i]"
+const MSG_KEY_SELF_DELIVER: String = "[i]You deliver the {item} to the escape shuttle, {remain_count} remaining.[/i]"
 const MSG_LOSE: String = "Your past self sees you and you both go insane, causing all timelines to collapse."
 const MSG_OUT_OF_TURNS: String = "Just before the ship explodes, your suit's time travel module activates."
+const MSG_DROP: String = "[i]You drop the {item}.[/i]"
 
 func clear() -> void:
 	for child in $VBoxContainer.get_children():

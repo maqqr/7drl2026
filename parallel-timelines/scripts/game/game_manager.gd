@@ -17,6 +17,7 @@ class Timeline:
 
 @onready var message_buffer: MessageBuffer = $CanvasLayer_GUI/MessageBuffer
 @onready var turns_label: RichTextLabel = $CanvasLayer_GUI/RichTextLabel_Turns
+@onready var inventory_ui: InventoryUi = $CanvasLayer_GUI/Inventory
 @onready var cursor: Node3D = $Cursor
 var original_tilemap: TileMap2D
 var map_generator: MapGenerator
@@ -29,6 +30,7 @@ var parallel_timelines: Array[Timeline]
 var recorded_actions = []
 
 var debug_rect_scene: PackedScene = preload("res://scenes/debug_rect.tscn")
+var debug_rect_green_scene: PackedScene = preload("res://scenes/debug_rect_green.tscn")
 var debug_rects: Node3D
 
 var need_sight_check = false
@@ -37,15 +39,16 @@ var darkness_nodes: Dictionary[Vector2i, Node3D]
 
 var need_action_finish_check = false
 var game_over = false
+var advance_game = false
 
 func _ready() -> void:
-	map_generator = MapGenerator.new()
-	map_generator.name = "MapGenerator"
-	add_child(map_generator)
-
 	debug_rects = Node3D.new()
 	debug_rects.name = "DebugRects"
 	add_child(debug_rects)
+
+	inventory_ui.item_used.connect(_on_item_use)
+	inventory_ui.item_dropped.connect(_on_item_drop)
+	inventory_ui.item_thrown.connect(_on_item_throw)
 
 	start_new_game()
 
@@ -91,7 +94,6 @@ func _process(delta: float) -> void:
 
 	# Handle player movement
 	if is_input_enabled():
-		var advance_game = false
 		for key_name in MOVE_KEYS:
 			if Input.is_action_pressed(key_name):
 				var direction = MOVE_KEYS[key_name]
@@ -114,18 +116,32 @@ func _process(delta: float) -> void:
 			game_state.player.ongoing_action = WarpAction.new()
 			recorded_actions.push_back(game_state.player.ongoing_action)
 
-		if advance_game:
-			set_remaining_turns(game_state.remaining_turns - 1)
-			need_action_finish_check = true
-			for past_player in game_state.past_players:
-				if not past_player.past_actions.is_empty():
-					past_player.ongoing_action = past_player.past_actions[0]
-					past_player.past_actions.remove_at(0)
-					assert(past_player.ongoing_action)
-					# Stop the whole timeline if execution fails
-					if not past_player.ongoing_action.can_execute(self, past_player):
-						past_player.ongoing_action = null
-						past_player.past_actions.clear()
+	if advance_game:
+		advance_game = false
+		set_remaining_turns(game_state.remaining_turns - 1)
+		need_action_finish_check = true
+		for past_player in game_state.past_players:
+			if not past_player.past_actions.is_empty():
+				past_player.ongoing_action = past_player.past_actions[0]
+				past_player.past_actions.remove_at(0)
+				assert(past_player.ongoing_action)
+				# Stop the whole timeline if execution fails
+				if not past_player.ongoing_action.can_execute(self, past_player):
+					past_player.ongoing_action = null
+					past_player.past_actions.clear()
+
+	if Input.is_action_just_pressed("debug"):
+		for y in range(darkness.height):
+			for x in range(darkness.width):
+				var pos = Vector2i(x, y)
+				if darkness.get_value(pos) == 1:
+					darkness.set_value(pos, 0)
+					remove_child(darkness_nodes[pos])
+					darkness_nodes.erase(pos)
+		for pos in map_generator.debug_path:
+			var d = debug_rect_green_scene.instantiate() as DebugRect
+			d.set_rect(Rect2i(pos, Vector2i.ONE))
+			debug_rects.add_child(d)
 
 func is_input_enabled() -> bool:
 	return not game_over and \
@@ -210,6 +226,13 @@ func restart_game() -> void:
 	start_new_game()
 
 func start_new_game() -> void:
+	if map_generator:
+		map_generator.queue_free()
+
+	map_generator = MapGenerator.new()
+	map_generator.name = "MapGenerator"
+	add_child(map_generator)
+
 	while true:
 		map_generator.generate(MapGenerator.SMALL)
 		await map_generator.completed
@@ -241,21 +264,16 @@ func start_new_game() -> void:
 		for y in range(darkness.height):
 			for x in range(darkness.width):
 				var tile_pos = Vector2i(x, y)
-				var node = preload("res://scenes/darkness.tscn").instantiate() as Node3D
-				add_child(node)
-				node.position = TileMap2D.to_scene_pos(tile_pos)
-				darkness_nodes[tile_pos] = node
+				if original_tilemap.get_tile(tile_pos) != Enum.TileType.EMPTY:
+					var node = preload("res://scenes/darkness.tscn").instantiate() as Node3D
+					add_child(node)
+					node.position = TileMap2D.to_scene_pos(tile_pos)
+					darkness_nodes[tile_pos] = node
+				else:
+					darkness.set_value(tile_pos, 0)
 	else:
 		darkness = Array2D.new(original_tilemap.width, original_tilemap.height, 0)
 
-	#game_state = GameState.new(map_generator.spawn_room_position)
-	#game_state.name = "GameState"
-	#game_state.tile_map = TileMap2D.new(0, 0, Enum.TileType.EMPTY)
-	#original_tilemap.copy_to(game_state.tile_map)
-	#game_state.planned_objects = map_generator.planned_objects
-	#game_state.planned_items = map_generator.planned_items
-	#game_state.safe_room = map_generator.spawn_room_rect
-	#add_child(game_state)
 	game_state = _create_game_state()
 	add_child(game_state)
 	set_remaining_turns(game_state.remaining_turns)
@@ -291,3 +309,17 @@ func _create_game_state() -> GameState:
 	state.remaining_keycards = map_generator.parameters.keycard_count
 	state.remaining_turns = map_generator.turns_until_game_over
 	return state
+
+func _on_item_use(_index: int) -> void:
+	add_message("(use not implemented)")
+
+func _on_item_drop(index: int) -> void:
+	if not is_input_enabled():
+		return
+	var item_type = game_state.player.items[index]
+	game_state.player.ongoing_action = DropItemAction.new(item_type, index)
+	recorded_actions.push_back(game_state.player.ongoing_action)
+	advance_game = true
+
+func _on_item_throw(_index: int) -> void:
+	add_message("(throw not implemented)")

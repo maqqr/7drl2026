@@ -1,0 +1,33 @@
+[gd_scene format=3 uid="uid://bubwxbjjiv1jx"]
+
+[ext_resource type="Script" uid="uid://55quad3hhlbv" path="res://scripts/effect/debug_rect.gd" id="1_sohc0"]
+[ext_resource type="Material" uid="uid://bhww4jn05q0wr" path="res://models/debug_rect_green_mat.tres" id="2_7wlqq"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_8cj0n"]
+size = Vector3(0.1, 0.1, 1)
+
+[node name="DebugRect" type="Node3D" unique_id=1894987367]
+script = ExtResource("1_sohc0")
+
+[node name="Visual" type="Node3D" parent="." unique_id=2095578852]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.5, 0, -0.5)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Visual" unique_id=2119311770]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.3869061, 0, 0.5)
+mesh = SubResource("BoxMesh_8cj0n")
+surface_material_override/0 = ExtResource("2_7wlqq")
+
+[node name="MeshInstance3D2" type="MeshInstance3D" parent="Visual" unique_id=519426441]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.6068349, 0, 0.5)
+mesh = SubResource("BoxMesh_8cj0n")
+surface_material_override/0 = ExtResource("2_7wlqq")
+
+[node name="MeshInstance3D3" type="MeshInstance3D" parent="Visual" unique_id=800471314]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 0.5, 0, 0.613518)
+mesh = SubResource("BoxMesh_8cj0n")
+surface_material_override/0 = ExtResource("2_7wlqq")
+
+[node name="MeshInstance3D4" type="MeshInstance3D" parent="Visual" unique_id=1572856549]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 0.5, 0, 0.39729512)
+mesh = SubResource("BoxMesh_8cj0n")
+surface_material_override/0 = ExtResource("2_7wlqq")

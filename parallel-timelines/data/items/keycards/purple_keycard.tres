@@ -7,4 +7,7 @@
 script = ExtResource("1_evc8s")
 name = "purple keycard"
 visual_scene = ExtResource("2_evc8s")
+is_keycard = true
+can_drop = true
+can_throw = true
 metadata/_custom_type_script = "uid://bvcrglxmuimbn"

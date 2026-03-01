@@ -109,6 +109,8 @@ var planned_items: Array[PlannedItem]
 var keycard_positions: Array[Vector2i]
 var turns_until_game_over: int = 0
 
+var debug_path: Array[Vector2i]
+
 class PremadeRoom:
 	var plan_tiles: Array2D
 
@@ -164,7 +166,7 @@ func _run_task() -> void:
 
 	# Place escape pod at bottom
 	_place_premade_room(Vector2i(map_center_x - escape_pod.plan_tiles.width / 2, cursor.y), escape_pod)
-	escape_pod_position = Vector2i(map_center_x, cursor.y)
+	escape_pod_position = Vector2i(map_center_x, cursor.y + 4)
 
 	var corridor_positions: Array[Vector2i] = []
 
@@ -265,7 +267,7 @@ func _run_task() -> void:
 	_make_keycards()
 	_calculate_allowed_turns()
 
-	if turns_until_game_over == 0:
+	if turns_until_game_over < 15:
 		# Something went wrong
 		fail = true
 		return
@@ -443,7 +445,6 @@ func _mirror_map() -> void:
 
 		var mirrored_pos = Vector2i(tile_map.width - 1 - obj.tile_position.x, obj.tile_position.y)
 		new_objs.push_back(PlannedObject.new(obj.packed_scene, mirrored_pos))
-		print("Mirroring obj ", obj.packed_scene.resource_path)
 	planned_objects.append_array(new_objs)
 
 	# Mirror room rects
@@ -475,6 +476,11 @@ func _calculate_allowed_turns() -> void:
 	for keycard_pos in keycard_positions:
 		var path_to_keycard: Array[Vector2i] = astar.get_id_path(spawn_room_position, keycard_pos)
 		var path_to_shuttle: Array[Vector2i] = astar.get_id_path(keycard_pos, escape_pod_position)
-		most_turns = max(most_turns, path_to_keycard.size() + path_to_shuttle.size())
+		var turns_to_key = path_to_keycard.size() + path_to_shuttle.size()
+		if turns_to_key > most_turns:
+			most_turns = turns_to_key
+			debug_path.clear()
+			debug_path.append_array(path_to_keycard)
+			debug_path.append_array(path_to_shuttle)
 
-	turns_until_game_over = floor(most_turns * 1.5)
+	turns_until_game_over = floor(10 + most_turns * 1.5)
