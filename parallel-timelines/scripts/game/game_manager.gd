@@ -19,6 +19,7 @@ class Timeline:
 @onready var turns_label: RichTextLabel = $CanvasLayer_GUI/RichTextLabel_Turns
 @onready var inventory_ui: InventoryUi = $CanvasLayer_GUI/Inventory
 @onready var cursor: Node3D = $Cursor
+@onready var aim_line: Node3D = $AimLine
 var original_tilemap: TileMap2D
 var map_generator: MapGenerator
 
@@ -41,6 +42,12 @@ var need_action_finish_check = false
 var game_over = false
 var advance_game = false
 
+var targeting = false
+var aim_line_unblocked = false
+var item_throw_index = Vector2i.MAX.x
+@export var green_aim_line_material: Material
+@export var red_aim_line_material: Material
+
 func _ready() -> void:
 	debug_rects = Node3D.new()
 	debug_rects.name = "DebugRects"
@@ -60,6 +67,24 @@ func _process(delta: float) -> void:
 	var mouse_tile = get_mouse_tile()
 	if game_state.tile_map.is_point_inside(mouse_tile):
 		cursor.position = TileMap2D.to_scene_pos(mouse_tile)
+
+	# Update aim line
+	aim_line.visible = targeting
+	if targeting:
+		var start_tile = game_state.player.map_position
+		var target_tile = mouse_tile
+		if start_tile == target_tile:
+			aim_line.visible = false
+		else:
+			aim_line.transform.origin = TileMap2D.to_scene_pos(start_tile)
+			aim_line.look_at(TileMap2D.to_scene_pos(target_tile), Vector3.UP, true)
+			var look_vec = TileMap2D.to_scene_pos(target_tile) - TileMap2D.to_scene_pos(start_tile)
+			aim_line.scale.z = look_vec.length()
+			aim_line_unblocked = game_state.can_see(game_state.player, target_tile, true)
+			if not game_state.can_move_to(target_tile):
+				aim_line_unblocked = false
+			var aim_mesh = aim_line.get_child(0) as MeshInstance3D
+			aim_mesh.set_surface_override_material(0, green_aim_line_material if aim_line_unblocked else red_aim_line_material)
 
 	get_viewport().get_camera_3d().global_position = game_state.player.global_position + camera_offset
 
@@ -91,6 +116,13 @@ func _process(delta: float) -> void:
 			timewarp()
 			game_over = false
 			return
+
+	# Cancel aim with move
+	if targeting:
+		for key_name in MOVE_KEYS:
+			if Input.is_action_just_pressed(key_name):
+				targeting = false
+				break
 
 	# Handle player movement
 	if is_input_enabled():
@@ -145,6 +177,7 @@ func _process(delta: float) -> void:
 
 func is_input_enabled() -> bool:
 	return not game_over and \
+		not targeting and \
 		game_state.player.ongoing_action == null and \
 		game_state.past_players.all(func (c: Character): return c.ongoing_action == null)
 
@@ -162,6 +195,16 @@ func get_mouse_tile() -> Vector2i:
 func _unhandled_input(event: InputEvent) -> void:
 	if game_state == null:
 		return
+
+	if event is InputEventMouseButton:
+		if event.pressed and (event.button_index == 1 or event.button_index == 2):
+			if targeting:
+				targeting = false
+				if event.button_index == 1 and aim_line_unblocked:
+					var item_type = game_state.player.items[item_throw_index]
+					game_state.player.ongoing_action = ThrowItemAction.new(get_mouse_tile(), item_type, item_throw_index)
+					recorded_actions.push_back(game_state.player.ongoing_action)
+					advance_game = true
 
 	if DEV_MODE:
 		if event is InputEventMouseButton:
@@ -321,5 +364,7 @@ func _on_item_drop(index: int) -> void:
 	recorded_actions.push_back(game_state.player.ongoing_action)
 	advance_game = true
 
-func _on_item_throw(_index: int) -> void:
-	add_message("(throw not implemented)")
+func _on_item_throw(index: int) -> void:
+	add_message("Select tile where to throw.")
+	targeting = true
+	item_throw_index = index

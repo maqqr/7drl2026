@@ -27,6 +27,8 @@ func execute(game_manager: GameManager, character: Character, delta: float) -> b
 					break
 		if character.remove_item_at(game_manager, index):
 			game_manager.game_state.create_item_at(target_item_type, character.map_position)
+			if game_manager.game_state.player == character:
+				game_manager.add_message(MessageBuffer.MSG_DROP.format({ "item": target_item_type.name }))
 
 	return done
 

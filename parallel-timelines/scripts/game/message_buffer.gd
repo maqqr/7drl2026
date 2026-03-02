@@ -11,6 +11,7 @@ const MSG_KEY_SELF_DELIVER: String = "[i]You deliver the {item} to the escape sh
 const MSG_LOSE: String = "Your past self sees you and you both go insane, causing all timelines to collapse."
 const MSG_OUT_OF_TURNS: String = "Just before the ship explodes, your suit's time travel module activates."
 const MSG_DROP: String = "[i]You drop the {item}.[/i]"
+const MSG_THROW: String = "[i]You throw the {item}.[/i]"
 
 func clear() -> void:
 	for child in $VBoxContainer.get_children():

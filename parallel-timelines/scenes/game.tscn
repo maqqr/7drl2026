@@ -1,11 +1,17 @@
 [gd_scene format=3 uid="uid://dbm16gkqqs62h"]
 
 [ext_resource type="Script" uid="uid://dh4ult0jy8bc4" path="res://scripts/game/game_manager.gd" id="1_uwrxv"]
+[ext_resource type="Material" uid="uid://bhww4jn05q0wr" path="res://models/debug_rect_green_mat.tres" id="2_lbhrr"]
 [ext_resource type="Script" uid="uid://bwstuco036cun" path="res://scripts/game/message_buffer.gd" id="2_yqjtg"]
+[ext_resource type="Material" uid="uid://bx3vtju7y3aml" path="res://models/debug_rect_mat.tres" id="3_iywne"]
 [ext_resource type="PackedScene" uid="uid://nppsj3un683g" path="res://scenes/ui/inventory/inventory.tscn" id="3_lnu2h"]
 
 [sub_resource type="BoxMesh" id="BoxMesh_8cj0n"]
 size = Vector3(0.1, 0.1, 1)
+
+[sub_resource type="QuadMesh" id="QuadMesh_iywne"]
+size = Vector2(0.1, 1)
+orientation = 1
 
 [sub_resource type="Curve" id="Curve_lbhrr"]
 _data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(0.71282053, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
@@ -51,6 +57,8 @@ orientation = 1
 
 [node name="Game" type="Node3D" unique_id=1579276341]
 script = ExtResource("1_uwrxv")
+green_aim_line_material = ExtResource("2_lbhrr")
+red_aim_line_material = ExtResource("3_iywne")
 
 [node name="Cursor" type="Node3D" parent="." unique_id=1711315370]
 
@@ -69,6 +77,13 @@ mesh = SubResource("BoxMesh_8cj0n")
 [node name="MeshInstance3D4" type="MeshInstance3D" parent="Cursor" unique_id=107463367]
 transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -2.1855694e-08, 0, -0.5)
 mesh = SubResource("BoxMesh_8cj0n")
+
+[node name="AimLine" type="Node3D" parent="." unique_id=136692163]
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="AimLine" unique_id=1153375978]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0.5)
+mesh = SubResource("QuadMesh_iywne")
+surface_material_override/0 = ExtResource("2_lbhrr")
 
 [node name="BackgroundStars" type="GPUParticles3D" parent="." unique_id=1133706144]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -6.832199, -29.888079)

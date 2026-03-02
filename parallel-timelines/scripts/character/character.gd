@@ -32,14 +32,9 @@ func pickup_item(game_manager: GameManager, item: ItemType) -> void:
 	items.push_back(item)
 	inventory_changed.emit(self)
 
-func remove_item_at(game_manager: GameManager, index: int) -> bool:
+func remove_item_at(_game_manager: GameManager, index: int) -> bool:
 	if index < 0 or index >= items.size():
 		return false
-
-	var item = items[index]
-
-	if game_manager.game_state.player == self:
-		game_manager.add_message(MessageBuffer.MSG_DROP.format({ "item": item.name }))
 
 	items.remove_at(index)
 	inventory_changed.emit(self)
