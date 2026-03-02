@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="ItemType" format=3 uid="uid://eykx8x62p2w7"]
+
+[ext_resource type="Texture2D" uid="uid://dosbwh7nv52dc" path="res://textures/items/mine.png" id="1_7f3gf"]
+[ext_resource type="Script" uid="uid://bvcrglxmuimbn" path="res://scripts/item/item_type.gd" id="1_nu8mo"]
+[ext_resource type="PackedScene" uid="uid://ci6uo360x5634" path="res://scenes/items/mine_item.tscn" id="3_3dhy7"]
+[ext_resource type="PackedScene" uid="uid://b8bh5jwfy26by" path="res://scenes/gameobjects/mine.tscn" id="3_aomuf"]
+
+[resource]
+script = ExtResource("1_nu8mo")
+name = "mine"
+inventory_icon = ExtResource("1_7f3gf")
+visual_scene = ExtResource("3_3dhy7")
+can_drop = true
+can_throw = true
+spawn_game_object_on_throw = ExtResource("3_aomuf")
+metadata/_custom_type_script = "uid://bvcrglxmuimbn"

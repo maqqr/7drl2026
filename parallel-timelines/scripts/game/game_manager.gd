@@ -41,6 +41,7 @@ var darkness_nodes: Dictionary[Vector2i, Node3D]
 var need_action_finish_check = false
 var game_over = false
 var advance_game = false
+var timewarp_queued = false
 
 var targeting = false
 var aim_line_unblocked = false
@@ -61,6 +62,15 @@ func _ready() -> void:
 
 func _process(delta: float) -> void:
 	if not (game_state != null and game_state.is_initialized):
+		return
+
+	if timewarp_queued:
+		timewarp_queued = false
+		await get_tree().create_timer(3).timeout
+		timewarp()
+		game_over = false
+
+	if game_state.player == null:
 		return
 
 	# Update cursor
@@ -101,12 +111,8 @@ func _process(delta: float) -> void:
 		need_action_finish_check = false
 		# Check if any past players can see the current player
 		for seen_pos in game_state.seen_tiles:
-			if game_state.player.map_position == seen_pos:
-				add_message(MessageBuffer.MSG_LOSE)
-				game_over = true
-				await get_tree().create_timer(6).timeout
-				# Reset game
-				restart_game()
+			if game_state.player.map_position == seen_pos and game_state.player.invisibility_turns <= 0:
+				lose_due_to_sight()
 				return
 		# Check remaining turns
 		if game_state.remaining_turns <= 0:
@@ -137,6 +143,13 @@ func _process(delta: float) -> void:
 					advance_game = true
 				else:
 					game_state.player.ongoing_action = null
+					# Check if interaction can be done instead
+					for game_obj in game_state.game_objects:
+						if TileMap2D.to_tile_pos(game_obj.transform.origin) == final_position:
+							game_state.player.ongoing_action = InteractAction.new(final_position, direction)
+							recorded_actions.push_back(game_state.player.ongoing_action)
+							advance_game = true
+							break
 				break
 
 		if Input.is_action_pressed("wait"):
@@ -200,9 +213,10 @@ func _unhandled_input(event: InputEvent) -> void:
 		if event.pressed and (event.button_index == 1 or event.button_index == 2):
 			if targeting:
 				targeting = false
-				if event.button_index == 1 and aim_line_unblocked:
+				var target_tile = get_mouse_tile()
+				if event.button_index == 1 and aim_line_unblocked and game_state.player.map_position != target_tile:
 					var item_type = game_state.player.items[item_throw_index]
-					game_state.player.ongoing_action = ThrowItemAction.new(get_mouse_tile(), item_type, item_throw_index)
+					game_state.player.ongoing_action = ThrowItemAction.new(target_tile, item_type, item_throw_index)
 					recorded_actions.push_back(game_state.player.ongoing_action)
 					advance_game = true
 
@@ -211,6 +225,42 @@ func _unhandled_input(event: InputEvent) -> void:
 			if event.pressed:
 				var tile = Enum.TileType.WALL if event.button_index == 1 else Enum.TileType.FLOOR
 				game_state.tile_map.set_tile(get_mouse_tile(), tile)
+
+func explode_at(pos: Vector2i, radius: int):
+	for dy in range(-radius, radius + 1):
+		for dx in range(-radius, radius + 1):
+			var tile_pos = pos + Vector2i(dx, dy)
+			if tile_pos.distance_squared_to(pos) <= radius * radius:
+				# Remove game objects under the explosion
+				var remove_objs = []
+				for game_obj in game_state.game_objects:
+					if TileMap2D.to_tile_pos(game_obj.transform.origin) == tile_pos:
+						remove_objs.push_back(game_obj)
+				for game_obj in remove_objs:
+					game_state.remove_game_object(game_obj)
+
+				# Remove doors
+				var door: Door = game_state.doors.get(tile_pos)
+				if door != null:
+					door.queue_free()
+					game_state.doors.erase(tile_pos)
+
+				# Convert tiles (except empty) into floors
+				var tile = game_state.tile_map.get_tile(tile_pos)
+				if tile != Enum.TileType.FLOOR and tile != Enum.TileType.EMPTY:
+					game_state.tile_map.set_tile(tile_pos, Enum.TileType.FLOOR)
+
+	var remove_players = []
+	for past_player in game_state.past_players:
+		if past_player.map_position.distance_squared_to(pos) <= radius * radius:
+			remove_players.push_back(past_player)
+	for player in remove_players:
+		game_state.remove_character(player)
+
+	if game_state.player.map_position.distance_squared_to(pos) <= radius * radius:
+		add_message(MessageBuffer.MSG_EXPLODED)
+		game_over = true
+		timewarp_queued = true
 
 func reveal_darkness() -> void:
 	for dy in range(-10, 11):
@@ -228,6 +278,13 @@ func add_message(msg: String) -> void:
 func set_remaining_turns(turns: int) -> void:
 	game_state.remaining_turns = turns
 	turns_label.text = "Turn left: " + str(game_state.remaining_turns)
+
+func lose_due_to_sight() -> void:
+	add_message(MessageBuffer.MSG_LOSE)
+	game_over = true
+	await get_tree().create_timer(6).timeout
+	# Reset game
+	restart_game()
 
 func timewarp() -> void:
 	# Store current timeline
@@ -266,6 +323,7 @@ func restart_game() -> void:
 	message_buffer.clear()
 	for node_pos in darkness_nodes:
 		darkness_nodes[node_pos].queue_free()
+	darkness_nodes.clear()
 	start_new_game()
 
 func start_new_game() -> void:
@@ -351,10 +409,16 @@ func _create_game_state() -> GameState:
 	state.safe_room = map_generator.spawn_room_rect
 	state.remaining_keycards = map_generator.parameters.keycard_count
 	state.remaining_turns = map_generator.turns_until_game_over
+	state.current_seed = map_generator.current_seed
 	return state
 
-func _on_item_use(_index: int) -> void:
-	add_message("(use not implemented)")
+func _on_item_use(index: int) -> void:
+	if not is_input_enabled():
+		return
+	var item_type = game_state.player.items[index]
+	game_state.player.ongoing_action = UseItemAction.new(item_type, index)
+	recorded_actions.push_back(game_state.player.ongoing_action)
+	advance_game = true
 
 func _on_item_drop(index: int) -> void:
 	if not is_input_enabled():
@@ -365,6 +429,9 @@ func _on_item_drop(index: int) -> void:
 	advance_game = true
 
 func _on_item_throw(index: int) -> void:
+	if not is_input_enabled():
+		return
+
 	add_message("Select tile where to throw.")
 	targeting = true
 	item_throw_index = index

@@ -28,6 +28,8 @@ var safe_room: Rect2i
 var remaining_keycards = 0
 var remaining_turns = 0
 
+var current_seed: int
+
 var is_initialized = false
 
 signal initialized
@@ -71,12 +73,7 @@ func _ready() -> void:
 
 	# Create other objects
 	for planned_obj in planned_objects:
-		var obj = planned_obj.packed_scene.instantiate() as Node3D
-		obj.transform.origin = TileMap2D.to_scene_pos(planned_obj.tile_position)
-		add_child(obj)
-		if obj is GameObject:
-			obj.set_game_manager(game_manager)
-			game_objects.push_back(obj)
+		create_game_object_at(game_manager, planned_obj.packed_scene, planned_obj.tile_position)
 
 	# Create items
 	for planned_item in planned_items:
@@ -84,6 +81,26 @@ func _ready() -> void:
 
 	is_initialized = true
 	initialized.emit()
+
+func create_game_object_at(game_manager: GameManager, packed_scene: PackedScene, pos: Vector2i) -> void:
+	var obj = packed_scene.instantiate() as Node3D
+	obj.transform.origin = TileMap2D.to_scene_pos(pos)
+	add_child(obj)
+	if obj is GameObject:
+		obj.set_game_manager(game_manager)
+		if obj.rotate_away_from_wall:
+			for dir in [Vector2i(0, -1), Vector2i(0, 1), Vector2i(-1, 0), Vector2i(1, 0)]:
+				if tile_map.get_tile(pos + dir) == Enum.TileType.WALL:
+					obj.look_at(TileMap2D.to_scene_pos(pos + dir))
+					break
+		game_objects.push_back(obj)
+
+func remove_game_object(obj: GameObject):
+	var tile_pos = TileMap2D.to_tile_pos(obj.transform.origin)
+	if tile_map.get_tile(tile_pos) != Enum.TileType.FLOOR:
+		tile_map.set_tile(tile_pos, Enum.TileType.FLOOR)
+	game_objects.erase(obj)
+	obj.queue_free()
 
 func create_character_at(pos: Vector2i) -> Character:
 	var character = preload("res://scenes/gameobjects/player.tscn").instantiate() as Character
@@ -169,6 +186,7 @@ func update_seen_tiles() -> void:
 
 func can_move_to(pos: Vector2i) -> bool:
 	match tile_map.get_tile(pos):
+		Enum.TileType.EMPTY: return false
 		Enum.TileType.WALL: return false
 		Enum.TileType.OBJECT_BLOCKING_OPAQUE: return false
 		Enum.TileType.OBJECT_BLOCKING_TRANSPARENT: return false

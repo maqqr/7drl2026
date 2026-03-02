@@ -109,6 +109,8 @@ var planned_items: Array[PlannedItem]
 var keycard_positions: Array[Vector2i]
 var turns_until_game_over: int = 0
 
+var current_seed = 0
+
 var debug_path: Array[Vector2i]
 
 class PremadeRoom:
@@ -142,6 +144,7 @@ func generate(param: Dictionary[String, int]) -> void:
 	door_positions.clear()
 	planned_objects.clear()
 	planned_items.clear()
+	current_seed = rng.randi()
 	task_id = WorkerThreadPool.add_task(_run_task, true, "MapGenerator")
 
 func _run_task() -> void:
@@ -271,6 +274,19 @@ func _run_task() -> void:
 		# Something went wrong
 		fail = true
 		return
+
+	# Put some crates and computers in all rooms
+	for random_room in random_room_rects:
+		var pos = _find_free_pos_next_to_wall(random_room)
+		if pos != Vector2i.ZERO:
+			tile_map.set_tile(pos, Enum.TileType.OBJECT_BLOCKING_TRANSPARENT)
+			var obj: PackedScene
+			if rng.randf() > 0.5:
+				obj = preload("res://scenes/gameobjects/crate.tscn")
+			else:
+				obj = preload("res://scenes/gameobjects/computer.tscn")
+
+			planned_objects.push_back(PlannedObject.new(obj, pos))
 
 	door_positions = _find_tiles_by_type(Enum.TileType.DOOR)
 	@warning_ignore_restore("integer_division")
@@ -484,3 +500,41 @@ func _calculate_allowed_turns() -> void:
 			debug_path.append_array(path_to_shuttle)
 
 	turns_until_game_over = floor(10 + most_turns * 1.5)
+
+# Assumes room includes just the floors, not surrounding walls
+func _find_free_pos_next_to_wall(room: Rect2i) -> Vector2i:
+	var attempts_left = 40
+	while attempts_left > 0:
+		attempts_left -= 1
+		var potential_pos = null
+		if rng.randf() < 0.5:
+			# Check top or bottom wall
+			var pos = Vector2i(
+				rng.randi_range(room.position.x, room.position.x + room.size.x - 1),
+				room.position.y if rng.randf() < 0.5 else room.position.y + room.size.y - 1)
+			if tile_map.get_tile(pos) == Enum.TileType.FLOOR:
+				var wall_top = tile_map.get_tile(pos + Vector2i(0, -1)) == Enum.TileType.WALL and tile_map.get_tile(pos + Vector2i(0, 1)) == Enum.TileType.FLOOR
+				var wall_bottom = tile_map.get_tile(pos + Vector2i(0, 1)) == Enum.TileType.WALL and tile_map.get_tile(pos + Vector2i(0, -1)) == Enum.TileType.FLOOR
+				if wall_top or wall_bottom:
+					potential_pos = pos
+		else:
+			# Check left or right wall
+			var pos = Vector2i(
+				room.position.x if rng.randf() < 0.5 else room.position.x + room.size.x - 1,
+				rng.randi_range(room.position.y, room.position.y + room.size.y - 1))
+			if tile_map.get_tile(pos) == Enum.TileType.FLOOR:
+				var wall_left = tile_map.get_tile(pos + Vector2i(-1, 0)) == Enum.TileType.WALL and tile_map.get_tile(pos + Vector2i(1, 0)) == Enum.TileType.FLOOR
+				var wall_right = tile_map.get_tile(pos + Vector2i(1, 0)) == Enum.TileType.WALL and tile_map.get_tile(pos + Vector2i(-1, 0)) == Enum.TileType.FLOOR
+				if wall_left or wall_right:
+					potential_pos = pos
+		if potential_pos != null:
+			# Must not have doors near to allow moving into room
+			for dir in DIR_VECTORS_AROUND:
+				if tile_map.get_tile(potential_pos + dir) == Enum.TileType.DOOR:
+					potential_pos = null
+					break
+
+			if potential_pos != null:
+				return potential_pos
+
+	return Vector2i.ZERO

@@ -44,9 +44,12 @@ func execute(game_manager: GameManager, character: Character, delta: float) -> b
 	var done = progress >= 1.0
 	if done and throw_started:
 		character.remove_child(flying_node)
-		game_manager.game_state.create_item_at(target_item_type, target_tile)
 		if game_manager.game_state.player == character:
-				game_manager.add_message(MessageBuffer.MSG_THROW.format({ "item": target_item_type.name }))
+			game_manager.add_message(MessageBuffer.MSG_THROW.format({ "item": target_item_type.name }))
+		if target_item_type.spawn_game_object_on_throw != null:
+			game_manager.game_state.create_game_object_at(game_manager, target_item_type.spawn_game_object_on_throw, target_tile)
+		else:
+			game_manager.game_state.create_item_at(target_item_type, target_tile)
 
 	return done
 

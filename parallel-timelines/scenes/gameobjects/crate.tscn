@@ -1,0 +1,28 @@
+[gd_scene format=3 uid="uid://diswo66yuokae"]
+
+[ext_resource type="Script" uid="uid://0f8aea72sm2a" path="res://scripts/game/crate.gd" id="1_mxcry"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ksyx6"]
+albedo_color = Color(0.73347086, 0.8659623, 0.9375, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_mxcry"]
+material = SubResource("StandardMaterial3D_ksyx6")
+size = Vector3(0.7, 0.6, 0.7)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_mxcry"]
+albedo_color = Color(0.33907834, 0.39359242, 0.50390625, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_moxay"]
+material = SubResource("StandardMaterial3D_mxcry")
+size = Vector3(0.7, 0.6, 0.7)
+
+[node name="Crate" type="Node3D" unique_id=1687865251]
+script = ExtResource("1_mxcry")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=1784160120]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.31854993, 0)
+mesh = SubResource("BoxMesh_mxcry")
+
+[node name="MeshInstance3D2" type="MeshInstance3D" parent="." unique_id=1846424901]
+transform = Transform3D(0.8019678, 0, 0, 0, 0.11922207, 0, 0, 0, 0.8019678, 0, 0.60773504, 0)
+mesh = SubResource("BoxMesh_moxay")

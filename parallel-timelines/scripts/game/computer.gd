@@ -1,0 +1,19 @@
+extends GameObject
+class_name Computer
+
+@export var screen_mesh: MeshInstance3D
+
+var used = false
+
+func on_interact(character: Character) -> void:
+	if used:
+		return
+
+	used = true
+	screen_mesh.visible = false
+
+	var turn_count = 15
+	game_manager.set_remaining_turns(game_manager.game_state.remaining_turns + turn_count)
+
+	if game_manager.game_state.player == character:
+		game_manager.add_message(MessageBuffer.MSG_COMPUTER.format({ "turn_count": turn_count }))

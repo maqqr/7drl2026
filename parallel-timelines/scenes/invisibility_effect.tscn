@@ -1,0 +1,20 @@
+[gd_scene format=3 uid="uid://budgxqv3j3byt"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_6yw41"]
+transparency = 1
+albedo_color = Color(0.7411765, 1, 0.99215686, 0.6784314)
+emission_enabled = true
+emission = Color(0.3716517, 0.4285231, 0.4765625, 1)
+rim_enabled = true
+rim = 0.2
+
+[sub_resource type="SphereMesh" id="SphereMesh_gj58h"]
+material = SubResource("StandardMaterial3D_6yw41")
+radius = 0.7
+height = 2.3
+
+[node name="InvisibilityEffect" type="Node3D" unique_id=998227732]
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=1995393776]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.0736798, 0)
+mesh = SubResource("SphereMesh_gj58h")

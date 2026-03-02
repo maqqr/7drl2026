@@ -1,0 +1,28 @@
+[gd_scene format=3 uid="uid://ci6uo360x5634"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_0lvg5"]
+albedo_color = Color(0.31416214, 0.49609375, 0.28377575, 1)
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_p8mj4"]
+material = SubResource("StandardMaterial3D_0lvg5")
+top_radius = 0.3
+bottom_radius = 0.4
+radial_segments = 8
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_7p4wc"]
+albedo_color = Color(0.44140625, 0.096281834, 0.1094575, 1)
+
+[sub_resource type="SphereMesh" id="SphereMesh_y520l"]
+material = SubResource("StandardMaterial3D_7p4wc")
+radial_segments = 16
+rings = 8
+
+[node name="MineItem" type="Node3D" unique_id=796853076]
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=275030544]
+transform = Transform3D(1, 0, 0, 0, 0.051458023, -0.8850364, 0, 0.097830474, 0.46552184, 0, 0.34383562, 0)
+mesh = SubResource("CylinderMesh_p8mj4")
+
+[node name="MeshInstance3D2" type="MeshInstance3D" parent="MeshInstance3D" unique_id=1095187861]
+transform = Transform3D(0.20633316, 0, 0, 0, 0.8689527, 1.6520272, 0, -0.18261234, 0.09605262, 0, 0.9577069, -0.0017141104)
+mesh = SubResource("SphereMesh_y520l")

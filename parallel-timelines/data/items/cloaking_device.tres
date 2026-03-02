@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="ItemType" format=3 uid="uid://iwn8v61w0cq4"]
+
+[ext_resource type="Script" uid="uid://bvcrglxmuimbn" path="res://scripts/item/item_type.gd" id="1_aqlwb"]
+[ext_resource type="Texture2D" uid="uid://cb4ksni6g6e7l" path="res://textures/items/cloaking_device.png" id="1_g1mij"]
+[ext_resource type="PackedScene" uid="uid://bwqdyfg37hqeb" path="res://scenes/items/cloaking_device.tscn" id="2_2qubi"]
+
+[resource]
+script = ExtResource("1_aqlwb")
+name = "cloaking device"
+inventory_icon = ExtResource("1_g1mij")
+visual_scene = ExtResource("2_2qubi")
+can_use = true
+can_drop = true
+can_throw = true
+invisibility_turns_on_use = 8
+metadata/_custom_type_script = "uid://bvcrglxmuimbn"

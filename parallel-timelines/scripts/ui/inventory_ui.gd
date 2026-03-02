@@ -60,6 +60,7 @@ func update(character: Character) -> void:
 	var i = 0
 	for item in character.items:
 		var button = item_button.instantiate() as Button
+		button.icon = item.inventory_icon
 		button.pressed.connect(on_item_button_pressed.bind(character, i))
 		item_button_container.add_child(button)
 		i += 1

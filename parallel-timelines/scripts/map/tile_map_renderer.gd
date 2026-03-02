@@ -21,6 +21,7 @@ class MultiMeshHelper:
 var floor_mesh: Mesh = preload("res://models/hull/floor_mesh.res")
 var corner_matches: Array[CornerMatch]
 var tile_map: TileMap2D
+var update_queued = false
 
 class Chunk:
 	const SIZE = 8
@@ -45,15 +46,19 @@ func _ready() -> void:
 				corner_matches.push_back(corner_match.get_rotated_90().get_rotated_90())
 				corner_matches.push_back(corner_match.get_rotated_90().get_rotated_90().get_rotated_90())
 
+func _process(_delta: float) -> void:
+	if update_queued:
+		update_queued = false
+		make_meshes()
+
 func set_tile_map(new_tile_map: TileMap2D):
 	tile_map = new_tile_map
 	tile_map.tile_changed.connect(_on_tile_map_change)
 	make_meshes()
 
 func _on_tile_map_change(_pos: Vector2i, _old_tile: Enum.TileType, _new_tile: Enum.TileType):
-	# TODO: This could edit just one chunk that changed
-	# TODO: Update meshes once on _process after all tile changes
-	make_meshes()
+	#make_meshes()
+	update_queued = true
 
 func make_meshes() -> void:
 	for chunk_pos in chunks:

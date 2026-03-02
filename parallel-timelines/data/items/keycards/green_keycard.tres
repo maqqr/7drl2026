@@ -1,11 +1,13 @@
 [gd_resource type="Resource" script_class="ItemType" format=3 uid="uid://b72ssfg0nxurc"]
 
 [ext_resource type="Script" uid="uid://bvcrglxmuimbn" path="res://scripts/item/item_type.gd" id="1_lecuo"]
+[ext_resource type="Texture2D" uid="uid://u2grt01jfg4f" path="res://textures/items/green_keycard.png" id="1_xeqf0"]
 [ext_resource type="PackedScene" uid="uid://kr51cex7rtlj" path="res://scenes/items/green_keycard.tscn" id="2_7pc3c"]
 
 [resource]
 script = ExtResource("1_lecuo")
 name = "green keycard"
+inventory_icon = ExtResource("1_xeqf0")
 visual_scene = ExtResource("2_7pc3c")
 is_keycard = true
 can_drop = true

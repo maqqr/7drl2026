@@ -1,11 +1,13 @@
 [gd_resource type="Resource" script_class="ItemType" format=3 uid="uid://dhhhg5yog8syy"]
 
 [ext_resource type="Script" uid="uid://bvcrglxmuimbn" path="res://scripts/item/item_type.gd" id="1_eybny"]
+[ext_resource type="Texture2D" uid="uid://cgcd5x4jduev8" path="res://textures/items/red_keycard.png" id="1_od5jr"]
 [ext_resource type="PackedScene" uid="uid://bujaryki0ro0a" path="res://scenes/items/red_keycard.tscn" id="2_eybny"]
 
 [resource]
 script = ExtResource("1_eybny")
 name = "red keycard"
+inventory_icon = ExtResource("1_od5jr")
 visual_scene = ExtResource("2_eybny")
 is_keycard = true
 can_drop = true
