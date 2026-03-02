@@ -22,11 +22,15 @@ enum RoomPlanTile {
 	BED = 4,
 	BLOCKING_OBJECT = 5,
 	SHUTTLE = 6,
+	COMPUTER = 7,
+	CLOSET = 8,
 }
 
 const PLAN_TO_OBJECT: Dictionary[RoomPlanTile, PackedScene] = {
 	RoomPlanTile.BED: preload("res://scenes/gameobjects/bed.tscn"),
 	RoomPlanTile.SHUTTLE: preload("res://scenes/gameobjects/shuttle.tscn"),
+	RoomPlanTile.COMPUTER: preload("res://scenes/gameobjects/computer.tscn"),
+	RoomPlanTile.CLOSET: preload("res://scenes/gameobjects/closet.tscn"),
 }
 
 const KEYCARD_ITEMS: Array[ItemType] = [
@@ -61,6 +65,8 @@ static func _convert_plan_tile(plan_tile: RoomPlanTile) -> Enum.TileType:
 		RoomPlanTile.BED: return Enum.TileType.OBJECT_NONBLOCKING_TRANSPARENT
 		RoomPlanTile.BLOCKING_OBJECT: return Enum.TileType.OBJECT_BLOCKING_TRANSPARENT
 		RoomPlanTile.SHUTTLE: return Enum.TileType.OBJECT_BLOCKING_TRANSPARENT
+		RoomPlanTile.COMPUTER: return Enum.TileType.OBJECT_BLOCKING_TRANSPARENT
+		RoomPlanTile.CLOSET: return Enum.TileType.OBJECT_NONBLOCKING_OPAQUE
 	assert(false) # Missing tile handling
 	return Enum.TileType.FLOOR
 
@@ -91,6 +97,7 @@ var cockpit: PremadeRoom
 var main_corridor: PremadeRoom
 var main_corridor_split: PremadeRoom
 var main_corridor_end: PremadeRoom
+var main_corridor_hide: PremadeRoom
 var escape_pod: PremadeRoom
 var bunk_room: PremadeRoom
 
@@ -122,6 +129,7 @@ func _init() -> void:
 	main_corridor = _read_premade_room("main_corridor.tscn")
 	main_corridor_split = _read_premade_room("main_corridor_split.tscn")
 	main_corridor_end = _read_premade_room("main_corridor_end.tscn")
+	main_corridor_hide = _read_premade_room("main_corridor_hide.tscn")
 	escape_pod = _read_premade_room("escape_pod.tscn")
 	bunk_room = _read_premade_room("bunk_room.tscn")
 
@@ -161,7 +169,8 @@ func _run_task() -> void:
 		var corridor = main_corridor_end
 		var enough_space = cursor.y < tile_map.height - main_corridor.plan_tiles.height * 2 - escape_pod.plan_tiles.height
 		if enough_space:
-			corridor = main_corridor_split if randf() < 0.7 else main_corridor
+			corridor = main_corridor_split if randf() < 0.7 else \
+				(main_corridor if randf() < 0.5 else main_corridor_hide)
 		_place_premade_room(cursor, corridor)
 		cursor += Vector2i(0, corridor.plan_tiles.height)
 		if not enough_space:
@@ -281,12 +290,26 @@ func _run_task() -> void:
 		if pos != Vector2i.ZERO:
 			tile_map.set_tile(pos, Enum.TileType.OBJECT_BLOCKING_TRANSPARENT)
 			var obj: PackedScene
-			if rng.randf() > 0.5:
+			if rng.randf() > 0.7:
 				obj = preload("res://scenes/gameobjects/crate.tscn")
 			else:
 				obj = preload("res://scenes/gameobjects/computer.tscn")
 
 			planned_objects.push_back(PlannedObject.new(obj, pos))
+
+		if rng.randf() < 0.3:
+			pos = _find_free_pos_next_to_wall(random_room)
+			if pos != Vector2i.ZERO:
+				tile_map.set_tile(pos, Enum.TileType.OBJECT_NONBLOCKING_OPAQUE)
+				planned_objects.push_back(PlannedObject.new(preload("res://scenes/gameobjects/closet.tscn"), pos))
+
+	# Place traps
+	var potential_trap_positions = _find_tiles_by_type(Enum.TileType.FLOOR)
+	for i in range(5):
+		var index = rng.randi_range(0, potential_trap_positions.size() - 1)
+		var tile_pos = potential_trap_positions[index]
+		potential_trap_positions.remove_at(index)
+		planned_objects.push_back(PlannedObject.new(preload("res://scenes/gameobjects/explosion_trap.tscn"), tile_pos))
 
 	door_positions = _find_tiles_by_type(Enum.TileType.DOOR)
 	@warning_ignore_restore("integer_division")

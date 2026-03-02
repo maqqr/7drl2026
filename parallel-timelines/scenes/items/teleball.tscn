@@ -1,0 +1,19 @@
+[gd_scene format=3 uid="uid://cv8id0kg4tm1y"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ii2c4"]
+albedo_color = Color(0.8663202, 0.8520383, 0.8671875, 1)
+metallic = 1.0
+roughness = 0.35
+
+[sub_resource type="SphereMesh" id="SphereMesh_251ub"]
+material = SubResource("StandardMaterial3D_ii2c4")
+radius = 0.1
+height = 0.2
+radial_segments = 16
+rings = 8
+
+[node name="Teleball" type="Node3D" unique_id=87976149]
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=584474939]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.0754379, 0)
+mesh = SubResource("SphereMesh_251ub")

@@ -18,6 +18,9 @@ func execute(game_manager: GameManager, character: Character, delta: float) -> b
 		else:
 			game_manager.game_state.remove_character(character)
 			game_manager.need_sight_check = true
+			for item in character.items:
+				if item.is_keycard:
+					game_manager.game_state.create_item_at(item, character.map_position)
 
 	return done
 

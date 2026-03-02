@@ -16,6 +16,9 @@ const MSG_THROW: String = "[i]You throw the {item}.[/i]"
 const MSG_USE_ITEM: String = "[i]You use the {item}.[/i]"
 const MSG_EXPLODED: String = "You exploded, but fortunately it caused your suit's time travel module to activate."
 const MSG_COMPUTER: String = "You use the computer to delay the ship's self-destruct by {turn_count} turns."
+const MSG_EXPLOSION_TRAP: String = "You stepped on a trap and hear an explosion somewhere."
+const MSG_HIDE: String = "You hide in the empty storage unit."
+const MSG_DEAD: String = "Just before you die, your suit's time travel module activates."
 
 func clear() -> void:
 	for child in $VBoxContainer.get_children():

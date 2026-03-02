@@ -13,4 +13,5 @@ visual_scene = ExtResource("3_3dhy7")
 can_drop = true
 can_throw = true
 spawn_game_object_on_throw = ExtResource("3_aomuf")
+consumed_on_throw = true
 metadata/_custom_type_script = "uid://bvcrglxmuimbn"

@@ -13,3 +13,6 @@ class_name ItemType
 
 @export var invisibility_turns_on_use: int
 @export var spawn_game_object_on_throw: PackedScene
+@export var teleport_on_throw: bool
+@export var kill_on_throw: bool
+@export var consumed_on_throw: bool

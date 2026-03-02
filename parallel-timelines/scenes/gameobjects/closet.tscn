@@ -1,0 +1,17 @@
+[gd_scene format=3 uid="uid://cs24omnpnn3f6"]
+
+[ext_resource type="Script" uid="uid://jorfhltkcrul" path="res://scripts/game/closet.gd" id="1_422r3"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_0pwos"]
+albedo_color = Color(1, 0.37480474, 0.38972723, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_422r3"]
+material = SubResource("StandardMaterial3D_0pwos")
+
+[node name="Closet" type="Node3D" unique_id=1644257645]
+script = ExtResource("1_422r3")
+rotate_away_from_wall = true
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=627394733]
+transform = Transform3D(1, 0, 0, 0, 1.4312372, 0, 0, 0, 0.49108052, 0, 0.7103623, 0)
+mesh = SubResource("BoxMesh_422r3")

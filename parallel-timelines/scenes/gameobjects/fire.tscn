@@ -1,0 +1,18 @@
+[gd_scene format=3 uid="uid://l6bogp86pinw"]
+
+[ext_resource type="Script" uid="uid://yi3iguqfjj1g" path="res://scripts/game/fire.gd" id="1_2f5sf"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ovwmk"]
+emission_enabled = true
+emission = Color(0.94140625, 0.4316855, 0.1735492, 1)
+emission_energy_multiplier = 8.0
+
+[sub_resource type="BoxMesh" id="BoxMesh_2f5sf"]
+material = SubResource("StandardMaterial3D_ovwmk")
+size = Vector3(1, 0.2, 1)
+
+[node name="Fire" type="Node3D" unique_id=498861813]
+script = ExtResource("1_2f5sf")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=1548615442]
+mesh = SubResource("BoxMesh_2f5sf")

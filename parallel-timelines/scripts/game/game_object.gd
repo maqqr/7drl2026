@@ -16,3 +16,6 @@ func on_character_move_finish(_character: Character) -> void:
 
 func on_interact(_character: Character) -> void:
 	pass
+
+func on_all_actions_finished() -> void:
+	pass

@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="ItemType" format=3 uid="uid://byakbhjllv4pg"]
+
+[ext_resource type="Script" uid="uid://bvcrglxmuimbn" path="res://scripts/item/item_type.gd" id="1_3w68e"]
+[ext_resource type="Texture2D" uid="uid://culm2rhijlqfa" path="res://textures/items/teleball.png" id="1_pc6jt"]
+[ext_resource type="PackedScene" uid="uid://cv8id0kg4tm1y" path="res://scenes/items/teleball.tscn" id="3_4n34y"]
+
+[resource]
+script = ExtResource("1_3w68e")
+name = "teleball"
+inventory_icon = ExtResource("1_pc6jt")
+visual_scene = ExtResource("3_4n34y")
+can_drop = true
+can_throw = true
+teleport_on_throw = true
+consumed_on_throw = true
+metadata/_custom_type_script = "uid://bvcrglxmuimbn"

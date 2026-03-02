@@ -85,9 +85,10 @@ func _ready() -> void:
 func create_game_object_at(game_manager: GameManager, packed_scene: PackedScene, pos: Vector2i) -> void:
 	var obj = packed_scene.instantiate() as Node3D
 	obj.transform.origin = TileMap2D.to_scene_pos(pos)
-	add_child(obj)
 	if obj is GameObject:
 		obj.set_game_manager(game_manager)
+	add_child(obj)
+	if obj is GameObject:
 		if obj.rotate_away_from_wall:
 			for dir in [Vector2i(0, -1), Vector2i(0, 1), Vector2i(-1, 0), Vector2i(1, 0)]:
 				if tile_map.get_tile(pos + dir) == Enum.TileType.WALL:
@@ -108,6 +109,11 @@ func create_character_at(pos: Vector2i) -> Character:
 	add_child(character)
 	character.teleport_to(pos)
 	return character
+
+func kill_character(character: Character):
+	remove_character(character)
+	for item in character.items:
+		create_item_at(item, character.map_position)
 
 func remove_character(character: Character):
 	if player == character:
@@ -138,6 +144,9 @@ func can_see(character: Character, pos: Vector2i, more_permissive = false):
 
 	if more_permissive and character.map_position.distance_squared_to(pos) < 4.0:
 		return true
+
+	if character.map_position.distance_squared_to(pos) > LOS_RADIUS * LOS_RADIUS:
+		return false
 
 	var angle = LOS_PERMISSIVE_ANGLE if more_permissive else LOS_ANGLE
 	if abs(Vector2(character.look_direction).angle_to(dir)) >= angle:

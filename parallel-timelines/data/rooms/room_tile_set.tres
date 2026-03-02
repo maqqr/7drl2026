@@ -18,6 +18,23 @@ texture = ExtResource("1_uugys")
 6:0/0 = 0
 6:0/0/custom_data_0 = 6
 7:0/0 = 0
+7:0/0/custom_data_0 = 7
+0:1/0 = 0
+0:1/0/custom_data_0 = 8
+1:1/0 = 0
+1:1/0/custom_data_0 = 9
+2:1/0 = 0
+2:1/0/custom_data_0 = 10
+3:1/0 = 0
+3:1/0/custom_data_0 = 11
+4:1/0 = 0
+4:1/0/custom_data_0 = 12
+5:1/0 = 0
+5:1/0/custom_data_0 = 13
+6:1/0 = 0
+6:1/0/custom_data_0 = 14
+7:1/0 = 0
+7:1/0/custom_data_0 = 15
 
 [resource]
 custom_data_layer_0/name = "type_enum"

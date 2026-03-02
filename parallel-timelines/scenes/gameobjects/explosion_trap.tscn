@@ -1,0 +1,18 @@
+[gd_scene format=3 uid="uid://bwuwdevevq83w"]
+
+[ext_resource type="Script" uid="uid://cws1rv11ks5jr" path="res://scripts/game/explosion_trap.gd" id="1_4rgqk"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_crmob"]
+albedo_color = Color(1, 0.2569483, 0.24202645, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_4rgqk"]
+material = SubResource("StandardMaterial3D_crmob")
+size = Vector3(0.5, 0.5, 0.5)
+
+[node name="ExplosionTrap" type="Node3D" unique_id=687339997]
+script = ExtResource("1_4rgqk")
+rotate_away_from_wall = null
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=1791656839]
+visible = false
+mesh = SubResource("BoxMesh_4rgqk")

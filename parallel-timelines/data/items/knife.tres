@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="ItemType" format=3 uid="uid://b73wuvegfjbg1"]
+
+[ext_resource type="Texture2D" uid="uid://cq8hfli2vkx4u" path="res://textures/items/knife.png" id="1_lhbww"]
+[ext_resource type="Script" uid="uid://bvcrglxmuimbn" path="res://scripts/item/item_type.gd" id="1_qpmi0"]
+[ext_resource type="PackedScene" uid="uid://cxt0mehilnwq8" path="res://scenes/items/knife.tscn" id="3_xbc7p"]
+
+[resource]
+script = ExtResource("1_qpmi0")
+name = "knife"
+inventory_icon = ExtResource("1_lhbww")
+visual_scene = ExtResource("3_xbc7p")
+can_drop = true
+can_throw = true
+kill_on_throw = true
+metadata/_custom_type_script = "uid://bvcrglxmuimbn"

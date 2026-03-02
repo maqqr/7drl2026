@@ -29,6 +29,7 @@ var parallel_timelines: Array[Timeline]
 
 @export var camera_offset = Vector3(0.0, 7.0, 5.5)
 var recorded_actions = []
+var queued_action = null
 
 var debug_rect_scene: PackedScene = preload("res://scenes/debug_rect.tscn")
 var debug_rect_green_scene: PackedScene = preload("res://scenes/debug_rect_green.tscn")
@@ -103,12 +104,28 @@ func _process(delta: float) -> void:
 	for past_player in game_state.past_players:
 		past_player.execute_action(self, delta)
 
+	# Remove dead players
+	var dead: Array[Character]
+	for past_player in game_state.past_players:
+		if past_player.health <= 0:
+			dead.push_back(past_player)
+	for past_player in dead:
+		need_sight_check = true
+		game_state.kill_character(past_player)
+	if game_state.player.health <= 0 and not game_over:
+		add_message(MessageBuffer.MSG_DEAD)
+		game_over = true
+		timewarp_queued = true
+
 	if need_sight_check:
 		game_state.update_seen_tiles()
 		need_sight_check = false
 
 	if is_input_enabled() and need_action_finish_check:
 		need_action_finish_check = false
+		# Trigger actions finish signal
+		for obj in game_state.game_objects:
+			obj.on_all_actions_finished()
 		# Check if any past players can see the current player
 		for seen_pos in game_state.seen_tiles:
 			if game_state.player.map_position == seen_pos and game_state.player.invisibility_turns <= 0:
@@ -161,6 +178,13 @@ func _process(delta: float) -> void:
 			game_state.player.ongoing_action = WarpAction.new()
 			recorded_actions.push_back(game_state.player.ongoing_action)
 
+	if queued_action != null:
+		game_state.player.ongoing_action = queued_action
+		if game_state.player.ongoing_action.can_execute(self, game_state.player):
+			recorded_actions.push_back(game_state.player.ongoing_action)
+			advance_game = true
+		queued_action = null
+
 	if advance_game:
 		advance_game = false
 		set_remaining_turns(game_state.remaining_turns - 1)
@@ -191,6 +215,7 @@ func _process(delta: float) -> void:
 func is_input_enabled() -> bool:
 	return not game_over and \
 		not targeting and \
+		queued_action == null and \
 		game_state.player.ongoing_action == null and \
 		game_state.past_players.all(func (c: Character): return c.ongoing_action == null)
 
@@ -216,9 +241,10 @@ func _unhandled_input(event: InputEvent) -> void:
 				var target_tile = get_mouse_tile()
 				if event.button_index == 1 and aim_line_unblocked and game_state.player.map_position != target_tile:
 					var item_type = game_state.player.items[item_throw_index]
-					game_state.player.ongoing_action = ThrowItemAction.new(target_tile, item_type, item_throw_index)
-					recorded_actions.push_back(game_state.player.ongoing_action)
-					advance_game = true
+					#game_state.player.ongoing_action = ThrowItemAction.new(target_tile, item_type, item_throw_index)
+					#recorded_actions.push_back(game_state.player.ongoing_action)
+					#advance_game = true
+					queued_action = ThrowItemAction.new(target_tile, item_type, item_throw_index)
 
 	if DEV_MODE:
 		if event is InputEventMouseButton:
@@ -250,12 +276,23 @@ func explode_at(pos: Vector2i, radius: int):
 				if tile != Enum.TileType.FLOOR and tile != Enum.TileType.EMPTY:
 					game_state.tile_map.set_tile(tile_pos, Enum.TileType.FLOOR)
 
-	var remove_players = []
+				# Create fire
+				if tile_pos.distance_squared_to(pos) <= (radius - 1) * (radius - 1):
+					tile = game_state.tile_map.get_tile(tile_pos)
+					if tile == Enum.TileType.FLOOR:
+						game_state.create_game_object_at(self, preload("res://scenes/gameobjects/fire.tscn"), tile_pos)
+
+	var remove_players: Array[Character] = []
 	for past_player in game_state.past_players:
 		if past_player.map_position.distance_squared_to(pos) <= radius * radius:
 			remove_players.push_back(past_player)
-	for player in remove_players:
+	for player: Character in remove_players:
 		game_state.remove_character(player)
+		for item in player.items:
+			if item.is_keycard:
+				game_state.create_item_at(item, player.map_position)
+
+	need_sight_check = true
 
 	if game_state.player.map_position.distance_squared_to(pos) <= radius * radius:
 		add_message(MessageBuffer.MSG_EXPLODED)
@@ -366,7 +403,7 @@ func start_new_game() -> void:
 			for x in range(darkness.width):
 				var tile_pos = Vector2i(x, y)
 				if original_tilemap.get_tile(tile_pos) != Enum.TileType.EMPTY:
-					var node = preload("res://scenes/darkness.tscn").instantiate() as Node3D
+					var node = preload("res://scenes/effects/darkness.tscn").instantiate() as Node3D
 					add_child(node)
 					node.position = TileMap2D.to_scene_pos(tile_pos)
 					darkness_nodes[tile_pos] = node
@@ -416,17 +453,19 @@ func _on_item_use(index: int) -> void:
 	if not is_input_enabled():
 		return
 	var item_type = game_state.player.items[index]
-	game_state.player.ongoing_action = UseItemAction.new(item_type, index)
-	recorded_actions.push_back(game_state.player.ongoing_action)
-	advance_game = true
+	#game_state.player.ongoing_action = UseItemAction.new(item_type, index)
+	#recorded_actions.push_back(game_state.player.ongoing_action)
+	#advance_game = true
+	queued_action = UseItemAction.new(item_type, index)
 
 func _on_item_drop(index: int) -> void:
 	if not is_input_enabled():
 		return
 	var item_type = game_state.player.items[index]
-	game_state.player.ongoing_action = DropItemAction.new(item_type, index)
-	recorded_actions.push_back(game_state.player.ongoing_action)
-	advance_game = true
+	#game_state.player.ongoing_action = DropItemAction.new(item_type, index)
+	#recorded_actions.push_back(game_state.player.ongoing_action)
+	#advance_game = true
+	queued_action = DropItemAction.new(item_type, index)
 
 func _on_item_throw(index: int) -> void:
 	if not is_input_enabled():

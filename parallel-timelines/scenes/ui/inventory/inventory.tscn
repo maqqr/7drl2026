@@ -14,6 +14,7 @@ offset_top = -40.0
 offset_right = 20.0
 grow_horizontal = 2
 grow_vertical = 0
+mouse_filter = 2
 script = ExtResource("1_3bwaq")
 action_button_panel = NodePath("VBoxContainer/PanelContainer")
 item_button_container = NodePath("VBoxContainer/PanelContainer2/HBoxContainer_ItemButtons")

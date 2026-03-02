@@ -11,6 +11,9 @@ var items: Array[ItemType]
 var invisibility_turns = 0
 var invisibility_effect_node: Node3D
 
+var max_health = 3
+var health = 3
+
 @onready var spotlight = $SpotLight3D
 
 signal inventory_changed(character: Character)
@@ -18,7 +21,7 @@ signal inventory_changed(character: Character)
 func make_invisible(turns: int) -> void:
 	invisibility_turns = turns
 	if invisibility_effect_node == null:
-		invisibility_effect_node = preload("res://scenes/invisibility_effect.tscn").instantiate()
+		invisibility_effect_node = preload("res://scenes/effects/invisibility_effect.tscn").instantiate()
 		add_child(invisibility_effect_node)
 
 func teleport_to(pos: Vector2i) -> void:
