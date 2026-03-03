@@ -1,0 +1,21 @@
+[gd_scene format=3 uid="uid://b6u48xacjacqh"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_gt8mc"]
+size = Vector3(1, 0.1, 1)
+
+[node name="Chair" type="Node3D" unique_id=802648987]
+
+[node name="Node3D_Chair" type="Node3D" parent="." unique_id=1096307450]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 0, 0, 0)
+
+[node name="MeshInstance3D2" type="MeshInstance3D" parent="Node3D_Chair" unique_id=1024468106]
+transform = Transform3D(0.3235336, 0, 0, 0, 1, 0, 0, 0, 0.349085, -0.06451249, 0.44125748, 0)
+mesh = SubResource("BoxMesh_gt8mc")
+
+[node name="MeshInstance3D3" type="MeshInstance3D" parent="Node3D_Chair" unique_id=680351848]
+transform = Transform3D(0.104506, 0, 0, 0, 9.149059, 0, 0, 0, 0.349085, 0.14171457, 0.4692797, 0)
+mesh = SubResource("BoxMesh_gt8mc")
+
+[node name="MeshInstance3D4" type="MeshInstance3D" parent="Node3D_Chair" unique_id=1805671196]
+transform = Transform3D(0.104506, 0, 0, 0, 3.8179834, 0, 0, 0, 0.349085, -0.16604733, 0.20664787, 0)
+mesh = SubResource("BoxMesh_gt8mc")

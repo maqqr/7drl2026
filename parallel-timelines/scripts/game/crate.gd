@@ -1,13 +1,18 @@
 extends GameObject
 class_name Crate
 
-var open = false
+@export var open = false
+@export var crate_lid: Node3D
+
+func _ready() -> void:
+	crate_lid.visible = not open
 
 func on_interact(character: Character) -> void:
 	if open:
 		return
 
 	open = true
+	crate_lid.visible = false
 
 	var rng = RandomNumberGenerator.new()
 	rng.seed = game_manager.game_state.current_seed + hash(TileMap2D.to_tile_pos(transform.origin))

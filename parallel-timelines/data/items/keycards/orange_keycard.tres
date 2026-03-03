@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="ItemType" format=3 uid="uid://c0ocnteisvkoy"]
+
+[ext_resource type="Texture2D" uid="uid://csu0xxwrbl1mi" path="res://textures/items/orange_keycard.png" id="1_lg78q"]
+[ext_resource type="Script" uid="uid://bvcrglxmuimbn" path="res://scripts/item/item_type.gd" id="1_qo3w5"]
+[ext_resource type="PackedScene" uid="uid://bvb4iiigb631h" path="res://scenes/items/orange_keycard.tscn" id="3_dy65d"]
+
+[resource]
+script = ExtResource("1_qo3w5")
+name = "orange keycard"
+an_article = true
+inventory_icon = ExtResource("1_lg78q")
+visual_scene = ExtResource("3_dy65d")
+is_keycard = true
+can_drop = true
+can_throw = true
+metadata/_custom_type_script = "uid://bvcrglxmuimbn"

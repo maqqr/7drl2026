@@ -1,6 +1,6 @@
-[gd_scene format=3 uid="uid://diswo66yuokae"]
+[gd_scene format=3 uid="uid://belskp1u1hmcs"]
 
-[ext_resource type="Script" uid="uid://0f8aea72sm2a" path="res://scripts/game/crate.gd" id="1_mxcry"]
+[ext_resource type="Script" uid="uid://0f8aea72sm2a" path="res://scripts/game/crate.gd" id="1_54mlc"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ksyx6"]
 albedo_color = Color(0.73347086, 0.8659623, 0.9375, 1)
@@ -26,7 +26,8 @@ material = SubResource("StandardMaterial3D_moxay")
 size = Vector3(0.7, 0.6, 0.646)
 
 [node name="Crate" type="Node3D" unique_id=1687865251 node_paths=PackedStringArray("crate_lid")]
-script = ExtResource("1_mxcry")
+script = ExtResource("1_54mlc")
+open = true
 crate_lid = NodePath("CrateLid")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=1784160120]

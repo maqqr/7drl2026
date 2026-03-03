@@ -1,17 +1,44 @@
 extends Node
 class_name MapGenerator
 
-static var SMALL: Dictionary[String, int] = {
+static var SIZE_SMALL: Dictionary = {
+	"width": 31,
+	"height": 30,
+	"extra_corridor_count": 2,
+	"traps": 1,
+}
+static var SIZE_MEDIUM: Dictionary = {
 	"width": 31,
 	"height": 40,
-	"extra_corridor_count": 2,
+	"extra_corridor_count": 4,
+	"traps": 3,
+}
+static var SIZE_LARGE: Dictionary = {
+	"width": 41,
+	"height": 50,
+	"extra_corridor_count": 8,
+	"traps": 5,
+}
+
+static var EASY: Dictionary = {
+	"time_multiplier": 1.8,
+	"max_computers": 4,
+	"keycard_count": 3,
+}
+static var MEDIUM: Dictionary = {
+	"time_multiplier": 1.5,
+	"max_computers": 3,
 	"keycard_count": 4,
 }
-static var LARGE: Dictionary[String, int] = {
-	"width": 41,
-	"height": 70,
-	"extra_corridor_count": 10,
-	"keycard_count": 4,
+static var HARD: Dictionary = {
+	"time_multiplier": 1.2,
+	"max_computers": 2,
+	"keycard_count": 5,
+}
+static var ALMOST_IMPOSSIBLE: Dictionary = {
+	"time_multiplier": 1.0,
+	"max_computers": 0,
+	"keycard_count": 5,
 }
 
 enum RoomPlanTile {
@@ -33,11 +60,22 @@ const PLAN_TO_OBJECT: Dictionary[RoomPlanTile, PackedScene] = {
 	RoomPlanTile.CLOSET: preload("res://scenes/gameobjects/closet.tscn"),
 }
 
+enum RoomTheme {
+	TECH,
+	STORAGE,
+	LIVING_ROOM,
+}
+
+func _get_random_room_theme() -> RoomTheme:
+	var themes = [RoomTheme.TECH, RoomTheme.STORAGE, RoomTheme.LIVING_ROOM]
+	return themes[rng.randi_range(0, themes.size() - 1)]
+
 const KEYCARD_ITEMS: Array[ItemType] = [
 	preload("res://data/items/keycards/green_keycard.tres"),
 	preload("res://data/items/keycards/red_keycard.tres"),
 	preload("res://data/items/keycards/cyan_keycard.tres"),
 	preload("res://data/items/keycards/purple_keycard.tres"),
+	preload("res://data/items/keycards/orange_keycard.tres"),
 ]
 
 class PlannedObject:
@@ -90,7 +128,7 @@ static func _dir_to_side(dir: Vector2i) -> Side:
 
 var task_id = null
 var rng: RandomNumberGenerator
-var parameters: Dictionary[String, int]
+var parameters: Dictionary
 signal completed
 
 var cockpit: PremadeRoom
@@ -115,6 +153,7 @@ var planned_objects: Array[PlannedObject]
 var planned_items: Array[PlannedItem]
 var keycard_positions: Array[Vector2i]
 var turns_until_game_over: int = 0
+var placed_computers = 0
 
 var current_seed = 0
 
@@ -138,7 +177,7 @@ func _process(_delta: float) -> void:
 		task_id = null
 		completed.emit()
 
-func generate(param: Dictionary[String, int]) -> void:
+func generate(param: Dictionary) -> void:
 	assert(task_id == null)
 	if task_id != null:
 		return
@@ -253,8 +292,8 @@ func _run_task() -> void:
 			# Expand room in all directions
 			for dir_enum in DIRECTIONS:
 				while true:
-					var too_wide = (dir_enum == Direction.LEFT or dir_enum == Direction.RIGHT) and potential_room.size.x >= 10
-					var too_tall = (dir_enum == Direction.UP or dir_enum == Direction.DOWN) and potential_room.size.y >= 10
+					var too_wide = (dir_enum == Direction.LEFT or dir_enum == Direction.RIGHT) and potential_room.size.x >= 8
+					var too_tall = (dir_enum == Direction.UP or dir_enum == Direction.DOWN) and potential_room.size.y >= 8
 					if too_wide or too_tall:
 						break
 
@@ -276,6 +315,10 @@ func _run_task() -> void:
 	_make_doors_for_rooms()
 	_cover_floors()
 	_mirror_map()
+	
+	for random_room in random_room_rects:
+		_decorate_random_room(random_room, _get_random_room_theme())
+	
 	_make_keycards()
 	_calculate_allowed_turns()
 
@@ -284,28 +327,9 @@ func _run_task() -> void:
 		fail = true
 		return
 
-	# Put some crates and computers in all rooms
-	for random_room in random_room_rects:
-		var pos = _find_free_pos_next_to_wall(random_room)
-		if pos != Vector2i.ZERO:
-			tile_map.set_tile(pos, Enum.TileType.OBJECT_BLOCKING_TRANSPARENT)
-			var obj: PackedScene
-			if rng.randf() > 0.7:
-				obj = preload("res://scenes/gameobjects/crate.tscn")
-			else:
-				obj = preload("res://scenes/gameobjects/computer.tscn")
-
-			planned_objects.push_back(PlannedObject.new(obj, pos))
-
-		if rng.randf() < 0.3:
-			pos = _find_free_pos_next_to_wall(random_room)
-			if pos != Vector2i.ZERO:
-				tile_map.set_tile(pos, Enum.TileType.OBJECT_NONBLOCKING_OPAQUE)
-				planned_objects.push_back(PlannedObject.new(preload("res://scenes/gameobjects/closet.tscn"), pos))
-
 	# Place traps
 	var potential_trap_positions = _find_tiles_by_type(Enum.TileType.FLOOR)
-	for i in range(5):
+	for i in range(parameters.traps):
 		var index = rng.randi_range(0, potential_trap_positions.size() - 1)
 		var tile_pos = potential_trap_positions[index]
 		potential_trap_positions.remove_at(index)
@@ -377,11 +401,24 @@ func _read_premade_room(path: StringName) -> PremadeRoom:
 func _make_keycards() -> void:
 	var potential_rooms: Array[Rect2i] = []
 	potential_rooms.append_array(random_room_rects)
-	while keycard_positions.size() < 4 and not potential_rooms.is_empty():
+	while keycard_positions.size() < parameters.keycard_count and not potential_rooms.is_empty():
 		var index = rng.randi_range(0, potential_rooms.size() - 1)
-		keycard_positions.push_back(potential_rooms[index].get_center())
+		var room = potential_rooms[index]
+		var floors: Array[Vector2i] = []
+		for y in range(room.position.y, room.position.y + room.size.y):
+			for x in range(room.position.x, room.position.x + room.size.x):
+				var pos = Vector2i(x, y)
+				if tile_map.get_tile(pos) == Enum.TileType.FLOOR:
+					floors.push_back(pos)
+
+		if not floors.is_empty():
+			keycard_positions.push_back(floors[rng.randi_range(0, floors.size() - 1)])
+
 		potential_rooms.remove_at(index)
 
+	# TODO: Just find any random floor if needed
+
+	assert(keycard_positions.size() == parameters.keycard_count)
 	assert(KEYCARD_ITEMS.size() >= keycard_positions.size())
 	for i in range(keycard_positions.size()):
 		planned_items.push_back(PlannedItem.new(KEYCARD_ITEMS[i], keycard_positions[i]))
@@ -522,34 +559,44 @@ func _calculate_allowed_turns() -> void:
 			debug_path.append_array(path_to_keycard)
 			debug_path.append_array(path_to_shuttle)
 
-	turns_until_game_over = floor(10 + most_turns * 1.5)
+	turns_until_game_over = floor(10 + most_turns * parameters.time_multiplier)
 
 # Assumes room includes just the floors, not surrounding walls
-func _find_free_pos_next_to_wall(room: Rect2i) -> Vector2i:
+# { "success": bool, "position": Vector2i, "free_position": Vector2i }
+func _find_free_pos_next_to_wall(room: Rect2i) -> Dictionary:
 	var attempts_left = 40
 	while attempts_left > 0:
 		attempts_left -= 1
 		var potential_pos = null
+		var free_pos: Vector2i
 		if rng.randf() < 0.5:
 			# Check top or bottom wall
 			var pos = Vector2i(
 				rng.randi_range(room.position.x, room.position.x + room.size.x - 1),
 				room.position.y if rng.randf() < 0.5 else room.position.y + room.size.y - 1)
 			if tile_map.get_tile(pos) == Enum.TileType.FLOOR:
-				var wall_top = tile_map.get_tile(pos + Vector2i(0, -1)) == Enum.TileType.WALL and tile_map.get_tile(pos + Vector2i(0, 1)) == Enum.TileType.FLOOR
-				var wall_bottom = tile_map.get_tile(pos + Vector2i(0, 1)) == Enum.TileType.WALL and tile_map.get_tile(pos + Vector2i(0, -1)) == Enum.TileType.FLOOR
-				if wall_top or wall_bottom:
+				# Wall on top
+				if tile_map.get_tile(pos + Vector2i(0, -1)) == Enum.TileType.WALL and tile_map.get_tile(pos + Vector2i(0, 1)) == Enum.TileType.FLOOR:
 					potential_pos = pos
+					free_pos = pos + Vector2i(0, 1)
+				# Wall on bottom
+				if tile_map.get_tile(pos + Vector2i(0, 1)) == Enum.TileType.WALL and tile_map.get_tile(pos + Vector2i(0, -1)) == Enum.TileType.FLOOR:
+					potential_pos = pos
+					free_pos = pos + Vector2i(0, -1)
 		else:
 			# Check left or right wall
 			var pos = Vector2i(
 				room.position.x if rng.randf() < 0.5 else room.position.x + room.size.x - 1,
 				rng.randi_range(room.position.y, room.position.y + room.size.y - 1))
 			if tile_map.get_tile(pos) == Enum.TileType.FLOOR:
-				var wall_left = tile_map.get_tile(pos + Vector2i(-1, 0)) == Enum.TileType.WALL and tile_map.get_tile(pos + Vector2i(1, 0)) == Enum.TileType.FLOOR
-				var wall_right = tile_map.get_tile(pos + Vector2i(1, 0)) == Enum.TileType.WALL and tile_map.get_tile(pos + Vector2i(-1, 0)) == Enum.TileType.FLOOR
-				if wall_left or wall_right:
+				# Wall on left
+				if tile_map.get_tile(pos + Vector2i(-1, 0)) == Enum.TileType.WALL and tile_map.get_tile(pos + Vector2i(1, 0)) == Enum.TileType.FLOOR:
 					potential_pos = pos
+					free_pos = pos + Vector2i(1, 0)
+				# Wall on right
+				if tile_map.get_tile(pos + Vector2i(1, 0)) == Enum.TileType.WALL and tile_map.get_tile(pos + Vector2i(-1, 0)) == Enum.TileType.FLOOR:
+					potential_pos = pos
+					free_pos = pos + Vector2i(-1, 0)
 		if potential_pos != null:
 			# Must not have doors near to allow moving into room
 			for dir in DIR_VECTORS_AROUND:
@@ -558,6 +605,90 @@ func _find_free_pos_next_to_wall(room: Rect2i) -> Vector2i:
 					break
 
 			if potential_pos != null:
-				return potential_pos
+				return { "success": true, "position": potential_pos, "free_position": free_pos }
 
-	return Vector2i.ZERO
+	return { "success": false }
+
+func _can_find_path_to_escape_pod(room: Rect2i, extra_wall: Vector2i):
+	var astar = AStarGrid2D.new()
+	astar.region = Rect2i(0, 0, tile_map.width, tile_map.height)
+	astar.diagonal_mode = AStarGrid2D.DIAGONAL_MODE_NEVER
+	astar.update()
+	for y in range(0, tile_map.height):
+		for x in range(0, tile_map.width):
+			var pos = Vector2i(x, y)
+			match tile_map.get_tile(pos):
+				Enum.TileType.EMPTY: astar.set_point_solid(pos, true)
+				Enum.TileType.WALL: astar.set_point_solid(pos, true)
+				Enum.TileType.OBJECT_BLOCKING_OPAQUE: astar.set_point_solid(pos, true)
+				Enum.TileType.OBJECT_BLOCKING_TRANSPARENT: astar.set_point_solid(pos, true)
+
+	astar.set_point_solid(extra_wall, true)
+	for y in range(room.position.y, room.position.y + room.size.y - 1):
+		for x in range(room.position.x, room.position.x + room.size.x - 1):
+			var path: Array[Vector2i] = astar.get_id_path(Vector2i(x, y), escape_pod_position)
+			if path.is_empty():
+				return false
+	return true
+
+func _is_rect_floor(rect: Rect2i) -> bool:
+	for y in range(rect.position.y, rect.position.y + rect.size.y):
+		for x in range(rect.position.x, rect.position.x + rect.size.x):
+			if tile_map.get_tile(Vector2i(x, y)) != Enum.TileType.FLOOR:
+				return false
+	return true
+
+func _decorate_random_room(room: Rect2i, theme: RoomTheme) -> void:
+	var computer = preload("res://scenes/gameobjects/computer.tscn")
+	var used_computer = preload("res://scenes/gameobjects/used_computer.tscn")
+	var crate = preload("res://scenes/gameobjects/crate.tscn")
+	var crate_open = preload("res://scenes/gameobjects/crate_open.tscn")
+	var closet = preload("res://scenes/gameobjects/closet.tscn")
+	var table = preload("res://scenes/gameobjects/table.tscn")
+	var chair_left = preload("res://scenes/gameobjects/chair_left.tscn")
+	var chair_right = preload("res://scenes/gameobjects/chair_right.tscn")
+	match theme:
+		RoomTheme.TECH:
+			for i in range(max(room.size.x, room.size.y)):
+				var result = _find_free_pos_next_to_wall(room)
+				if result.success and _can_find_path_to_escape_pod(room, result.position):
+					var obj = computer if randf() < 0.3 else used_computer
+					if placed_computers > parameters.max_computers:
+						obj = used_computer
+
+					var pos = result.position
+					tile_map.set_tile(pos, Enum.TileType.OBJECT_BLOCKING_TRANSPARENT)
+					planned_objects.push_back(PlannedObject.new(obj, pos))
+					if obj == computer:
+						placed_computers += 1
+
+		RoomTheme.STORAGE:
+			for i in range(max(room.size.x, room.size.y)):
+				var result = _find_free_pos_next_to_wall(room)
+				if result.success and _can_find_path_to_escape_pod(room, result.position):
+					var pos = result.position
+					var obj = crate if rng.randf() < 0.5 else crate_open
+					tile_map.set_tile(pos, Enum.TileType.OBJECT_BLOCKING_TRANSPARENT)
+					planned_objects.push_back(PlannedObject.new(obj, pos))
+
+		RoomTheme.LIVING_ROOM:
+			var attempts = 0
+			while attempts < 100:
+				attempts += 1
+				var pos = Vector2i(rng.randi_range(room.position.x, room.position.x + room.size.x - 3),
+									rng.randi_range(room.position.y, room.position.y + room.size.y - 3))
+				if _is_rect_floor(Rect2i(pos, Vector2i(3, 3))):
+					tile_map.set_tile(pos + Vector2i(1, 1), Enum.TileType.OBJECT_BLOCKING_TRANSPARENT)
+					planned_objects.push_back(PlannedObject.new(table, pos + Vector2i(1, 1)))
+					tile_map.set_tile(pos + Vector2i(0, 1), Enum.TileType.OBJECT_NONBLOCKING_TRANSPARENT)
+					planned_objects.push_back(PlannedObject.new(chair_right, pos + Vector2i(0, 1)))
+					tile_map.set_tile(pos + Vector2i(2, 1), Enum.TileType.OBJECT_NONBLOCKING_TRANSPARENT)
+					planned_objects.push_back(PlannedObject.new(chair_left, pos + Vector2i(2, 1)))
+
+	# Place a closet randomly regardless of theme
+	if rng.randf() < 0.3:
+		var result = _find_free_pos_next_to_wall(room)
+		if result.success:
+			var pos = result.position
+			tile_map.set_tile(pos, Enum.TileType.OBJECT_NONBLOCKING_OPAQUE)
+			planned_objects.push_back(PlannedObject.new(closet, pos))

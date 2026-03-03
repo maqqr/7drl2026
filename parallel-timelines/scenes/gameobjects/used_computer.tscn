@@ -1,0 +1,59 @@
+[gd_scene format=3 uid="uid://baf5qvh00ikl2"]
+
+[ext_resource type="Script" uid="uid://deamydnly5ht7" path="res://scripts/game/computer.gd" id="1_wwyfm"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_o7ddv"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_raf4v"]
+albedo_color = Color(0, 0, 0, 1)
+emission_enabled = true
+emission = Color(0, 0.22265625, 0, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_tpknr"]
+material = SubResource("StandardMaterial3D_raf4v")
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_x5yro"]
+albedo_color = Color(0, 0, 0, 1)
+emission_enabled = true
+emission = Color(0, 0.6015625, 0, 1)
+emission_energy_multiplier = 2.0
+
+[sub_resource type="BoxMesh" id="BoxMesh_xafoj"]
+material = SubResource("StandardMaterial3D_x5yro")
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_tpknr"]
+albedo_color = Color(0, 0, 0, 1)
+emission = Color(0, 0.22265625, 0, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_x5yro"]
+material = SubResource("StandardMaterial3D_tpknr")
+
+[node name="Computer" type="Node3D" unique_id=1062940433 node_paths=PackedStringArray("screen_mesh")]
+script = ExtResource("1_wwyfm")
+used = true
+screen_mesh = NodePath("Screen")
+rotate_away_from_wall = true
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=985618425]
+transform = Transform3D(0.80911636, 0, 0, 0, 0.80911636, 0, 0, 0, 0.80911636, 0, 0.4016766, 0)
+mesh = SubResource("BoxMesh_o7ddv")
+
+[node name="MeshInstance3D2" type="MeshInstance3D" parent="." unique_id=99634131]
+transform = Transform3D(0.8091165, 0, 0, 0, 0.36462218, 0.682693, 0, -0.586269, 0.4245919, 0, 0.67182344, -0.07384586)
+mesh = SubResource("BoxMesh_o7ddv")
+
+[node name="Screen" type="MeshInstance3D" parent="." unique_id=694184348]
+transform = Transform3D(0.60798585, 0, 0, 0, 0.2739842, 0.06483312, 0, -0.4405339, 0.040322103, 0, 1.0155989, 0.11549203)
+mesh = SubResource("BoxMesh_tpknr")
+
+[node name="MeshInstance3D4" type="MeshInstance3D" parent="Screen" unique_id=784278065]
+transform = Transform3D(0.8115095, 0, 0, 0, 0.11724053, 0, 0, -2.9802322e-08, 0.39471698, -0.05183727, 0.29372823, 0.513566)
+mesh = SubResource("BoxMesh_xafoj")
+
+[node name="MeshInstance3D7" type="MeshInstance3D" parent="Screen" unique_id=1274490187]
+transform = Transform3D(0.8115095, 0, 0, 0, 0.11724053, 0, 0, -2.9802322e-08, 0.39471698, -0.05183727, -0.2118386, 0.513566)
+mesh = SubResource("BoxMesh_xafoj")
+
+[node name="Screen2" type="MeshInstance3D" parent="." unique_id=811153953]
+transform = Transform3D(0.63531405, 0, 0, 0, 0.28984836, 0.06483312, 0, -0.4660416, 0.040322103, 0, 1.0020448, 0.107062265)
+mesh = SubResource("BoxMesh_x5yro")

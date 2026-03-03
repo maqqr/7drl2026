@@ -90,10 +90,7 @@ func create_game_object_at(game_manager: GameManager, packed_scene: PackedScene,
 	add_child(obj)
 	if obj is GameObject:
 		if obj.rotate_away_from_wall:
-			for dir in [Vector2i(0, -1), Vector2i(0, 1), Vector2i(-1, 0), Vector2i(1, 0)]:
-				if tile_map.get_tile(pos + dir) == Enum.TileType.WALL:
-					obj.look_at(TileMap2D.to_scene_pos(pos + dir))
-					break
+			_rotate_away_from_wall(pos, obj)
 		game_objects.push_back(obj)
 
 func remove_game_object(obj: GameObject):
@@ -217,3 +214,20 @@ func on_character_move_finish(character: Character) -> void:
 
 	for game_obj in game_objects:
 		game_obj.on_character_move_finish(character)
+
+func _rotate_away_from_wall(pos: Vector2i, obj: GameObject):
+	var wall_count = 0
+	for dir in [Vector2i(0, -1), Vector2i(0, 1), Vector2i(-1, 0), Vector2i(1, 0)]:
+		if tile_map.get_tile(pos + dir) == Enum.TileType.WALL:
+			wall_count += 1
+
+	if wall_count == 3:
+		for dir in [Vector2i(0, -1), Vector2i(0, 1), Vector2i(-1, 0), Vector2i(1, 0)]:
+			if tile_map.get_tile(pos + dir) == Enum.TileType.FLOOR:
+				obj.look_at(TileMap2D.to_scene_pos(pos - dir))
+				return
+
+	for dir in [Vector2i(0, -1), Vector2i(0, 1), Vector2i(-1, 0), Vector2i(1, 0)]:
+		if tile_map.get_tile(pos + dir) == Enum.TileType.WALL:
+			obj.look_at(TileMap2D.to_scene_pos(pos + dir))
+			break

@@ -371,8 +371,13 @@ func start_new_game() -> void:
 	map_generator.name = "MapGenerator"
 	add_child(map_generator)
 
+	var parameters = {}
+	parameters.merge(MapGenerator.SIZE_SMALL)
+	parameters.merge(MapGenerator.ALMOST_IMPOSSIBLE)
+	print(parameters)
+
 	while true:
-		map_generator.generate(MapGenerator.SMALL)
+		map_generator.generate(parameters)
 		await map_generator.completed
 		if not map_generator.fail:
 			break

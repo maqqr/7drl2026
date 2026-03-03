@@ -1,9 +1,11 @@
 extends GameObject
 class_name Computer
 
+@export var used = false
 @export var screen_mesh: MeshInstance3D
 
-var used = false
+func _ready() -> void:
+	screen_mesh.visible = not used
 
 func on_interact(character: Character) -> void:
 	if used:

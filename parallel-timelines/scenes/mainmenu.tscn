@@ -1,0 +1,10 @@
+[gd_scene format=3 uid="uid://d1ca7hji0ju4w"]
+
+[node name="Mainmenu" type="Node3D" unique_id=1660149479]
+
+[node name="CanvasLayer_GUI" type="CanvasLayer" parent="." unique_id=90992129]
+
+[node name="Button" type="Button" parent="CanvasLayer_GUI" unique_id=1875562157]
+offset_right = 8.0
+offset_bottom = 8.0
+text = "Start game"
