@@ -57,6 +57,7 @@ orientation = 1
 
 [node name="Game" type="Node3D" unique_id=1579276341]
 script = ExtResource("1_uwrxv")
+camera_offset = Vector3(0, 10, 6)
 green_aim_line_material = ExtResource("2_lbhrr")
 red_aim_line_material = ExtResource("3_iywne")
 

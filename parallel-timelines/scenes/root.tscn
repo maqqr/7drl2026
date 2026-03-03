@@ -1,10 +1,10 @@
 [gd_scene format=3 uid="uid://bpx25rgxyxxwd"]
 
-[ext_resource type="PackedScene" uid="uid://dbm16gkqqs62h" path="res://scenes/game.tscn" id="1_jh1ax"]
 [ext_resource type="Shader" uid="uid://bpdji7sc7r6i" path="res://shaders/extract_emission.gdshader" id="1_sqa0i"]
 [ext_resource type="Shader" uid="uid://rivm26f0vwbu" path="res://shaders/blur_x.gdshader" id="2_jh1ax"]
 [ext_resource type="Shader" uid="uid://dehpq8aqecjog" path="res://shaders/blur_y.gdshader" id="3_kycxp"]
 [ext_resource type="Shader" uid="uid://c8fyamgl2l2r4" path="res://shaders/colorrect_dither_glow.gdshader" id="4_j287u"]
+[ext_resource type="PackedScene" uid="uid://d1ca7hji0ju4w" path="res://scenes/mainmenu.tscn" id="5_jh1ax"]
 
 [sub_resource type="Gradient" id="Gradient_lbhrr"]
 colors = PackedColorArray(0.07983647, 0.08684586, 0.1875, 1, 1, 1, 1, 1)
@@ -150,5 +150,4 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 
-[node name="Game" parent="." unique_id=1579276341 instance=ExtResource("1_jh1ax")]
-camera_offset = Vector3(0, 12, 6.5)
+[node name="Mainmenu" parent="." unique_id=1660149479 instance=ExtResource("5_jh1ax")]

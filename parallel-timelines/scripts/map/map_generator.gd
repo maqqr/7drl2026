@@ -416,7 +416,12 @@ func _make_keycards() -> void:
 
 		potential_rooms.remove_at(index)
 
-	# TODO: Just find any random floor if needed
+	# Just find any random floor if needed
+	if keycard_positions.size() < parameters.keycard_count:
+		var floor_positions = _find_tiles_by_type(Enum.TileType.FLOOR)
+		while keycard_positions.size() < parameters.keycard_count:
+			var pos = floor_positions[rng.randi_range(0, floor_positions.size() - 1)]
+			keycard_positions.push_back(pos)
 
 	assert(keycard_positions.size() == parameters.keycard_count)
 	assert(KEYCARD_ITEMS.size() >= keycard_positions.size())
