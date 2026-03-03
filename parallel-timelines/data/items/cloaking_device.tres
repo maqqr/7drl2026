@@ -12,5 +12,5 @@ visual_scene = ExtResource("2_2qubi")
 can_use = true
 can_drop = true
 can_throw = true
-invisibility_turns_on_use = 8
+invisibility_turns_on_use = 20
 metadata/_custom_type_script = "uid://bvcrglxmuimbn"

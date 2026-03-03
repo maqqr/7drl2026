@@ -5,6 +5,7 @@
 [ext_resource type="Shader" uid="uid://dehpq8aqecjog" path="res://shaders/blur_y.gdshader" id="3_kycxp"]
 [ext_resource type="Shader" uid="uid://c8fyamgl2l2r4" path="res://shaders/colorrect_dither_glow.gdshader" id="4_j287u"]
 [ext_resource type="PackedScene" uid="uid://d1ca7hji0ju4w" path="res://scenes/mainmenu.tscn" id="5_jh1ax"]
+[ext_resource type="PackedScene" uid="uid://dffeynk4lyb3g" path="res://scenes/effects/warp_effect.tscn" id="6_kycxp"]
 
 [sub_resource type="Environment" id="Environment_gee14"]
 background_mode = 1
@@ -156,3 +157,6 @@ mouse_filter = 2
 [node name="Mainmenu" parent="." unique_id=1660149479 instance=ExtResource("5_jh1ax")]
 level_size_group = SubResource("ButtonGroup_jh1ax")
 difficulty_group = SubResource("ButtonGroup_kycxp")
+
+[node name="WarpEffect" parent="." unique_id=95820578 instance=ExtResource("6_kycxp")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8, 0, 5)

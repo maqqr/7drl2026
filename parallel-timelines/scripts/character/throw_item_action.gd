@@ -60,7 +60,8 @@ func execute(game_manager: GameManager, character: Character, delta: float) -> b
 
 		if target_item_type.teleport_on_throw:
 			character.teleport_to(target_tile)
-			game_manager.screen_shake.shake(0.4, 3.0)
+			if character == game_manager.game_state.player:
+				game_manager.screen_shake.shake(0.4, 3.0)
 
 		if target_item_type.kill_on_throw and kill_target:
 			kill_target.health = 0

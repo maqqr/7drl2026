@@ -1,0 +1,76 @@
+[gd_scene format=3 uid="uid://dffeynk4lyb3g"]
+
+[ext_resource type="Script" uid="uid://b76dnuyxja1k1" path="res://scripts/effect/warp_effect.gd" id="1_pb8ae"]
+[ext_resource type="Texture2D" uid="uid://5rvrhf55d0br" path="res://textures/vfx_circle.PNG" id="1_sqh4b"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_pb8ae"]
+transparency = 1
+blend_mode = 1
+cull_mode = 2
+shading_mode = 0
+vertex_color_use_as_albedo = true
+albedo_texture = ExtResource("1_sqh4b")
+billboard_mode = 1
+billboard_keep_scale = true
+
+[sub_resource type="Gradient" id="Gradient_sqh4b"]
+offsets = PackedFloat32Array(0.19505495, 1)
+colors = PackedColorArray(1, 1, 1, 1, 0, 0, 0, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_pb8ae"]
+gradient = SubResource("Gradient_sqh4b")
+
+[sub_resource type="Curve" id="Curve_sqh4b"]
+_data = [Vector2(0, 0.03369677), 0.0, 62.80969, 0, 0, Vector2(0.0871795, 0.99355805), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="CurveTexture" id="CurveTexture_pb8ae"]
+curve = SubResource("Curve_sqh4b")
+
+[sub_resource type="Curve" id="Curve_adgg2"]
+_data = [Vector2(0.06716418, 0), 0.0, 0.0, 0, 0, Vector2(0.4925373, 0.6830727), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_rwcia"]
+curve = SubResource("Curve_adgg2")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_lutka"]
+emission_shape = 3
+emission_box_extents = Vector3(0.3, 0.8, 0.3)
+direction = Vector3(0, 1, 0)
+spread = 0.0
+initial_velocity_min = 2.0
+initial_velocity_max = 3.0
+orbit_velocity_min = 9.49949e-08
+orbit_velocity_max = 9.49949e-08
+radial_velocity_min = -2.2351742e-05
+radial_velocity_max = 0.49997765
+gravity = Vector3(0, 2, 0)
+scale_min = 0.29999998
+scale_max = 0.5
+scale_curve = SubResource("CurveTexture_pb8ae")
+color = Color(0.27511954, 1, 0.28036582, 1)
+color_ramp = SubResource("GradientTexture1D_pb8ae")
+turbulence_enabled = true
+turbulence_noise_scale = 4.0
+turbulence_noise_speed_random = 0.6
+turbulence_influence_min = 0.15
+turbulence_influence_max = 0.2
+turbulence_influence_over_life = SubResource("CurveTexture_rwcia")
+
+[sub_resource type="QuadMesh" id="QuadMesh_50ge8"]
+
+[node name="WarpEffect" type="Node3D" unique_id=95820578]
+script = ExtResource("1_pb8ae")
+
+[node name="GPUParticles3D" type="GPUParticles3D" parent="." unique_id=879016035]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.7, 0)
+material_override = SubResource("StandardMaterial3D_pb8ae")
+emitting = false
+amount = 64
+lifetime = 1.5
+one_shot = true
+explosiveness = 1.0
+randomness = 1.0
+process_material = SubResource("ParticleProcessMaterial_lutka")
+draw_pass_1 = SubResource("QuadMesh_50ge8")

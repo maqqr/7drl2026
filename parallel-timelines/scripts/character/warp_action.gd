@@ -10,6 +10,16 @@ func can_execute(_game_manager: GameManager, _character: Character) -> bool:
 	return true
 
 func execute(game_manager: GameManager, character: Character, delta: float) -> bool:
+	if not started:
+		started = true
+		character.visible = false
+		var effect = preload("res://scenes/effects/warp_effect.tscn").instantiate() as Node3D
+		effect.transform.origin = TileMap2D.to_scene_pos(character.map_position)
+		game_manager.game_state.add_child(effect)
+
+		if game_manager.game_state.player == character:
+			duration = 1.5
+
 	progress = min(1.0, progress + delta / duration)
 	var done = progress >= 1.0
 	if done:

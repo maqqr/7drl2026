@@ -91,6 +91,7 @@ surface_material_override/0 = ExtResource("2_lbhrr")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -6.832199, -29.888079)
 amount = 64
 lifetime = 2.0
+preprocess = 1.5
 visibility_aabb = AABB(-4, -4, -4, 8, 8, 150)
 process_material = SubResource("ParticleProcessMaterial_lnu2h")
 draw_pass_1 = SubResource("QuadMesh_lbhrr")

@@ -51,6 +51,7 @@ enum RoomPlanTile {
 	SHUTTLE = 6,
 	COMPUTER = 7,
 	CLOSET = 8,
+	CRATE = 9,
 }
 
 const PLAN_TO_OBJECT: Dictionary[RoomPlanTile, PackedScene] = {
@@ -58,6 +59,7 @@ const PLAN_TO_OBJECT: Dictionary[RoomPlanTile, PackedScene] = {
 	RoomPlanTile.SHUTTLE: preload("res://scenes/gameobjects/shuttle.tscn"),
 	RoomPlanTile.COMPUTER: preload("res://scenes/gameobjects/computer.tscn"),
 	RoomPlanTile.CLOSET: preload("res://scenes/gameobjects/closet.tscn"),
+	RoomPlanTile.CRATE: preload("res://scenes/gameobjects/crate.tscn"),
 }
 
 enum RoomTheme {
@@ -105,6 +107,7 @@ static func _convert_plan_tile(plan_tile: RoomPlanTile) -> Enum.TileType:
 		RoomPlanTile.SHUTTLE: return Enum.TileType.OBJECT_BLOCKING_TRANSPARENT
 		RoomPlanTile.COMPUTER: return Enum.TileType.OBJECT_BLOCKING_TRANSPARENT
 		RoomPlanTile.CLOSET: return Enum.TileType.OBJECT_NONBLOCKING_OPAQUE
+		RoomPlanTile.CRATE: return Enum.TileType.OBJECT_BLOCKING_TRANSPARENT
 	assert(false) # Missing tile handling
 	return Enum.TileType.FLOOR
 
@@ -134,6 +137,7 @@ signal completed
 var cockpit: PremadeRoom
 var main_corridor: PremadeRoom
 var main_corridor_split: PremadeRoom
+var main_corridor_split_item: PremadeRoom
 var main_corridor_end: PremadeRoom
 var main_corridor_hide: PremadeRoom
 var escape_pod: PremadeRoom
@@ -167,6 +171,7 @@ func _init() -> void:
 	cockpit = _read_premade_room("cockpit.tscn")
 	main_corridor = _read_premade_room("main_corridor.tscn")
 	main_corridor_split = _read_premade_room("main_corridor_split.tscn")
+	main_corridor_split_item = _read_premade_room("main_corridor_split_item.tscn")
 	main_corridor_end = _read_premade_room("main_corridor_end.tscn")
 	main_corridor_hide = _read_premade_room("main_corridor_hide.tscn")
 	escape_pod = _read_premade_room("escape_pod.tscn")
@@ -205,11 +210,13 @@ func _run_task() -> void:
 
 	var cursor = Vector2i(map_center_x - main_corridor.plan_tiles.width / 2, cockpit.plan_tiles.height + 1)
 	while true:
-		var corridor = main_corridor_end
+		var corridor: PremadeRoom = main_corridor_end
 		var enough_space = cursor.y < tile_map.height - main_corridor.plan_tiles.height * 2 - escape_pod.plan_tiles.height
 		if enough_space:
-			corridor = main_corridor_split if randf() < 0.7 else \
-				(main_corridor if randf() < 0.5 else main_corridor_hide)
+			corridor = (main_corridor_split_item if rng.randf() < 0.5 else main_corridor_split) if rng.randf() < 0.7 else \
+				(main_corridor if rng.randf() < 0.5 else main_corridor_hide)
+
+		cursor.x = map_center_x - corridor.plan_tiles.width / 2
 		_place_premade_room(cursor, corridor)
 		cursor += Vector2i(0, corridor.plan_tiles.height)
 		if not enough_space:
