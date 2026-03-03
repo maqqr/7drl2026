@@ -1,0 +1,17 @@
+[gd_scene format=3 uid="uid://u7o04nlc2nqe"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_5byno"]
+shading_mode = 0
+albedo_color = Color(0.29296875, 0.29296875, 0.29296875, 1)
+
+[sub_resource type="TorusMesh" id="TorusMesh_5s3wf"]
+material = SubResource("StandardMaterial3D_5byno")
+inner_radius = 0.4
+outer_radius = 0.5
+rings = 16
+ring_segments = 8
+
+[node name="ItemMarker" type="Node3D" unique_id=1236382777]
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=176548442]
+mesh = SubResource("TorusMesh_5s3wf")

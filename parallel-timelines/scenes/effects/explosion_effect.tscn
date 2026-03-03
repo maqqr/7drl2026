@@ -1,0 +1,26 @@
+[gd_scene format=3 uid="uid://bslbj806bakp8"]
+
+[ext_resource type="SpriteFrames" uid="uid://wsa8bsnljy03" path="res://textures/explosion_sprite_frames.tres" id="1_5ssc0"]
+[ext_resource type="Script" uid="uid://c1oeh2nvtm7wf" path="res://scripts/effect/explosion_effect.gd" id="1_ss4gf"]
+[ext_resource type="Texture2D" uid="uid://bggci1bid8gik" path="res://textures/explosion_sheet.png" id="2_52shv"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_k6p1u"]
+resource_local_to_scene = true
+blend_mode = 1
+shading_mode = 0
+vertex_color_use_as_albedo = true
+albedo_texture = ExtResource("2_52shv")
+
+[node name="ExplosionEffect" type="Node3D" unique_id=858868109]
+script = ExtResource("1_ss4gf")
+
+[node name="AnimatedSprite3D" type="AnimatedSprite3D" parent="." unique_id=1413702502]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.6, 0)
+material_override = SubResource("StandardMaterial3D_k6p1u")
+modulate = Color(1.8247963, 0.69283086, 0.23165976, 1)
+pixel_size = 0.03
+axis = 1
+sprite_frames = ExtResource("1_5ssc0")
+
+[node name="GPUParticles3D" type="GPUParticles3D" parent="." unique_id=1067512686]
+visible = false

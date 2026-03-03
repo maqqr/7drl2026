@@ -60,18 +60,10 @@ func execute(game_manager: GameManager, character: Character, delta: float) -> b
 
 		if target_item_type.teleport_on_throw:
 			character.teleport_to(target_tile)
+			game_manager.screen_shake.shake(0.4, 3.0)
 
 		if target_item_type.kill_on_throw and kill_target:
 			kill_target.health = 0
-			#for past_player in game_manager.game_state.past_players:
-				#if past_player.map_position == target_tile:
-					#past_player.health = 0
-			#var killed_players: Array[Character] = []
-			#for past_player in game_manager.game_state.past_players:
-				#if past_player.map_position == target_tile:
-					#killed_players.push_back(past_player)
-			#for past_player in killed_players:
-				#game_manager.game_state.kill_character(past_player)
 
 		if not target_item_type.consumed_on_throw:
 			game_manager.game_state.create_item_at(target_item_type, target_tile)

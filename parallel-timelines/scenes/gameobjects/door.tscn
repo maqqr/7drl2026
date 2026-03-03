@@ -17,22 +17,28 @@ size = Vector3(0.1, 0.1, 0.15)
 [sub_resource type="QuadMesh" id="QuadMesh_83dcw"]
 orientation = 1
 
-[node name="Door" type="Node3D" unique_id=1472609592]
+[node name="Door" type="Node3D" unique_id=1472609592 node_paths=PackedStringArray("left_door", "right_door")]
 script = ExtResource("1_hpvv5")
+left_door = NodePath("DoorLeft")
+right_door = NodePath("DoorRight")
 
-[node name="DoorLeft" type="MeshInstance3D" parent="." unique_id=421820932]
-transform = Transform3D(0.4550807, 0, 0, 0, 1, 0, 0, 0, 1, -0.29613847, 0.5, 0)
+[node name="DoorLeft" type="Node3D" parent="." unique_id=1461721524]
+
+[node name="DoorLeftModel" type="MeshInstance3D" parent="DoorLeft" unique_id=421820932]
+transform = Transform3D(0.455, 0, 0, 0, 0.95, 0, 0, 0, 2, -0.29613847, 0.5, 0)
 mesh = SubResource("BoxMesh_5f452")
 
-[node name="DoorLeftLight" type="MeshInstance3D" parent="DoorLeft" unique_id=1124484886]
+[node name="DoorLeftLight" type="MeshInstance3D" parent="DoorLeft/DoorLeftModel" unique_id=1124484886]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.44279045, 0, 0)
 mesh = SubResource("BoxMesh_uvdjg")
 
-[node name="DoorRight" type="MeshInstance3D" parent="." unique_id=804251988]
-transform = Transform3D(0.455, 0, 0, 0, 1, 0, 0, 0, 1, 0.2962253, 0.5, 0)
+[node name="DoorRight" type="Node3D" parent="." unique_id=531713264]
+
+[node name="DoorRightModel" type="MeshInstance3D" parent="DoorRight" unique_id=804251988]
+transform = Transform3D(0.455, 0, 0, 0, 0.95, 0, 0, 0, 2, 0.2962253, 0.5, 0)
 mesh = SubResource("BoxMesh_5f452")
 
-[node name="DoorRightLight" type="MeshInstance3D" parent="DoorRight" unique_id=984232093]
+[node name="DoorRightLight" type="MeshInstance3D" parent="DoorRight/DoorRightModel" unique_id=984232093]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.44437897, 0, 0)
 mesh = SubResource("BoxMesh_uvdjg")
 

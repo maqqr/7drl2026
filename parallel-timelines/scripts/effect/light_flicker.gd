@@ -1,4 +1,5 @@
 extends Light3D
+class_name LightFlicker
 
 enum LightType { FIRE, ELECTRIC }
 
@@ -11,6 +12,7 @@ enum LightType { FIRE, ELECTRIC }
 @export_group("Electric Properties")
 @export var cutoff_value = 0.0
 
+var total_intensity = 0.0
 var time_passed = 0.0
 
 func _ready() -> void:
@@ -22,4 +24,4 @@ func _process(delta) -> void:
 	if light_type == LightType.ELECTRIC:
 		sampled_noise = 0.0 if sampled_noise < cutoff_value else 1.0
 
-	light_energy = base_amount + flicker_amount * sampled_noise
+	light_energy = total_intensity * (base_amount + flicker_amount * sampled_noise)

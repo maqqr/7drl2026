@@ -15,6 +15,21 @@ class Timeline:
 	var spawn_position: Vector2i
 	var actions = []
 
+class ScreenShake:
+	var intensity = 0.0
+	var active_shake_time = 0.0
+	var shake_decay = 1.0
+	var shake_time = 0.0
+	var shake_time_speed = 40.0
+	var noise = FastNoiseLite.new()
+
+	func shake(p_intensity: float, p_time: float) -> void:
+		noise.seed = randi()
+		noise.frequency = 2.0
+		intensity = p_intensity
+		active_shake_time = p_time
+		shake_time = 0.0
+
 @onready var message_buffer: MessageBuffer = $CanvasLayer_GUI/MessageBuffer
 @onready var turns_label: RichTextLabel = $CanvasLayer_GUI/RichTextLabel_Turns
 @onready var inventory_ui: InventoryUi = $CanvasLayer_GUI/Inventory
@@ -50,6 +65,10 @@ var item_throw_index = Vector2i.MAX.x
 @export var green_aim_line_material: Material
 @export var red_aim_line_material: Material
 
+var screen_shake = ScreenShake.new()
+
+var chosen_parameters: Dictionary
+
 func _ready() -> void:
 	debug_rects = Node3D.new()
 	debug_rects.name = "DebugRects"
@@ -74,6 +93,8 @@ func _process(delta: float) -> void:
 	if game_state.player == null:
 		return
 
+	_update_camera(delta)
+
 	# Update cursor
 	var mouse_tile = get_mouse_tile()
 	if game_state.tile_map.is_point_inside(mouse_tile):
@@ -96,8 +117,6 @@ func _process(delta: float) -> void:
 				aim_line_unblocked = false
 			var aim_mesh = aim_line.get_child(0) as MeshInstance3D
 			aim_mesh.set_surface_override_material(0, green_aim_line_material if aim_line_unblocked else red_aim_line_material)
-
-	get_viewport().get_camera_3d().global_position = game_state.player.global_position + camera_offset
 
 	# Execute all actions
 	game_state.player.execute_action(self, delta)
@@ -126,6 +145,8 @@ func _process(delta: float) -> void:
 		# Trigger actions finish signal
 		for obj in game_state.game_objects:
 			obj.on_all_actions_finished()
+		for door_pos in game_state.doors:
+			game_state.doors[door_pos].on_all_actions_finished()
 		# Check if any past players can see the current player
 		for seen_pos in game_state.seen_tiles:
 			if game_state.player.map_position == seen_pos and game_state.player.invisibility_turns <= 0:
@@ -157,6 +178,7 @@ func _process(delta: float) -> void:
 				game_state.player.ongoing_action = MoveAction.new(old_position, final_position, direction)
 				if game_state.player.ongoing_action.can_execute(self, game_state.player):
 					recorded_actions.push_back(game_state.player.ongoing_action)
+					_trigger_action_starts(game_state.player, game_state.player.ongoing_action)
 					advance_game = true
 				else:
 					game_state.player.ongoing_action = null
@@ -165,6 +187,7 @@ func _process(delta: float) -> void:
 						if TileMap2D.to_tile_pos(game_obj.transform.origin) == final_position:
 							game_state.player.ongoing_action = InteractAction.new(final_position, direction)
 							recorded_actions.push_back(game_state.player.ongoing_action)
+							_trigger_action_starts(game_state.player, game_state.player.ongoing_action)
 							advance_game = true
 							break
 				break
@@ -172,6 +195,7 @@ func _process(delta: float) -> void:
 		if Input.is_action_pressed("wait"):
 			game_state.player.ongoing_action = WaitAction.new()
 			recorded_actions.push_back(game_state.player.ongoing_action)
+			_trigger_action_starts(game_state.player, game_state.player.ongoing_action)
 			advance_game = true
 
 		if Input.is_action_just_pressed("warp"):
@@ -182,6 +206,7 @@ func _process(delta: float) -> void:
 		game_state.player.ongoing_action = queued_action
 		if game_state.player.ongoing_action.can_execute(self, game_state.player):
 			recorded_actions.push_back(game_state.player.ongoing_action)
+			_trigger_action_starts(game_state.player, game_state.player.ongoing_action)
 			advance_game = true
 		queued_action = null
 
@@ -198,6 +223,8 @@ func _process(delta: float) -> void:
 				if not past_player.ongoing_action.can_execute(self, past_player):
 					past_player.ongoing_action = null
 					past_player.past_actions.clear()
+				else:
+					_trigger_action_starts(past_player, past_player.ongoing_action)
 
 	if Input.is_action_just_pressed("debug"):
 		for y in range(darkness.height):
@@ -211,6 +238,7 @@ func _process(delta: float) -> void:
 			var d = debug_rect_green_scene.instantiate() as DebugRect
 			d.set_rect(Rect2i(pos, Vector2i.ONE))
 			debug_rects.add_child(d)
+		#game_state.player.pickup_item(self, preload("res://data/items/mine.tres"))
 
 func is_input_enabled() -> bool:
 	return not game_over and \
@@ -218,6 +246,12 @@ func is_input_enabled() -> bool:
 		queued_action == null and \
 		game_state.player.ongoing_action == null and \
 		game_state.past_players.all(func (c: Character): return c.ongoing_action == null)
+
+func _trigger_action_starts(character: Character, action):
+	for obj in game_state.game_objects:
+		obj.on_action_started(character, action)
+	for door_pos in game_state.doors:
+		game_state.doors[door_pos].on_action_started(character, action)
 
 func get_mouse_tile() -> Vector2i:
 	var camera = get_viewport().get_camera_3d()
@@ -241,16 +275,15 @@ func _unhandled_input(event: InputEvent) -> void:
 				var target_tile = get_mouse_tile()
 				if event.button_index == 1 and aim_line_unblocked and game_state.player.map_position != target_tile:
 					var item_type = game_state.player.items[item_throw_index]
-					#game_state.player.ongoing_action = ThrowItemAction.new(target_tile, item_type, item_throw_index)
-					#recorded_actions.push_back(game_state.player.ongoing_action)
-					#advance_game = true
 					queued_action = ThrowItemAction.new(target_tile, item_type, item_throw_index)
 
 	if DEV_MODE:
 		if event is InputEventMouseButton:
-			if event.pressed:
-				var tile = Enum.TileType.WALL if event.button_index == 1 else Enum.TileType.FLOOR
-				game_state.tile_map.set_tile(get_mouse_tile(), tile)
+			if event.pressed and event.button_index == 1:
+				explode_at(get_mouse_tile(), 1)
+			#if event.pressed:
+				#var tile = Enum.TileType.WALL if event.button_index == 1 else Enum.TileType.FLOOR
+				#game_state.tile_map.set_tile(get_mouse_tile(), tile)
 
 func explode_at(pos: Vector2i, radius: int):
 	for dy in range(-radius, radius + 1):
@@ -275,6 +308,15 @@ func explode_at(pos: Vector2i, radius: int):
 				var tile = game_state.tile_map.get_tile(tile_pos)
 				if tile != Enum.TileType.FLOOR and tile != Enum.TileType.EMPTY:
 					game_state.tile_map.set_tile(tile_pos, Enum.TileType.FLOOR)
+					# Remove doors with no support on both sides
+					for dyy in range(-1, 2):
+						for dxx in range(-1, 2):
+							var extra_pos = tile_pos + Vector2i(dxx, dyy)
+							var extra_door: Door = game_state.doors.get(extra_pos)
+							if extra_door != null:
+								extra_door.queue_free()
+								game_state.doors.erase(extra_pos)
+								game_state.tile_map.set_tile(extra_pos, Enum.TileType.FLOOR)
 
 				# Create fire
 				if tile_pos.distance_squared_to(pos) <= (radius - 1) * (radius - 1):
@@ -294,6 +336,17 @@ func explode_at(pos: Vector2i, radius: int):
 
 	need_sight_check = true
 
+	var explosion_effect = preload("res://scenes/effects/explosion_effect.tscn").instantiate()
+	explosion_effect.transform.origin = TileMap2D.to_scene_pos(pos)
+	game_state.add_child(explosion_effect)
+
+	# Screen shake
+	var intensity = 1.2
+	var distance = pos.distance_to(game_state.player.map_position)
+	if distance > 12:
+		intensity = max(0.1, intensity - (distance - 12) * 0.08)
+	screen_shake.shake(intensity, 4.0)
+
 	if game_state.player.map_position.distance_squared_to(pos) <= radius * radius:
 		add_message(MessageBuffer.MSG_EXPLODED)
 		game_over = true
@@ -309,12 +362,12 @@ func reveal_darkness() -> void:
 					remove_child(darkness_nodes[checked_pos])
 					darkness_nodes.erase(checked_pos)
 
-func add_message(msg: String) -> void:
-	message_buffer.add_message(msg)
+func add_message(msg: String, extra_time: float = 0.0) -> void:
+	message_buffer.add_message(msg, extra_time)
 
 func set_remaining_turns(turns: int) -> void:
 	game_state.remaining_turns = turns
-	turns_label.text = "Turn left: " + str(game_state.remaining_turns)
+	turns_label.text = "Turns left: " + str(game_state.remaining_turns)
 
 func lose_due_to_sight() -> void:
 	add_message(MessageBuffer.MSG_LOSE)
@@ -347,7 +400,7 @@ func timewarp() -> void:
 			character.past_actions.push_back(action.clone())
 		game_state.past_players.push_back(character)
 
-	add_message("You wake up in a dark room with yourself.")
+	add_message(MessageBuffer.MSG_WAKE_UP)
 
 	print("Time warp done")
 
@@ -372,8 +425,7 @@ func start_new_game() -> void:
 	add_child(map_generator)
 
 	var parameters = {}
-	parameters.merge(MapGenerator.SIZE_SMALL)
-	parameters.merge(MapGenerator.ALMOST_IMPOSSIBLE)
+	parameters.merge(chosen_parameters)
 	print(parameters)
 
 	while true:
@@ -421,7 +473,7 @@ func start_new_game() -> void:
 	add_child(game_state)
 	set_remaining_turns(game_state.remaining_turns)
 
-	add_message(MessageBuffer.MSG_NEW_GAME.format({ "count": game_state.remaining_keycards }))
+	add_message(MessageBuffer.MSG_NEW_GAME)
 
 	# Look in all directions to see the initial room
 	for key in MOVE_KEYS:
@@ -441,6 +493,9 @@ func start_new_game() -> void:
 		d.set_rect(rect)
 		debug_rects.add_child(d)
 
+	await get_tree().create_timer(MessageBuffer.SHOW_MESSAGE_TIME + 1.0).timeout
+	add_message(MessageBuffer.MSG_NEW_GAME2.format({ "count": game_state.remaining_keycards }))
+
 func _create_game_state() -> GameState:
 	var state = GameState.new(map_generator.spawn_room_position)
 	state.name = "GameState"
@@ -453,6 +508,26 @@ func _create_game_state() -> GameState:
 	state.remaining_turns = map_generator.turns_until_game_over
 	state.current_seed = map_generator.current_seed
 	return state
+
+func _update_camera(delta: float) -> void:
+	if game_state.remaining_turns <= 10:
+		screen_shake.intensity = 0.07
+		screen_shake.active_shake_time = 1.0
+		if game_state.remaining_turns <= 3:
+			screen_shake.intensity = 0.1
+
+	var shake_offset = Vector3.ZERO
+	if screen_shake.active_shake_time > 0.0:
+		screen_shake.shake_time += delta * screen_shake.shake_time_speed
+		screen_shake.active_shake_time -= delta
+		var z = screen_shake.noise.get_noise_2d(0.0, screen_shake.shake_time) * screen_shake.intensity
+		shake_offset = Vector3(
+			screen_shake.noise.get_noise_2d(screen_shake.shake_time, 0.0) * screen_shake.intensity,
+			z,
+			z,
+		)
+		screen_shake.intensity = max(0.0, screen_shake.intensity - screen_shake.shake_decay * delta)
+	get_viewport().get_camera_3d().global_position = game_state.player.global_position + camera_offset + shake_offset
 
 func _on_item_use(index: int) -> void:
 	if not is_input_enabled():
@@ -476,6 +551,6 @@ func _on_item_throw(index: int) -> void:
 	if not is_input_enabled():
 		return
 
-	add_message("Select tile where to throw.")
+	add_message(MessageBuffer.MSG_THROW_SELECT_TILE)
 	targeting = true
 	item_throw_index = index

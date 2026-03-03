@@ -185,7 +185,7 @@ func update_seen_tiles() -> void:
 
 	see_markers.clear()
 	for pos in seen_tiles:
-		var marker = preload("res://scenes/debug_rect.tscn").instantiate() as DebugRect
+		var marker = preload("res://scenes/effects/red_tile_marker.tscn").instantiate() as DebugRect
 		marker.set_rect(Rect2i(pos, Vector2i.ONE))
 		see_markers.push_back(marker)
 		add_child(marker)

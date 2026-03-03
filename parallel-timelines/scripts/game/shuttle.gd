@@ -17,4 +17,5 @@ func on_character_move_finish(character: Character) -> void:
 				character.inventory_changed.emit(character)
 
 				if game_manager.game_state.remaining_keycards == 0:
-					game_manager.add_message("You escaped with the shuttle and won the game.")
+					game_manager.add_message("You escaped with the shuttle and won the game.", 120.0)
+					game_manager.game_over = true

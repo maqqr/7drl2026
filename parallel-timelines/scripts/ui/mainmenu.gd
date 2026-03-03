@@ -1,10 +1,52 @@
 extends Node
 
+@export var level_size_group: ButtonGroup
+@export var difficulty_group: ButtonGroup
 @export var start_button: Button
+@export var debug_label: RichTextLabel
+
+var selected_level_size = 0
+var selected_difficulty = 0
+
+var level_sizes = [
+	MapGenerator.SIZE_SMALL,
+	MapGenerator.SIZE_MEDIUM,
+	MapGenerator.SIZE_LARGE,
+]
+
+var difficulties = [
+	MapGenerator.EASY,
+	MapGenerator.NORMAL,
+	MapGenerator.HARD,
+	MapGenerator.ALMOST_IMPOSSIBLE,
+]
 
 func _ready() -> void:
 	start_button.pressed.connect(start_game)
+	level_size_group.pressed.connect(level_size_changed)
+	difficulty_group.pressed.connect(difficulty_changed)
+	update_debug()
 
 func start_game() -> void:
 	queue_free()
-	get_parent().add_child(preload("res://scenes/game.tscn").instantiate())
+	var game = preload("res://scenes/game.tscn").instantiate() as GameManager
+	game.chosen_parameters.merge(level_sizes[selected_level_size])
+	game.chosen_parameters.merge(difficulties[selected_difficulty])
+	get_parent().add_child(game)
+
+func level_size_changed(button: Button):
+	print("Size change ", button.get_instance_id(), " index ", button.get_index() - 1)
+	selected_level_size = button.get_index() - 1
+	update_debug()
+
+func difficulty_changed(button: Button):
+	print("Diff change ", button.get_instance_id(), " index ", button.get_index() - 1)
+	selected_difficulty = button.get_index() - 1
+	update_debug()
+
+func update_debug():
+	debug_label.text = "Debug info:\n[i]"
+	for k in level_sizes[selected_level_size]:
+		debug_label.text += k + ": " + str(level_sizes[selected_level_size][k]) + "\n"
+	for k in difficulties[selected_difficulty]:
+		debug_label.text += k + ": " + str(difficulties[selected_difficulty][k]) + "\n"

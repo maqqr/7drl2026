@@ -25,7 +25,7 @@ static var EASY: Dictionary = {
 	"max_computers": 4,
 	"keycard_count": 3,
 }
-static var MEDIUM: Dictionary = {
+static var NORMAL: Dictionary = {
 	"time_multiplier": 1.5,
 	"max_computers": 3,
 	"keycard_count": 4,

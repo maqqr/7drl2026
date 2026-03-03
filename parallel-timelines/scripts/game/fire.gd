@@ -2,7 +2,6 @@ extends GameObject
 class_name Fire
 
 var _map_position: Vector2i
-
 var turns_left = 0
 
 func _ready() -> void:

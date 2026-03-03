@@ -112,7 +112,7 @@ offset_bottom = 40.0
 mouse_filter = 2
 
 [node name="RichTextLabel_Turns" type="RichTextLabel" parent="CanvasLayer_GUI" unique_id=1721962737]
-custom_minimum_size = Vector2(160, 28)
+custom_minimum_size = Vector2(200, 28)
 anchors_preset = 2
 anchor_top = 1.0
 anchor_bottom = 1.0

@@ -19,3 +19,6 @@ func on_interact(_character: Character) -> void:
 
 func on_all_actions_finished() -> void:
 	pass
+
+func on_action_started(_character: Character, _action) -> void:
+	pass

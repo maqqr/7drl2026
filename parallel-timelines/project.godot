@@ -31,6 +31,10 @@ export/convert_text_resources_to_binary=false
 
 enabled=PackedStringArray("res://addons/corner_match_editor_plugin/plugin.cfg")
 
+[gui]
+
+theme/custom="uid://cc0puase5inag"
+
 [input]
 
 left={

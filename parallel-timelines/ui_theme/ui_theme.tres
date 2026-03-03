@@ -1,0 +1,97 @@
+[gd_resource type="Theme" format=3 uid="uid://cc0puase5inag"]
+
+[ext_resource type="FontFile" uid="uid://hx72vnusp726" path="res://ui_theme/Eldring.ttf" id="1_nn3af"]
+[ext_resource type="Texture2D" uid="uid://ctfvx3iepdald" path="res://ui_theme/button.png" id="2_8ugpu"]
+[ext_resource type="Texture2D" uid="uid://b0mjprv56t5j5" path="res://ui_theme/button_hover.png" id="2_v6fjb"]
+[ext_resource type="Texture2D" uid="uid://rdacunj4jy0s" path="res://ui_theme/panel.png" id="4_v6fjb"]
+[ext_resource type="Texture2D" uid="uid://dvkqfqiwnyhv7" path="res://ui_theme/simple_panel.png" id="5_82c4i"]
+[ext_resource type="FontFile" uid="uid://vca7s2uoqb2a" path="res://ui_theme/EldringBold.ttf" id="6_8cn0g"]
+[ext_resource type="FontFile" uid="uid://c3ty6ucyesqug" path="res://ui_theme/EldringCondensed.ttf" id="7_f1yd7"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_8ugpu"]
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_82c4i"]
+texture = ExtResource("2_v6fjb")
+texture_margin_left = 14.0
+texture_margin_top = 14.0
+texture_margin_right = 14.0
+texture_margin_bottom = 14.0
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_v6fjb"]
+texture = ExtResource("2_8ugpu")
+texture_margin_left = 14.0
+texture_margin_top = 14.0
+texture_margin_right = 14.0
+texture_margin_bottom = 14.0
+modulate_color = Color(0.636719, 0.636719, 0.636719, 1)
+
+[sub_resource type="StyleBoxLine" id="StyleBoxLine_8cn0g"]
+color = Color(0.589844, 0.589844, 0.589844, 1)
+thickness = 2
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_c1odr"]
+texture = ExtResource("4_v6fjb")
+texture_margin_left = 12.0
+texture_margin_top = 12.0
+texture_margin_right = 12.0
+texture_margin_bottom = 12.0
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_f1yd7"]
+texture = ExtResource("5_82c4i")
+texture_margin_left = 6.0
+texture_margin_top = 6.0
+texture_margin_right = 6.0
+texture_margin_bottom = 6.0
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_8cn0g"]
+texture = ExtResource("5_82c4i")
+texture_margin_left = 6.0
+texture_margin_top = 6.0
+texture_margin_right = 6.0
+texture_margin_bottom = 6.0
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_8cn0g"]
+bg_color = Color(0.671875, 0.671875, 0.671875, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_f1yd7"]
+bg_color = Color(1, 1, 1, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_sob2e"]
+bg_color = Color(0.777344, 0.777344, 0.777344, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_dxh6r"]
+bg_color = Color(0.265625, 0.265625, 0.265625, 1)
+border_width_left = 8
+border_color = Color(0.128906, 0.128906, 0.128906, 1)
+
+[sub_resource type="StyleBoxLine" id="StyleBoxLine_f1yd7"]
+color = Color(0.588235, 0.588235, 0.588235, 1)
+thickness = 4
+vertical = true
+
+[resource]
+Button/font_sizes/font_size = 23
+Button/fonts/font = ExtResource("1_nn3af")
+Button/styles/focus = SubResource("StyleBoxEmpty_8ugpu")
+Button/styles/hover = SubResource("StyleBoxTexture_82c4i")
+Button/styles/normal = SubResource("StyleBoxTexture_v6fjb")
+Button/styles/pressed = SubResource("StyleBoxTexture_v6fjb")
+HSeparator/styles/separator = SubResource("StyleBoxLine_8cn0g")
+Label/font_sizes/font_size = 23
+Label/fonts/font = ExtResource("1_nn3af")
+PanelContainer/styles/panel = SubResource("StyleBoxTexture_c1odr")
+PanelContainerSimple/base_type = &"PanelContainer"
+PanelContainerSimple/styles/panel = SubResource("StyleBoxTexture_f1yd7")
+PanelSimple/base_type = &"Panel"
+PanelSimple/styles/panel = SubResource("StyleBoxTexture_8cn0g")
+RichTextLabel/font_sizes/bold_font_size = 23
+RichTextLabel/font_sizes/italics_font_size = 23
+RichTextLabel/font_sizes/normal_font_size = 23
+RichTextLabel/fonts/bold_font = ExtResource("6_8cn0g")
+RichTextLabel/fonts/italics_font = ExtResource("7_f1yd7")
+RichTextLabel/fonts/normal_font = ExtResource("1_nn3af")
+VScrollBar/styles/grabber = SubResource("StyleBoxFlat_8cn0g")
+VScrollBar/styles/grabber_highlight = SubResource("StyleBoxFlat_f1yd7")
+VScrollBar/styles/grabber_pressed = SubResource("StyleBoxFlat_sob2e")
+VScrollBar/styles/scroll = SubResource("StyleBoxFlat_dxh6r")
+VSeparator/styles/separator = SubResource("StyleBoxLine_f1yd7")

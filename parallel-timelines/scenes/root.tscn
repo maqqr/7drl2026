@@ -49,6 +49,10 @@ shader_parameter/use_palette = false
 shader_parameter/glow_texture = SubResource("ViewportTexture_dinhu")
 shader_parameter/glow_strength = 1.0
 
+[sub_resource type="ButtonGroup" id="ButtonGroup_jh1ax"]
+
+[sub_resource type="ButtonGroup" id="ButtonGroup_kycxp"]
+
 [node name="Root" type="Node3D" unique_id=1229380050]
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1172231745]
@@ -64,7 +68,7 @@ remote_path = NodePath("../../PostProcessing/Control/SubViewportContainer/SubVie
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=804060558]
 transform = Transform3D(-0.55697703, -0.49102902, 0.66982615, 0, 0.8065065, 0.5912252, -0.8305279, 0.32929885, -0.4492056, 0, 4.84497, 0)
 light_color = Color(0.7163558, 0.6778824, 1, 1)
-light_energy = 0.05
+light_energy = 0.06
 
 [node name="PostProcessing" type="Node" parent="." unique_id=1705565781]
 
@@ -103,6 +107,7 @@ mesh = SubResource("QuadMesh_0tnpc")
 
 [node name="Camera3D" type="Camera3D" parent="PostProcessing/Control/SubViewportContainer/SubViewport" unique_id=44427725]
 transform = Transform3D(1, 0, 0, 0, 0.39073107, 0.92050487, 0, -0.92050487, 0.39073107, 7.8, 7.8, 8)
+cull_mask = 1048559
 
 [node name="CanvasLayer" type="CanvasLayer" parent="PostProcessing/Control/SubViewportContainer/SubViewport" unique_id=1825013091]
 
@@ -149,3 +154,5 @@ grow_vertical = 2
 mouse_filter = 2
 
 [node name="Mainmenu" parent="." unique_id=1660149479 instance=ExtResource("5_jh1ax")]
+level_size_group = SubResource("ButtonGroup_jh1ax")
+difficulty_group = SubResource("ButtonGroup_kycxp")

@@ -12,7 +12,10 @@ func _ready() -> void:
 	_scene = item.visual_scene.instantiate() as Node3D
 	add_child(_scene)
 
+	var marker = preload("res://scenes/effects/item_marker.tscn").instantiate()
+	add_child(marker)
+
 func _process(delta: float) -> void:
 	time += delta
 	_scene.rotate(Vector3i(0, 1, 0), 8.0 * delta)
-	transform.origin.y = 0.5 * (sin(time * 4.0) * 0.5 + 0.5)
+	_scene.transform.origin.y = 0.5 * (sin(time * 4.0) * 0.5 + 0.5)

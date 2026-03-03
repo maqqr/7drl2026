@@ -1,0 +1,163 @@
+[gd_scene format=3 uid="uid://dgnf45qjke22o"]
+
+[ext_resource type="Shader" uid="uid://cb5w7ucrdo1k" path="res://shaders/fire.tres" id="1_lhwvw"]
+[ext_resource type="Script" uid="uid://cmytp2vt0pu6t" path="res://scenes/effects/fire_effect.gd" id="1_optiu"]
+[ext_resource type="Texture2D" uid="uid://vslslovb15xw" path="res://textures/vfx_noise.png" id="2_2s1i1"]
+[ext_resource type="Shader" uid="uid://cc6efubk5pa0t" path="res://shaders/fire_bottom.tres" id="3_6jfsk"]
+[ext_resource type="Texture2D" uid="uid://5rvrhf55d0br" path="res://textures/vfx_circle.PNG" id="4_1pbkl"]
+[ext_resource type="Shader" uid="uid://d0hsebod4vkjt" path="res://shaders/heatwave.gdshader" id="5_tvuyf"]
+[ext_resource type="Script" uid="uid://gs2tle13hqje" path="res://scripts/effect/light_flicker.gd" id="6_s8gyf"]
+
+[sub_resource type="Gradient" id="Gradient_ni31j"]
+offsets = PackedFloat32Array(0.025974026, 1)
+colors = PackedColorArray(0.8359375, 0.22720172, 0.11444349, 1, 1, 0.8975278, 0.37882024, 1)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_xlvrw"]
+gradient = SubResource("Gradient_ni31j")
+fill_from = Vector2(1, 1)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_5juve"]
+render_priority = 0
+shader = ExtResource("1_lhwvw")
+shader_parameter/Fire_Color = SubResource("GradientTexture2D_xlvrw")
+shader_parameter/NoiseTexture = ExtResource("2_2s1i1")
+
+[sub_resource type="QuadMesh" id="QuadMesh_y2354"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_fy5k1"]
+render_priority = 0
+shader = ExtResource("3_6jfsk")
+shader_parameter/Fire_Color = SubResource("GradientTexture2D_xlvrw")
+shader_parameter/NoiseTexture = ExtResource("2_2s1i1")
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_5juve"]
+blend_mode = 1
+cull_mode = 2
+shading_mode = 0
+disable_ambient_light = true
+disable_fog = true
+disable_specular_occlusion = true
+vertex_color_use_as_albedo = true
+vertex_color_is_srgb = true
+albedo_texture = ExtResource("4_1pbkl")
+
+[sub_resource type="Gradient" id="Gradient_73fnb"]
+offsets = PackedFloat32Array(0.14931238, 0.27111983)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_5juve"]
+gradient = SubResource("Gradient_73fnb")
+
+[sub_resource type="Curve" id="Curve_73fnb"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(0.98130834, 0), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_5juve"]
+curve = SubResource("Curve_73fnb")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_73fnb"]
+particle_flag_align_y = true
+emission_shape = 3
+emission_box_extents = Vector3(0.4, 0.1, 0.4)
+direction = Vector3(0, 1, 0)
+spread = 0.0
+initial_velocity_min = 0.5
+initial_velocity_max = 3.0
+radial_velocity_min = -0.50002235
+radial_velocity_max = 0.49997765
+gravity = Vector3(0, 0, 0)
+scale_min = 0.79999995
+scale_max = 1.1999999
+scale_curve = SubResource("CurveTexture_5juve")
+color = Color(1.353256, 1.2513242, 0.77603394, 1)
+color_ramp = SubResource("GradientTexture1D_5juve")
+
+[sub_resource type="QuadMesh" id="QuadMesh_5juve"]
+size = Vector2(0.1, 0.5)
+
+[sub_resource type="Gradient" id="Gradient_y2354"]
+offsets = PackedFloat32Array(0, 0.2, 0.8, 1)
+colors = PackedColorArray(0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1)
+metadata/_snap_enabled = true
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_ni31j"]
+gradient = SubResource("Gradient_y2354")
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_y2354"]
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_ni31j"]
+noise = SubResource("FastNoiseLite_y2354")
+seamless = true
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_ni31j"]
+render_priority = 0
+shader = ExtResource("5_tvuyf")
+shader_parameter/noise_texture = SubResource("NoiseTexture2D_ni31j")
+shader_parameter/mask_texture = SubResource("GradientTexture1D_ni31j")
+shader_parameter/noise_speed = 0.40000000596048
+shader_parameter/noise_scale = 0.5000000074506
+shader_parameter/distortion_strength = 0.00800000038
+
+[sub_resource type="QuadMesh" id="QuadMesh_xlvrw"]
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_fy5k1"]
+noise_type = 2
+fractal_octaves = 3
+
+[sub_resource type="NoiseTexture3D" id="NoiseTexture3D_5c1cw"]
+noise = SubResource("FastNoiseLite_fy5k1")
+
+[node name="FlameSquare" type="Node3D" unique_id=454317896 node_paths=PackedStringArray("light", "fire_mesh_instances")]
+script = ExtResource("1_optiu")
+light = NodePath("OmniLight3D")
+fire_mesh_instances = [NodePath("BottomQuad"), NodePath("SideQuad1"), NodePath("SideQuad2"), NodePath("SideQuad3"), NodePath("SideQuad4")]
+
+[node name="SideQuad1" type="MeshInstance3D" parent="." unique_id=2131078711]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0.5)
+material_override = SubResource("ShaderMaterial_5juve")
+mesh = SubResource("QuadMesh_y2354")
+
+[node name="SideQuad2" type="MeshInstance3D" parent="." unique_id=1306762598]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 0.5, 0.5, 0)
+material_override = SubResource("ShaderMaterial_5juve")
+mesh = SubResource("QuadMesh_y2354")
+
+[node name="SideQuad3" type="MeshInstance3D" parent="." unique_id=1828834397]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 0, 0.5, -0.5)
+material_override = SubResource("ShaderMaterial_5juve")
+mesh = SubResource("QuadMesh_y2354")
+
+[node name="SideQuad4" type="MeshInstance3D" parent="." unique_id=467995799]
+transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, -0.5, 0.5, 0)
+material_override = SubResource("ShaderMaterial_5juve")
+mesh = SubResource("QuadMesh_y2354")
+
+[node name="BottomQuad" type="MeshInstance3D" parent="." unique_id=17660441]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 0, 0.044, 0)
+material_override = SubResource("ShaderMaterial_fy5k1")
+mesh = SubResource("QuadMesh_y2354")
+
+[node name="GPUParticles3D" type="GPUParticles3D" parent="." unique_id=1140805360]
+material_override = SubResource("StandardMaterial3D_5juve")
+amount = 10
+lifetime = 0.8
+explosiveness = 0.3
+process_material = SubResource("ParticleProcessMaterial_73fnb")
+draw_pass_1 = SubResource("QuadMesh_5juve")
+
+[node name="Heatwave" type="MeshInstance3D" parent="." unique_id=685544674]
+transform = Transform3D(1.8028668, 0, 0, 0, 1.8156832, 0.7981095, 0, -1.2295876, 1.1785367, 0, 1.6135505, 0.2701615)
+layers = 16
+sorting_offset = -2.0
+material_override = SubResource("ShaderMaterial_ni31j")
+mesh = SubResource("QuadMesh_xlvrw")
+
+[node name="OmniLight3D" type="OmniLight3D" parent="." unique_id=157660594]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.58597815, 0)
+light_color = Color(1, 0.6213909, 0.122422874, 1)
+light_energy = 0.0
+omni_range = 2.5
+script = ExtResource("6_s8gyf")
+noise_texture = SubResource("NoiseTexture3D_5c1cw")
+speed = 150.0
+base_amount = 0.05
+flicker_amount = 0.2
