@@ -1,0 +1,46 @@
+[gd_scene format=3 uid="uid://b61wdeyerm0au"]
+
+[ext_resource type="Script" uid="uid://csas6qa6p1m32" path="res://scripts/game/game_object.gd" id="1_te8oc"]
+[ext_resource type="Script" uid="uid://gs2tle13hqje" path="res://scripts/effect/light_flicker.gd" id="2_85cl1"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_e8bbj"]
+size = Vector3(0.3, 0.15, 0.15)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_te8oc"]
+emission_enabled = true
+emission = Color(0.71083194, 0.9925387, 1, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_85cl1"]
+material = SubResource("StandardMaterial3D_te8oc")
+size = Vector3(0.3, 0.15, 0.15)
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_0i1dm"]
+
+[sub_resource type="NoiseTexture3D" id="NoiseTexture3D_xxedu"]
+noise = SubResource("FastNoiseLite_0i1dm")
+
+[node name="WallLight" type="Node3D" unique_id=2044326142]
+script = ExtResource("1_te8oc")
+rotate_away_from_wall = true
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=150017797]
+transform = Transform3D(1, 0, 0, 0, 0.7109246, 0, 0, 0, 1, 0, 0.85174274, -0.6)
+mesh = SubResource("BoxMesh_e8bbj")
+
+[node name="MeshInstance3D2" type="MeshInstance3D" parent="MeshInstance3D" unique_id=895241324]
+transform = Transform3D(0.8001441, 0, 0, 0, 0.8459339, 0, 0, 0, 0.2739511, 0, 0, 0.08478165)
+mesh = SubResource("BoxMesh_85cl1")
+
+[node name="SpotLight3D" type="SpotLight3D" parent="MeshInstance3D" unique_id=1279672786]
+transform = Transform3D(-0.9999998, 2.2670154e-08, -7.950691e-08, -3.0424395e-08, 1.2702104, 0.72569495, 7.950445e-08, 0.44662353, -0.85222584, 0, 0, 0.15042192)
+light_color = Color(0.78776443, 0.9775731, 1, 1)
+light_energy = 0.15
+spot_range = 4.0
+spot_angle = 60.0
+script = ExtResource("2_85cl1")
+light_type = 1
+noise_texture = SubResource("NoiseTexture3D_xxedu")
+speed = 20.0
+base_amount = 0.1
+flicker_amount = 0.01
+cutoff_value = 0.01

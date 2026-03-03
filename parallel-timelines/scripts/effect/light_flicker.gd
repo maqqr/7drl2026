@@ -17,6 +17,7 @@ var time_passed = 0.0
 
 func _ready() -> void:
 	time_passed = randf() * 10000.0
+	total_intensity = 1.0
 
 func _process(delta) -> void:
 	time_passed += delta

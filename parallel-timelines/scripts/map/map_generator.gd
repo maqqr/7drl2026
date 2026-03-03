@@ -52,6 +52,7 @@ enum RoomPlanTile {
 	COMPUTER = 7,
 	CLOSET = 8,
 	CRATE = 9,
+	WALL_LIGHT = 10,
 }
 
 const PLAN_TO_OBJECT: Dictionary[RoomPlanTile, PackedScene] = {
@@ -60,6 +61,7 @@ const PLAN_TO_OBJECT: Dictionary[RoomPlanTile, PackedScene] = {
 	RoomPlanTile.COMPUTER: preload("res://scenes/gameobjects/computer.tscn"),
 	RoomPlanTile.CLOSET: preload("res://scenes/gameobjects/closet.tscn"),
 	RoomPlanTile.CRATE: preload("res://scenes/gameobjects/crate.tscn"),
+	RoomPlanTile.WALL_LIGHT: preload("res://scenes/gameobjects/wall_light.tscn"),
 }
 
 enum RoomTheme {
@@ -108,6 +110,7 @@ static func _convert_plan_tile(plan_tile: RoomPlanTile) -> Enum.TileType:
 		RoomPlanTile.COMPUTER: return Enum.TileType.OBJECT_BLOCKING_TRANSPARENT
 		RoomPlanTile.CLOSET: return Enum.TileType.OBJECT_NONBLOCKING_OPAQUE
 		RoomPlanTile.CRATE: return Enum.TileType.OBJECT_BLOCKING_TRANSPARENT
+		RoomPlanTile.WALL_LIGHT: return Enum.TileType.OBJECT_NONBLOCKING_TRANSPARENT
 	assert(false) # Missing tile handling
 	return Enum.TileType.FLOOR
 
@@ -659,6 +662,7 @@ func _decorate_random_room(room: Rect2i, theme: RoomTheme) -> void:
 	var table = preload("res://scenes/gameobjects/table.tscn")
 	var chair_left = preload("res://scenes/gameobjects/chair_left.tscn")
 	var chair_right = preload("res://scenes/gameobjects/chair_right.tscn")
+	var wall_light = preload("res://scenes/gameobjects/wall_light.tscn")
 	match theme:
 		RoomTheme.TECH:
 			for i in range(max(room.size.x, room.size.y)):
@@ -704,3 +708,10 @@ func _decorate_random_room(room: Rect2i, theme: RoomTheme) -> void:
 			var pos = result.position
 			tile_map.set_tile(pos, Enum.TileType.OBJECT_NONBLOCKING_OPAQUE)
 			planned_objects.push_back(PlannedObject.new(closet, pos))
+
+	# Try to place a light
+	var light_result = _find_free_pos_next_to_wall(room)
+	if light_result.success:
+		var pos = light_result.position
+		tile_map.set_tile(pos, Enum.TileType.OBJECT_NONBLOCKING_TRANSPARENT)
+		planned_objects.push_back(PlannedObject.new(wall_light, pos))
