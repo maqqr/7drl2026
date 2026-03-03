@@ -32,7 +32,7 @@ func execute_action(game_manager: GameManager, delta: float) -> void:
 	if ongoing_action:
 		if ongoing_action.execute(game_manager, self, delta):
 			if ongoing_action is MoveAction:
-				spotlight.light_energy = 0.0 if game_manager.game_state.safe_room.has_point(map_position) else 1.0
+				spotlight.light_energy = 0.0 if game_manager.game_state.safe_room.has_point(map_position) else 0.2
 				_pickup_items_on_ground(game_manager)
 				if invisibility_turns > 0:
 					invisibility_turns -= 1

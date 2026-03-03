@@ -13,5 +13,7 @@ void fragment() {
     col += texture(screen_texture, SCREEN_UV + vec2(3.0 * -SCREEN_PIXEL_SIZE.x, 0.0)).xyz * 0.09;
     col += texture(screen_texture, SCREEN_UV + vec2(4.0 * SCREEN_PIXEL_SIZE.x, 0.0)).xyz * 0.05;
     col += texture(screen_texture, SCREEN_UV + vec2(4.0 * -SCREEN_PIXEL_SIZE.x, 0.0)).xyz * 0.05;
+	col += texture(screen_texture, SCREEN_UV + vec2(5.0 * SCREEN_PIXEL_SIZE.x, 0.0)).xyz * 0.04;
+    col += texture(screen_texture, SCREEN_UV + vec2(5.0 * -SCREEN_PIXEL_SIZE.x, 0.0)).xyz * 0.04;
     COLOR.xyz = col;
 }
