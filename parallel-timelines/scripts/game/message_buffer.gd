@@ -16,12 +16,15 @@ const MSG_OUT_OF_TURNS: String = "[i]Just before the ship explodes, your suit's 
 const MSG_DROP: String = "[i]You drop the {item}.[/i]"
 const MSG_THROW: String = "[i]You throw the {item}.[/i]"
 const MSG_USE_ITEM: String = "[i]You use the {item}.[/i]"
-const MSG_EXPLODED: String = "[i]You exploded, but fortunately it caused your suit's time travel module to activate.[/i]"
+const MSG_EXPLODED: String = "[i]You exploded, but it caused your suit's time travel module to activate.[/i]"
 const MSG_COMPUTER: String = "[i]You use the computer to delay the ship's self-destruct by {turn_count} turns.[/i]"
 const MSG_EXPLOSION_TRAP: String = "[i]You stepped on a trap and hear an explosion somewhere.[/i]"
 const MSG_HIDE: String = "[i]You hide in the empty storage unit.[/i]"
 const MSG_DEAD: String = "[i]Just before you die, your suit's time travel module activates.[/i]"
 const MSG_THROW_SELECT_TILE: String = "[i]Select tile where to throw.[/i]"
+const MSG_WIN: String = "[i]You managed to escape with the shuttle.[/i]"
+const MSG_WIN_OTHER: String = "[i]At least one of you managed to escape with the shuttle.[/i]"
+const MSG_INV_FULL: String = "[i]You cannot take the {item}, your inventory is full.[/i]"
 
 func clear() -> void:
 	for child in $VBoxContainer.get_children():

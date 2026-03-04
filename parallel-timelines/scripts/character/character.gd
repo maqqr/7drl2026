@@ -7,6 +7,7 @@ var map_position: Vector2i
 var spawn_position: Vector2i
 var look_direction: Vector2i
 var items: Array[ItemType]
+var initial_items: Array[ItemType]
 
 var invisibility_turns = 0
 var invisibility_effect_node: Node3D
@@ -15,8 +16,13 @@ var max_health = 3
 var health = 3
 
 @onready var spotlight = $SpotLight3D
+@onready var audio_player = $AudioStreamPlayer3D
 
 signal inventory_changed(character: Character)
+
+func play_warp_audio():
+	audio_player.stream = preload("res://audio/timewarp.ogg")
+	audio_player.play()
 
 func make_invisible(turns: int) -> void:
 	invisibility_turns = turns
@@ -61,7 +67,11 @@ func _pickup_items_on_ground(game_manager: GameManager) -> void:
 			pickup.push_back(item_on_ground)
 
 	for item_on_ground in pickup:
-		pickup_item(game_manager, item_on_ground.item)
-		if game_manager.game_state.player == self:
-			game_manager.add_message(MessageBuffer.MSG_PICKUP.format({ "a": "an" if item_on_ground.item.an_article else "a", "item": item_on_ground.item.name }))
-		game_manager.game_state.remove_item(item_on_ground)
+		if items.size() < game_manager.MAX_INVENTORY:
+			pickup_item(game_manager, item_on_ground.item)
+			if game_manager.game_state.player == self:
+				game_manager.add_message(MessageBuffer.MSG_PICKUP.format({ "a": "an" if item_on_ground.item.an_article else "a", "item": item_on_ground.item.name }))
+			game_manager.game_state.remove_item(item_on_ground)
+		else:
+			if game_manager.game_state.player == self:
+				game_manager.add_message(MessageBuffer.MSG_INV_FULL.format({ "item": item_on_ground.item.name }))

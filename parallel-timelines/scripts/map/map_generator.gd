@@ -5,7 +5,7 @@ static var SIZE_SMALL: Dictionary = {
 	"width": 31,
 	"height": 30,
 	"extra_corridor_count": 2,
-	"traps": 1,
+	"traps": 2,
 }
 static var SIZE_MEDIUM: Dictionary = {
 	"width": 31,
@@ -37,6 +37,11 @@ static var HARD: Dictionary = {
 }
 static var ALMOST_IMPOSSIBLE: Dictionary = {
 	"time_multiplier": 1.0,
+	"max_computers": 0,
+	"keycard_count": 5,
+}
+static var IMPOSSIBLE: Dictionary = {
+	"time_multiplier": 0.7,
 	"max_computers": 0,
 	"keycard_count": 5,
 }
@@ -409,6 +414,8 @@ func _read_premade_room(path: StringName) -> PremadeRoom:
 	return room
 
 func _make_keycards() -> void:
+	var astar = _make_normal_astar()
+
 	var potential_rooms: Array[Rect2i] = []
 	potential_rooms.append_array(random_room_rects)
 	while keycard_positions.size() < parameters.keycard_count and not potential_rooms.is_empty():
@@ -421,17 +428,27 @@ func _make_keycards() -> void:
 				if tile_map.get_tile(pos) == Enum.TileType.FLOOR:
 					floors.push_back(pos)
 
-		if not floors.is_empty():
-			keycard_positions.push_back(floors[rng.randi_range(0, floors.size() - 1)])
+		while not floors.is_empty():
+			var floor_index = rng.randi_range(0, floors.size() - 1)
+			var path = astar.get_id_path(floors[floor_index], escape_pod_position)
+			if not path.is_empty():
+				keycard_positions.push_back(floors[floor_index])
+				break
+			else:
+				floors.remove_at(floor_index)
 
 		potential_rooms.remove_at(index)
 
 	# Just find any random floor if needed
 	if keycard_positions.size() < parameters.keycard_count:
+		var attempts = 0
 		var floor_positions = _find_tiles_by_type(Enum.TileType.FLOOR)
-		while keycard_positions.size() < parameters.keycard_count:
+		while keycard_positions.size() < parameters.keycard_count or attempts > 100:
+			attempts += 1
 			var pos = floor_positions[rng.randi_range(0, floor_positions.size() - 1)]
-			keycard_positions.push_back(pos)
+			var path = astar.get_id_path(pos, escape_pod_position)
+			if not path.is_empty():
+				keycard_positions.push_back(pos)
 
 	assert(keycard_positions.size() == parameters.keycard_count)
 	assert(KEYCARD_ITEMS.size() >= keycard_positions.size())
@@ -624,7 +641,8 @@ func _find_free_pos_next_to_wall(room: Rect2i) -> Dictionary:
 
 	return { "success": false }
 
-func _can_find_path_to_escape_pod(room: Rect2i, extra_wall: Vector2i):
+# Pathfinding suitable for characters
+func _make_normal_astar() -> AStarGrid2D:
 	var astar = AStarGrid2D.new()
 	astar.region = Rect2i(0, 0, tile_map.width, tile_map.height)
 	astar.diagonal_mode = AStarGrid2D.DIAGONAL_MODE_NEVER
@@ -637,6 +655,22 @@ func _can_find_path_to_escape_pod(room: Rect2i, extra_wall: Vector2i):
 				Enum.TileType.WALL: astar.set_point_solid(pos, true)
 				Enum.TileType.OBJECT_BLOCKING_OPAQUE: astar.set_point_solid(pos, true)
 				Enum.TileType.OBJECT_BLOCKING_TRANSPARENT: astar.set_point_solid(pos, true)
+	return astar
+
+func _can_find_path_to_escape_pod(room: Rect2i, extra_wall: Vector2i):
+	var astar = _make_normal_astar()
+	#var astar = AStarGrid2D.new()
+	#astar.region = Rect2i(0, 0, tile_map.width, tile_map.height)
+	#astar.diagonal_mode = AStarGrid2D.DIAGONAL_MODE_NEVER
+	#astar.update()
+	#for y in range(0, tile_map.height):
+		#for x in range(0, tile_map.width):
+			#var pos = Vector2i(x, y)
+			#match tile_map.get_tile(pos):
+				#Enum.TileType.EMPTY: astar.set_point_solid(pos, true)
+				#Enum.TileType.WALL: astar.set_point_solid(pos, true)
+				#Enum.TileType.OBJECT_BLOCKING_OPAQUE: astar.set_point_solid(pos, true)
+				#Enum.TileType.OBJECT_BLOCKING_TRANSPARENT: astar.set_point_solid(pos, true)
 
 	astar.set_point_solid(extra_wall, true)
 	for y in range(room.position.y, room.position.y + room.size.y - 1):
@@ -669,7 +703,7 @@ func _decorate_random_room(room: Rect2i, theme: RoomTheme) -> void:
 				var result = _find_free_pos_next_to_wall(room)
 				if result.success and _can_find_path_to_escape_pod(room, result.position):
 					var obj = computer if randf() < 0.3 else used_computer
-					if placed_computers > parameters.max_computers:
+					if placed_computers >= parameters.max_computers:
 						obj = used_computer
 
 					var pos = result.position

@@ -6,6 +6,8 @@
 [ext_resource type="Shader" uid="uid://c8fyamgl2l2r4" path="res://shaders/colorrect_dither_glow.gdshader" id="4_j287u"]
 [ext_resource type="PackedScene" uid="uid://d1ca7hji0ju4w" path="res://scenes/mainmenu.tscn" id="5_jh1ax"]
 [ext_resource type="PackedScene" uid="uid://dffeynk4lyb3g" path="res://scenes/effects/warp_effect.tscn" id="6_kycxp"]
+[ext_resource type="AudioStream" uid="uid://by32sy6j1vr77" path="res://audio/ambient.mp3" id="7_j287u"]
+[ext_resource type="Script" uid="uid://4yu06x4fa108" path="res://scripts/game/music.gd" id="8_5sfjl"]
 
 [sub_resource type="Environment" id="Environment_gee14"]
 background_mode = 1
@@ -50,9 +52,9 @@ shader_parameter/use_palette = false
 shader_parameter/glow_texture = SubResource("ViewportTexture_dinhu")
 shader_parameter/glow_strength = 1.0
 
-[sub_resource type="ButtonGroup" id="ButtonGroup_jh1ax"]
+[sub_resource type="ButtonGroup" id="ButtonGroup_5sfjl"]
 
-[sub_resource type="ButtonGroup" id="ButtonGroup_kycxp"]
+[sub_resource type="ButtonGroup" id="ButtonGroup_3hfy5"]
 
 [node name="Root" type="Node3D" unique_id=1229380050]
 
@@ -155,8 +157,12 @@ grow_vertical = 2
 mouse_filter = 2
 
 [node name="Mainmenu" parent="." unique_id=1660149479 instance=ExtResource("5_jh1ax")]
-level_size_group = SubResource("ButtonGroup_jh1ax")
-difficulty_group = SubResource("ButtonGroup_kycxp")
+level_size_group = SubResource("ButtonGroup_5sfjl")
+difficulty_group = SubResource("ButtonGroup_3hfy5")
 
 [node name="WarpEffect" parent="." unique_id=95820578 instance=ExtResource("6_kycxp")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8, 0, 5)
+
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="." unique_id=720740724]
+stream = ExtResource("7_j287u")
+script = ExtResource("8_5sfjl")

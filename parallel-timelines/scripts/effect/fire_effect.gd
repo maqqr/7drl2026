@@ -15,5 +15,5 @@ func _process(delta: float) -> void:
 
 	light.total_intensity = intensity
 
-	for fire_mesh in fire_mesh_instances:
-		fire_mesh.set_instance_shader_parameter("Intensity", intensity)
+	#for fire_mesh in fire_mesh_instances:
+		#fire_mesh.set_instance_shader_parameter("Intensity", intensity)

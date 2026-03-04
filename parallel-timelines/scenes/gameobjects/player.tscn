@@ -32,3 +32,6 @@ mesh = SubResource("BoxMesh_2s7gj")
 transform = Transform3D(-1, 0, 8.742278e-08, 3.4548854e-08, 0.9185982, 0.3951928, -8.030641e-08, 0.3951928, -0.9185982, 0, 1.3545687, 0.43466663)
 light_energy = 0.0
 spot_angle = 63.837288
+
+[node name="AudioStreamPlayer3D" type="AudioStreamPlayer3D" parent="." unique_id=2073793541]
+unit_size = 6.0

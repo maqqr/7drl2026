@@ -8,6 +8,8 @@ var progress: float = 0.0
 var duration: float = 0.1
 var target_angle: float
 
+var started = false
+
 func _init(p_target_tile: Vector2i, p_direction: Vector2i) -> void:
 	target_tile = p_target_tile
 	direction = p_direction
@@ -18,6 +20,11 @@ func can_execute(_game_manager: GameManager, _character: Character) -> bool:
 	return true
 
 func execute(game_manager: GameManager, character: Character, delta: float) -> bool:
+	if not started:
+		started = true
+		if game_manager.game_state.player == character:
+			duration = 0.3
+
 	progress = min(1.0, progress + delta / duration)
 	character.global_rotation.y = lerp_angle(character.global_rotation.y, target_angle, progress)
 	var done = progress >= 1.0

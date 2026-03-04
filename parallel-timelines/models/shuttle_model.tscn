@@ -1,0 +1,9 @@
+[gd_scene format=3 uid="uid://y0kitiwndva7"]
+
+[ext_resource type="PackedScene" uid="uid://b5q3xbcouyeqi" path="res://models/shuttle.glb" id="1_w205m"]
+[ext_resource type="Material" uid="uid://dxscctjlx51uy" path="res://models/basic_palette.tres" id="2_hjmea"]
+
+[node name="shuttle" unique_id=1793861449 instance=ExtResource("1_w205m")]
+
+[node name="Shuttle" parent="." index="0" unique_id=964946348]
+surface_material_override/0 = ExtResource("2_hjmea")

@@ -83,6 +83,11 @@ layout_mode = 2
 button_group = SubResource("ButtonGroup_natt5")
 text = "Almost impossible"
 
+[node name="CheckButton5" type="CheckButton" parent="PanelContainer2/VBoxContainer" unique_id=72467338]
+layout_mode = 2
+button_group = SubResource("ButtonGroup_natt5")
+text = "Impossible"
+
 [node name="DebugLabel" type="RichTextLabel" parent="." unique_id=872536381]
 offset_left = 546.0
 offset_top = 39.0

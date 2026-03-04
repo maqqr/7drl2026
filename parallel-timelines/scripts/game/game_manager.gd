@@ -3,6 +3,7 @@ class_name GameManager
 
 const DEV_MODE = false
 const FILL_DARKNESS = not DEV_MODE
+const MAX_INVENTORY = 3
 
 const MOVE_KEYS: Dictionary[String, Vector2i] = {
 	"right": Vector2i(1, 0),
@@ -14,6 +15,7 @@ const MOVE_KEYS: Dictionary[String, Vector2i] = {
 class Timeline:
 	var spawn_position: Vector2i
 	var actions = []
+	var initial_items = []
 
 class ScreenShake:
 	var intensity = 0.0
@@ -23,9 +25,11 @@ class ScreenShake:
 	var shake_time_speed = 40.0
 	var noise = FastNoiseLite.new()
 
+	func _init() -> void:
+		noise.frequency = 2.0
+
 	func shake(p_intensity: float, p_time: float) -> void:
 		noise.seed = randi()
-		noise.frequency = 2.0
 		intensity = p_intensity
 		active_shake_time = p_time
 		shake_time = 0.0
@@ -67,6 +71,8 @@ var item_throw_index = Vector2i.MAX.x
 
 var screen_shake = ScreenShake.new()
 
+var quit_to_menu_timer = null
+
 var chosen_parameters: Dictionary
 
 func _ready() -> void:
@@ -81,11 +87,21 @@ func _ready() -> void:
 	start_new_game()
 
 func _process(delta: float) -> void:
+	if quit_to_menu_timer != null:
+		quit_to_menu_timer -= delta
+		if quit_to_menu_timer <= 0.0:
+			var menu = load("res://scenes/mainmenu.tscn").instantiate()
+			get_parent().add_child(menu)
+			queue_free()
+
 	if not (game_state != null and game_state.is_initialized):
 		return
 
+	game_state.game_manager_process(self, delta)
+
 	if timewarp_queued:
 		timewarp_queued = false
+		game_state.player.play_warp_audio()
 		await get_tree().create_timer(3).timeout
 		timewarp()
 		game_over = false
@@ -156,6 +172,7 @@ func _process(delta: float) -> void:
 		if game_state.remaining_turns <= 0:
 			add_message(MessageBuffer.MSG_OUT_OF_TURNS)
 			game_over = true
+			game_state.player.play_warp_audio()
 			await get_tree().create_timer(3).timeout
 			timewarp()
 			game_over = false
@@ -280,13 +297,35 @@ func _unhandled_input(event: InputEvent) -> void:
 	if DEV_MODE:
 		if event is InputEventMouseButton:
 			if event.pressed and event.button_index == 1:
-				var eff = preload("res://scenes/effects/warp_effect.tscn").instantiate() as Node3D
-				eff.transform.origin = TileMap2D.to_scene_pos(get_mouse_tile())
-				game_state.add_child(eff)
-				#explode_at(get_mouse_tile(), 1)
+				#var eff = preload("res://scenes/effects/warp_effect.tscn").instantiate() as Node3D
+				#eff.transform.origin = TileMap2D.to_scene_pos(get_mouse_tile())
+				#game_state.add_child(eff)
+				fake_explode_at(get_mouse_tile(), 3)
 			#if event.pressed:
 				#var tile = Enum.TileType.WALL if event.button_index == 1 else Enum.TileType.FLOOR
 				#game_state.tile_map.set_tile(get_mouse_tile(), tile)
+
+func fake_explode_at(pos: Vector2i, radius: int):
+	for dy in range(-radius, radius + 1):
+		for dx in range(-radius, radius + 1):
+			var tile_pos = pos + Vector2i(dx, dy)
+			if tile_pos.distance_squared_to(pos) <= radius * radius:
+				# Create fire
+				if tile_pos.distance_squared_to(pos) <= (radius - 1) * (radius - 1):
+					var tile = game_state.tile_map.get_tile(tile_pos)
+					if tile != Enum.TileType.EMPTY and tile != Enum.TileType.WALL:
+						game_state.create_game_object_at(self, preload("res://scenes/gameobjects/fire.tscn"), tile_pos)
+
+	var explosion_effect = preload("res://scenes/effects/explosion_effect.tscn").instantiate()
+	explosion_effect.transform.origin = TileMap2D.to_scene_pos(pos)
+	game_state.add_child(explosion_effect)
+
+	# Screen shake
+	var intensity = 1.2
+	var distance = pos.distance_to(game_state.player.map_position)
+	if distance > 12:
+		intensity = max(0.1, intensity - (distance - 12) * 0.08)
+	screen_shake.shake(intensity, 4.0)
 
 func explode_at(pos: Vector2i, radius: int):
 	for dy in range(-radius, radius + 1):
@@ -335,7 +374,7 @@ func explode_at(pos: Vector2i, radius: int):
 		game_state.remove_character(player)
 		for item in player.items:
 			if item.is_keycard:
-				game_state.create_item_at(item, player.map_position)
+				game_state.create_item_at(item, player.map_position, false)
 
 	need_sight_check = true
 
@@ -383,9 +422,15 @@ func timewarp() -> void:
 	# Store current timeline
 	var timeline = Timeline.new()
 	timeline.spawn_position = game_state.player.spawn_position
+	timeline.initial_items = game_state.player.initial_items
 	timeline.actions = recorded_actions
 	recorded_actions = []
 	parallel_timelines.push_back(timeline)
+
+	var warped_items: Array[ItemType] = []
+	for item in game_state.player.items:
+		if not item.is_keycard:
+			warped_items.push_back(item)
 
 	# Clear old game state
 	remove_child(game_state)
@@ -396,11 +441,19 @@ func timewarp() -> void:
 	add_child(game_state)
 	set_remaining_turns(game_state.remaining_turns)
 
+	# Set initial items
+	game_state.player.initial_items = warped_items
+	for item in warped_items:
+		game_state.player.items.push_back(item)
+	game_state.player.inventory_changed.emit(game_state.player)
+
 	# Create old timelines
 	for old_timeline in parallel_timelines:
 		var character = game_state.create_character_at(old_timeline.spawn_position)
 		for action in old_timeline.actions:
 			character.past_actions.push_back(action.clone())
+		for item in old_timeline.initial_items:
+			character.items.push_back(item)
 		game_state.past_players.push_back(character)
 
 	add_message(MessageBuffer.MSG_WAKE_UP)

@@ -45,3 +45,6 @@ mesh = SubResource("BoxMesh_uvdjg")
 [node name="Floor" type="MeshInstance3D" parent="." unique_id=1501358836]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 0.32429117, 0, 0, 0)
 mesh = SubResource("QuadMesh_83dcw")
+
+[node name="AudioStreamPlayer3D" type="AudioStreamPlayer3D" parent="." unique_id=1836441486]
+unit_size = 5.0

@@ -30,6 +30,8 @@ var remaining_turns = 0
 
 var current_seed: int
 
+var time_until_next_fake_expl = 0.0 # Explosions for game over effect
+
 var is_initialized = false
 
 signal initialized
@@ -50,6 +52,10 @@ func _ready() -> void:
 	player = create_character_at(player_spawn_position)
 	player.inventory_changed.connect(game_manager.inventory_ui.update)
 	game_manager.inventory_ui.update(player)
+	
+	var audio_listener = AudioListener3D.new()
+	player.add_child(audio_listener)
+	audio_listener.make_current()
 
 	# Create door objects
 	for y in range(tile_map.height):
@@ -77,10 +83,19 @@ func _ready() -> void:
 
 	# Create items
 	for planned_item in planned_items:
-		create_item_at(planned_item.item_type, planned_item.tile_position)
+		create_item_at(planned_item.item_type, planned_item.tile_position, false)
 
 	is_initialized = true
 	initialized.emit()
+
+func game_manager_process(game_manager: GameManager, delta: float) -> void:
+	if remaining_turns <= 0:
+		time_until_next_fake_expl -= delta
+		if time_until_next_fake_expl <= 0.0:
+			time_until_next_fake_expl = randf() * 0.7
+			var pos = Vector2i(randi_range(0, tile_map.width - 1), randi_range(0, tile_map.height - 1))
+			if tile_map.get_tile(pos) != Enum.TileType.EMPTY:
+				game_manager.fake_explode_at(pos, 3)
 
 func create_game_object_at(game_manager: GameManager, packed_scene: PackedScene, pos: Vector2i) -> void:
 	var obj = packed_scene.instantiate() as Node3D
@@ -110,7 +125,7 @@ func create_character_at(pos: Vector2i) -> Character:
 func kill_character(character: Character):
 	remove_character(character)
 	for item in character.items:
-		create_item_at(item, character.map_position)
+		create_item_at(item, character.map_position, false)
 
 func remove_character(character: Character):
 	if player == character:
@@ -119,12 +134,20 @@ func remove_character(character: Character):
 	past_players.erase(character)
 	remove_child(character)
 
-func create_item_at(item_type: ItemType, pos: Vector2i) -> ItemOnGround:
+func create_item_at(item_type: ItemType, pos: Vector2i, play_audio: bool) -> ItemOnGround:
 	var item_on_ground = ItemOnGround.new()
 	item_on_ground.item = item_type
 	item_on_ground.map_position = pos
 	items.push_back(item_on_ground)
 	add_child(item_on_ground)
+
+	if play_audio:
+		var audio = AudioStreamPlayer3D.new()
+		audio.stream = preload("res://audio/drop_item.ogg")
+		audio.unit_size = 5.0
+		item_on_ground.add_child(audio)
+		audio.play()
+
 	return item_on_ground
 
 func remove_item(item_on_ground: ItemOnGround):

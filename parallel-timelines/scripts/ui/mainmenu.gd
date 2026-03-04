@@ -19,6 +19,7 @@ var difficulties = [
 	MapGenerator.NORMAL,
 	MapGenerator.HARD,
 	MapGenerator.ALMOST_IMPOSSIBLE,
+	MapGenerator.IMPOSSIBLE,
 ]
 
 func _ready() -> void:

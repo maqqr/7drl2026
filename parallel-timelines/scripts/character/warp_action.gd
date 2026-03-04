@@ -2,7 +2,7 @@ extends RefCounted
 class_name WarpAction
 
 var progress: float = 0.0
-var duration: float = 0.1
+var duration: float = 0.25
 
 var started = false
 
@@ -18,7 +18,11 @@ func execute(game_manager: GameManager, character: Character, delta: float) -> b
 		game_manager.game_state.add_child(effect)
 
 		if game_manager.game_state.player == character:
-			duration = 1.5
+			duration = 2.2
+			character.play_warp_audio()
+		else:
+			character.audio_player.stream = preload("res://audio/timewarp_other.ogg")
+			character.audio_player.play()
 
 	progress = min(1.0, progress + delta / duration)
 	var done = progress >= 1.0
@@ -30,7 +34,7 @@ func execute(game_manager: GameManager, character: Character, delta: float) -> b
 			game_manager.need_sight_check = true
 			for item in character.items:
 				if item.is_keycard:
-					game_manager.game_state.create_item_at(item, character.map_position)
+					game_manager.game_state.create_item_at(item, character.map_position, false)
 
 	return done
 
