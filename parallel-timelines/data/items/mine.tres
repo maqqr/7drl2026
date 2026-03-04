@@ -8,6 +8,7 @@
 [resource]
 script = ExtResource("1_nu8mo")
 name = "mine"
+tooltip_text = "Dropping is safe, throwing activates it."
 inventory_icon = ExtResource("1_7f3gf")
 visual_scene = ExtResource("3_3dhy7")
 can_drop = true

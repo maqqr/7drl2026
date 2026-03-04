@@ -4,6 +4,7 @@ class_name ItemType
 
 @export var name: String
 @export var an_article: bool
+@export_multiline var tooltip_text: String
 @export var inventory_icon: Texture2D
 @export var visual_scene: PackedScene
 @export var is_keycard: bool

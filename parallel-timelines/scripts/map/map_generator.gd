@@ -21,12 +21,12 @@ static var SIZE_LARGE: Dictionary = {
 }
 
 static var EASY: Dictionary = {
-	"time_multiplier": 1.8,
+	"time_multiplier": 1.6,
 	"max_computers": 4,
 	"keycard_count": 3,
 }
 static var NORMAL: Dictionary = {
-	"time_multiplier": 1.5,
+	"time_multiplier": 1.4,
 	"max_computers": 3,
 	"keycard_count": 4,
 }
@@ -41,7 +41,7 @@ static var ALMOST_IMPOSSIBLE: Dictionary = {
 	"keycard_count": 5,
 }
 static var IMPOSSIBLE: Dictionary = {
-	"time_multiplier": 0.7,
+	"time_multiplier": 0.8,
 	"max_computers": 0,
 	"keycard_count": 5,
 }

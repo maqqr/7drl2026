@@ -43,6 +43,7 @@ alignment = 2
 visible = false
 layout_mode = 2
 size_flags_horizontal = 4
+theme_type_variation = &"PanelContainerSimple"
 
 [node name="VBoxContainer_ActionButtons" type="HBoxContainer" parent="VBoxContainer/PanelContainer" unique_id=1077843414]
 layout_mode = 2
@@ -70,6 +71,7 @@ text = "Cancel"
 [node name="PanelContainer2" type="PanelContainer" parent="VBoxContainer" unique_id=1558009869]
 layout_mode = 2
 size_flags_horizontal = 4
+theme_type_variation = &"PanelContainerSimple"
 
 [node name="HBoxContainer_ItemButtons" type="HBoxContainer" parent="VBoxContainer/PanelContainer2" unique_id=2028544897]
 layout_mode = 2

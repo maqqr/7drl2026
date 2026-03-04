@@ -52,6 +52,7 @@ func _ready() -> void:
 	player = create_character_at(player_spawn_position)
 	player.inventory_changed.connect(game_manager.inventory_ui.update)
 	game_manager.inventory_ui.update(player)
+	player.health_changed.connect(game_manager.update_stats_ui)
 	
 	var audio_listener = AudioListener3D.new()
 	player.add_child(audio_listener)

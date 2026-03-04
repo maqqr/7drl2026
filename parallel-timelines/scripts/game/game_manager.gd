@@ -3,7 +3,7 @@ class_name GameManager
 
 const DEV_MODE = false
 const FILL_DARKNESS = not DEV_MODE
-const MAX_INVENTORY = 3
+const MAX_INVENTORY = 5
 
 const MOVE_KEYS: Dictionary[String, Vector2i] = {
 	"right": Vector2i(1, 0),
@@ -35,8 +35,10 @@ class ScreenShake:
 		shake_time = 0.0
 
 @onready var message_buffer: MessageBuffer = $CanvasLayer_GUI/MessageBuffer
-@onready var turns_label: RichTextLabel = $CanvasLayer_GUI/RichTextLabel_Turns
+@onready var turns_label: Label = $CanvasLayer_GUI/Stats/PanelContainer/VBoxContainer/Label_Turns
+@onready var health_label: Label = $CanvasLayer_GUI/Stats/PanelContainer/VBoxContainer/Label_Health
 @onready var inventory_ui: InventoryUi = $CanvasLayer_GUI/Inventory
+@onready var timewarp_button: Button = $CanvasLayer_GUI/Button_Timewarp
 @onready var cursor: Node3D = $Cursor
 @onready var aim_line: Node3D = $AimLine
 var original_tilemap: TileMap2D
@@ -83,6 +85,8 @@ func _ready() -> void:
 	inventory_ui.item_used.connect(_on_item_use)
 	inventory_ui.item_dropped.connect(_on_item_drop)
 	inventory_ui.item_thrown.connect(_on_item_throw)
+
+	timewarp_button.pressed.connect(_on_timewarp_button_pressed)
 
 	start_new_game()
 
@@ -255,7 +259,6 @@ func _process(delta: float) -> void:
 			var d = debug_rect_green_scene.instantiate() as DebugRect
 			d.set_rect(Rect2i(pos, Vector2i.ONE))
 			debug_rects.add_child(d)
-		#game_state.player.pickup_item(self, preload("res://data/items/mine.tres"))
 
 func is_input_enabled() -> bool:
 	return not game_over and \
@@ -410,6 +413,10 @@ func add_message(msg: String, extra_time: float = 0.0) -> void:
 func set_remaining_turns(turns: int) -> void:
 	game_state.remaining_turns = turns
 	turns_label.text = "Turns left: " + str(game_state.remaining_turns)
+	turns_label.self_modulate = Color.WHITE if turns > 10 else Color.YELLOW
+
+func update_stats_ui(character: Character):
+	health_label.text = "Health: " + str(character.health) + " / " + str(character.max_health)
 
 func lose_due_to_sight() -> void:
 	add_message(MessageBuffer.MSG_LOSE)
@@ -536,6 +543,11 @@ func start_new_game() -> void:
 		game_state.player.look_direction = MOVE_KEYS[key]
 		reveal_darkness()
 
+	# Move the first player to right one tile so two players are visible after
+	# the first timewarp, hopefully causing less confusion for new players
+	game_state.player.spawn_position += Vector2i(1, 0)
+	game_state.player.teleport_to(game_state.player.map_position + Vector2i(1, 0))
+
 	debug_rects.get_children().map(func (c): c.queue_free())
 	var rects = []
 	#rects.append(map_generator.spawn_room_rect)
@@ -589,18 +601,12 @@ func _on_item_use(index: int) -> void:
 	if not is_input_enabled():
 		return
 	var item_type = game_state.player.items[index]
-	#game_state.player.ongoing_action = UseItemAction.new(item_type, index)
-	#recorded_actions.push_back(game_state.player.ongoing_action)
-	#advance_game = true
 	queued_action = UseItemAction.new(item_type, index)
 
 func _on_item_drop(index: int) -> void:
 	if not is_input_enabled():
 		return
 	var item_type = game_state.player.items[index]
-	#game_state.player.ongoing_action = DropItemAction.new(item_type, index)
-	#recorded_actions.push_back(game_state.player.ongoing_action)
-	#advance_game = true
 	queued_action = DropItemAction.new(item_type, index)
 
 func _on_item_throw(index: int) -> void:
@@ -610,3 +616,11 @@ func _on_item_throw(index: int) -> void:
 	add_message(MessageBuffer.MSG_THROW_SELECT_TILE)
 	targeting = true
 	item_throw_index = index
+
+func _on_timewarp_button_pressed() -> void:
+	if not is_input_enabled():
+		return
+
+	#game_state.player.ongoing_action = WarpAction.new()
+	#recorded_actions.push_back(game_state.player.ongoing_action)
+	queued_action = WarpAction.new()

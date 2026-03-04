@@ -18,6 +18,7 @@ var health = 3
 @onready var spotlight = $SpotLight3D
 @onready var audio_player = $AudioStreamPlayer3D
 
+signal health_changed(character: Character)
 signal inventory_changed(character: Character)
 
 func play_warp_audio():

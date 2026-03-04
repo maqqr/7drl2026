@@ -5,6 +5,7 @@
 [ext_resource type="Script" uid="uid://bwstuco036cun" path="res://scripts/game/message_buffer.gd" id="2_yqjtg"]
 [ext_resource type="Material" uid="uid://bx3vtju7y3aml" path="res://models/debug_rect_mat.tres" id="3_iywne"]
 [ext_resource type="PackedScene" uid="uid://nppsj3un683g" path="res://scenes/ui/inventory/inventory.tscn" id="3_lnu2h"]
+[ext_resource type="Texture2D" uid="uid://cm3ed0vsl86of" path="res://textures/timewarp.png" id="6_p57ef"]
 
 [sub_resource type="BoxMesh" id="BoxMesh_8cj0n"]
 size = Vector3(0.1, 0.1, 1)
@@ -126,3 +127,43 @@ scroll_active = false
 autowrap_mode = 0
 
 [node name="Inventory" parent="CanvasLayer_GUI" unique_id=2037613832 instance=ExtResource("3_lnu2h")]
+
+[node name="Stats" type="Control" parent="CanvasLayer_GUI" unique_id=323630755]
+layout_mode = 3
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_top = -40.0
+offset_right = 40.0
+grow_vertical = 0
+
+[node name="PanelContainer" type="PanelContainer" parent="CanvasLayer_GUI/Stats" unique_id=694751397]
+custom_minimum_size = Vector2(190, 0)
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_top = -72.0
+offset_right = 178.0
+grow_vertical = 0
+theme_type_variation = &"PanelContainerSimple"
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer_GUI/Stats/PanelContainer" unique_id=243933959]
+layout_mode = 2
+
+[node name="Label_Health" type="Label" parent="CanvasLayer_GUI/Stats/PanelContainer/VBoxContainer" unique_id=1501723816]
+layout_mode = 2
+text = "Health: 3 / 3"
+
+[node name="Label_Turns" type="Label" parent="CanvasLayer_GUI/Stats/PanelContainer/VBoxContainer" unique_id=1334592926]
+layout_mode = 2
+text = "Turns left: 0"
+
+[node name="Button_Timewarp" type="Button" parent="CanvasLayer_GUI" unique_id=401397576]
+offset_left = 626.0
+offset_top = 434.0
+offset_right = 686.0
+offset_bottom = 494.0
+tooltip_text = "Jump back in time"
+theme_type_variation = &"ButtonItem"
+icon = ExtResource("6_p57ef")

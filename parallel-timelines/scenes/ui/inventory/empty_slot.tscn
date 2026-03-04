@@ -1,0 +1,6 @@
+[gd_scene format=3 uid="uid://bg0f0k7p3in13"]
+
+[node name="EmptySlot" type="Panel" unique_id=2123586283]
+self_modulate = Color(0.28515625, 0.28515625, 0.28515625, 1)
+custom_minimum_size = Vector2(60, 60)
+theme_type_variation = &"PanelSimple"

@@ -7,6 +7,7 @@
 [resource]
 script = ExtResource("1_3w68e")
 name = "teleball"
+tooltip_text = "Teleports you to where you throw it."
 inventory_icon = ExtResource("1_pc6jt")
 visual_scene = ExtResource("3_4n34y")
 can_drop = true

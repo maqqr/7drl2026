@@ -10,6 +10,7 @@ class_name InventoryUi
 @export var cancel_button: Button
 
 var item_button: PackedScene = preload("res://scenes/ui/inventory/item_button.tscn")
+var empty_slot: PackedScene = preload("res://scenes/ui/inventory/empty_slot.tscn")
 var pressed_index = null
 
 signal item_used(index: int)
@@ -62,5 +63,13 @@ func update(character: Character) -> void:
 		var button = item_button.instantiate() as Button
 		button.icon = item.inventory_icon
 		button.pressed.connect(on_item_button_pressed.bind(character, i))
+		button.tooltip_text = item.name[0].to_upper() + item.name.substr(1)
+		if item.tooltip_text.length() > 0:
+			button.tooltip_text += "\n" + item.tooltip_text
 		item_button_container.add_child(button)
+		i += 1
+
+	while i < GameManager.MAX_INVENTORY:
+		var slot = empty_slot.instantiate()
+		item_button_container.add_child(slot)
 		i += 1

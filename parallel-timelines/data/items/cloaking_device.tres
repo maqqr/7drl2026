@@ -7,6 +7,7 @@
 [resource]
 script = ExtResource("1_aqlwb")
 name = "cloaking device"
+tooltip_text = "Use to turn invisible for 20 turns."
 inventory_icon = ExtResource("1_g1mij")
 visual_scene = ExtResource("2_2qubi")
 can_use = true

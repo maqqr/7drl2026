@@ -16,8 +16,9 @@ func on_character_move_finish(character: Character) -> void:
 
 	if character.map_position == _map_position:
 		character.health -= 1
+		character.health_changed.emit(character)
 		if game_manager.game_state.player == character:
-			game_manager.add_message("You take 1 damage from the fire. Hit points left " + str(character.health) + " / " + str(character.max_health) + ".")
+			game_manager.add_message(MessageBuffer.MSG_FIRE_DAMAGE)
 
 func on_all_actions_finished() -> void:
 	turns_left -= 1

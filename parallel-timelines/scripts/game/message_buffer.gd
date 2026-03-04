@@ -25,6 +25,7 @@ const MSG_THROW_SELECT_TILE: String = "[i]Select tile where to throw.[/i]"
 const MSG_WIN: String = "[i]You managed to escape with the shuttle.[/i]"
 const MSG_WIN_OTHER: String = "[i]At least one of you managed to escape with the shuttle.[/i]"
 const MSG_INV_FULL: String = "[i]You cannot take the {item}, your inventory is full.[/i]"
+const MSG_FIRE_DAMAGE: String = "[i]You take 1 damage from the fire.[/i]"
 
 func clear() -> void:
 	for child in $VBoxContainer.get_children():

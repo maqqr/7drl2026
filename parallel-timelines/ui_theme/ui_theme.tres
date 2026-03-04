@@ -25,6 +25,41 @@ texture_margin_right = 14.0
 texture_margin_bottom = 14.0
 modulate_color = Color(0.636719, 0.636719, 0.636719, 1)
 
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_dxh6r"]
+content_margin_left = 0.0
+content_margin_top = 0.0
+content_margin_right = 0.0
+content_margin_bottom = 0.0
+texture = ExtResource("2_v6fjb")
+texture_margin_left = 14.0
+texture_margin_top = 14.0
+texture_margin_right = 14.0
+texture_margin_bottom = 14.0
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_sob2e"]
+content_margin_left = 0.0
+content_margin_top = 0.0
+content_margin_right = 0.0
+content_margin_bottom = 0.0
+texture = ExtResource("2_8ugpu")
+texture_margin_left = 14.0
+texture_margin_top = 14.0
+texture_margin_right = 14.0
+texture_margin_bottom = 14.0
+modulate_color = Color(0.636719, 0.636719, 0.636719, 1)
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_flppx"]
+content_margin_left = 0.0
+content_margin_top = 0.0
+content_margin_right = 0.0
+content_margin_bottom = 0.0
+texture = ExtResource("2_8ugpu")
+texture_margin_left = 14.0
+texture_margin_top = 14.0
+texture_margin_right = 14.0
+texture_margin_bottom = 14.0
+modulate_color = Color(0.636719, 0.636719, 0.636719, 1)
+
 [sub_resource type="StyleBoxLine" id="StyleBoxLine_8cn0g"]
 color = Color(0.589844, 0.589844, 0.589844, 1)
 thickness = 2
@@ -76,6 +111,10 @@ Button/styles/focus = SubResource("StyleBoxEmpty_8ugpu")
 Button/styles/hover = SubResource("StyleBoxTexture_82c4i")
 Button/styles/normal = SubResource("StyleBoxTexture_v6fjb")
 Button/styles/pressed = SubResource("StyleBoxTexture_v6fjb")
+ButtonItem/base_type = &"Button"
+ButtonItem/styles/hover = SubResource("StyleBoxTexture_dxh6r")
+ButtonItem/styles/normal = SubResource("StyleBoxTexture_sob2e")
+ButtonItem/styles/pressed = SubResource("StyleBoxTexture_flppx")
 HSeparator/styles/separator = SubResource("StyleBoxLine_8cn0g")
 Label/font_sizes/font_size = 23
 Label/fonts/font = ExtResource("1_nn3af")
