@@ -2,10 +2,13 @@
 
 [ext_resource type="Script" uid="uid://2dvtc1a73k7c" path="res://scripts/effect/darkness_fade.gd" id="1_5j32q"]
 [ext_resource type="ArrayMesh" uid="uid://iq6j1ya7jveh" path="res://models/darkness_mesh.res" id="1_phdn0"]
+[ext_resource type="Material" uid="uid://dnf6blotyot21" path="res://models/darkness_mat.tres" id="3_ji6bk"]
 
 [node name="Darkness" type="Node3D" unique_id=924265394]
+process_mode = 4
 script = ExtResource("1_5j32q")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=665803989]
 transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 0, 0, 0)
 mesh = ExtResource("1_phdn0")
+surface_material_override/0 = ExtResource("3_ji6bk")

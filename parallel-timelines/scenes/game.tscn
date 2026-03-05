@@ -5,6 +5,7 @@
 [ext_resource type="Script" uid="uid://bwstuco036cun" path="res://scripts/game/message_buffer.gd" id="2_yqjtg"]
 [ext_resource type="Material" uid="uid://bx3vtju7y3aml" path="res://models/debug_rect_mat.tres" id="3_iywne"]
 [ext_resource type="PackedScene" uid="uid://nppsj3un683g" path="res://scenes/ui/inventory/inventory.tscn" id="3_lnu2h"]
+[ext_resource type="AudioStream" uid="uid://ywuu2snciv1" path="res://audio/rumble.ogg" id="4_0tnpc"]
 [ext_resource type="PackedScene" uid="uid://cx1k1hfvldxh4" path="res://scenes/effects/background_stars.tscn" id="4_u5sy4"]
 [ext_resource type="Texture2D" uid="uid://cm3ed0vsl86of" path="res://textures/timewarp.png" id="6_p57ef"]
 [ext_resource type="Script" uid="uid://bpe7mxdgtxlb4" path="res://scripts/ui/tooltip_button.gd" id="8_gee14"]
@@ -47,6 +48,11 @@ visible = false
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0.5)
 mesh = SubResource("QuadMesh_iywne")
 surface_material_override/0 = ExtResource("2_lbhrr")
+
+[node name="AudioStreamPlayer_Rumble" type="AudioStreamPlayer" parent="." unique_id=778546143]
+stream = ExtResource("4_0tnpc")
+volume_db = -80.0
+autoplay = true
 
 [node name="BackgroundStars" parent="." unique_id=1816344847 instance=ExtResource("4_u5sy4")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -6.832199, -29.888079)

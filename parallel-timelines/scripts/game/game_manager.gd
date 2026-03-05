@@ -42,6 +42,7 @@ class ScreenShake:
 @onready var timewarp_button: Button = $CanvasLayer_GUI/Button_Timewarp
 @onready var cursor: Node3D = $Cursor
 @onready var aim_line: Node3D = $AimLine
+@onready var rumble_audio_player = $AudioStreamPlayer_Rumble
 var original_tilemap: TileMap2D
 var map_generator: MapGenerator
 
@@ -406,8 +407,11 @@ func reveal_darkness() -> void:
 			if darkness.get_value(checked_pos) == 1:
 				if game_state.can_see(game_state.player, checked_pos, true):
 					darkness.set_value(checked_pos, 0)
-					remove_child(darkness_nodes[checked_pos])
+					#remove_child(darkness_nodes[checked_pos])
+					darkness_nodes[checked_pos].process_mode = Node.PROCESS_MODE_INHERIT
+					darkness_nodes[checked_pos].fade = true
 					darkness_nodes.erase(checked_pos)
+					
 
 func add_message(msg: String, extra_time: float = 0.0) -> void:
 	message_buffer.add_message(msg, extra_time)
@@ -416,6 +420,7 @@ func set_remaining_turns(turns: int) -> void:
 	game_state.remaining_turns = turns
 	turns_label.text = "Turns left: " + str(game_state.remaining_turns)
 	turns_label.self_modulate = Color.WHITE if turns > 10 else Color.YELLOW
+	rumble_audio_player.volume_linear = clamp(1.2 - (game_state.remaining_turns / 12.0), 0.0, 1.2)
 
 func update_stats_ui(character: Character):
 	if character != game_state.player:
