@@ -3,6 +3,7 @@ class_name TileMapRenderer
 
 class MultiMeshHelper:
 	var transforms: Array[Transform3D]
+	var tile_positions: Array[Vector2i]
 	var multimesh_instance: MultiMeshInstance3D
 
 	func _init(parent: Node3D, mesh: Mesh):
@@ -21,7 +22,7 @@ class MultiMeshHelper:
 var floor_mesh: Mesh = preload("res://models/hull/floor_mesh.res")
 var corner_matches: Array[CornerMatch]
 var tile_map: TileMap2D
-var update_queued = false
+var queued_removes: Dictionary[Vector2i, bool] = {}
 
 class Chunk:
 	const SIZE = 8
@@ -47,23 +48,53 @@ func _ready() -> void:
 				corner_matches.push_back(corner_match.get_rotated_90().get_rotated_90().get_rotated_90())
 
 func _process(_delta: float) -> void:
-	if update_queued:
-		update_queued = false
-		make_meshes()
+	#if update_queued:
+	#	update_queued = false
+	#	make_meshes()
+	if not queued_removes.is_empty():
+		var affected_chunks: Array[Chunk] = []
+		for pos in queued_removes:
+			var subgrid_pos = pos * 2
+			var chunk = _get_chunk(subgrid_pos)
+			if not affected_chunks.has(chunk):
+				affected_chunks.push_back(chunk)
+
+		for chunk in affected_chunks:
+			for mesh in chunk.multimeshes:
+				if mesh == floor_mesh:
+					continue
+
+				var new_transforms: Array[Transform3D] = []
+				var new_tile_positions: Array[Vector2i] = []
+				var multimesh_helper = chunk.multimeshes[mesh]
+				assert(multimesh_helper.tile_positions.size() == multimesh_helper.transforms.size())
+				for i in range(multimesh_helper.tile_positions.size()):
+					if not queued_removes.has(multimesh_helper.tile_positions[i]):
+						new_transforms.push_back(multimesh_helper.transforms[i])
+						new_tile_positions.push_back(multimesh_helper.tile_positions[i])
+
+				multimesh_helper.transforms = new_transforms
+				multimesh_helper.tile_positions = new_tile_positions
+				multimesh_helper.update_multimesh()
+
+		queued_removes.clear()
 
 func set_tile_map(new_tile_map: TileMap2D):
 	tile_map = new_tile_map
 	tile_map.tile_changed.connect(_on_tile_map_change)
 	make_meshes()
 
-func _on_tile_map_change(_pos: Vector2i, _old_tile: Enum.TileType, _new_tile: Enum.TileType):
-	#make_meshes()
-	update_queued = true
+func _on_tile_map_change(pos: Vector2i, _old_tile: Enum.TileType, new_tile: Enum.TileType):
+	if new_tile == Enum.TileType.FLOOR:
+		queued_removes[pos] = true
+	else:
+		make_meshes()
 
 func make_meshes() -> void:
 	for chunk_pos in chunks:
 		for mesh in chunks[chunk_pos].multimeshes:
 			chunks[chunk_pos].multimeshes[mesh].transforms.clear()
+			chunks[chunk_pos].multimeshes[mesh].tile_positions.clear()
 
 	var wall_subgrid = Array2D.new(tile_map.width * 2, tile_map.height * 2, 0)
 	for y in range(tile_map.height):
@@ -75,6 +106,7 @@ func make_meshes() -> void:
 				wall_subgrid.set_value(Vector2i(x * 2, y * 2 + 1), 1)
 				wall_subgrid.set_value(Vector2i(x * 2 + 1, y * 2 + 1), 1)
 			if tile != Enum.TileType.EMPTY:
+				# Create floor models
 				var chunk = _get_chunk(Vector2i(x * 2, y * 2))
 				if not chunk.multimeshes.has(floor_mesh):
 					chunk.multimeshes[floor_mesh] = MultiMeshHelper.new(self, floor_mesh)
@@ -83,7 +115,9 @@ func make_meshes() -> void:
 				var multimesh_helper = chunk.multimeshes[floor_mesh]
 				var mm_basis = Basis.from_scale(Vector3(0.5, 0.5, 0.5))
 				multimesh_helper.transforms.push_back(Transform3D(mm_basis, scene_position))
+				multimesh_helper.tile_positions.push_back(Vector2i(x, y))
 
+	# Create wall models
 	for y in range(wall_subgrid.height):
 		for x in range(wall_subgrid.width):
 			for corner_match in corner_matches:
@@ -97,6 +131,8 @@ func make_meshes() -> void:
 					var multimesh_helper = chunk.multimeshes[corner_match.mesh]
 					var mm_basis = Basis.from_scale(Vector3(0.5, 0.5, 0.5)).rotated(Vector3(0, 1, 0), -corner_match.rotation_90_count * PI * 0.5)
 					multimesh_helper.transforms.push_back(Transform3D(mm_basis, scene_position))
+					@warning_ignore("integer_division")
+					multimesh_helper.tile_positions.push_back(Vector2i(x / 2, y / 2))
 
 	for chunk_pos in chunks:
 		for mesh in chunks[chunk_pos].multimeshes:

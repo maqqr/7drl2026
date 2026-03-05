@@ -304,7 +304,8 @@ func _unhandled_input(event: InputEvent) -> void:
 				#var eff = preload("res://scenes/effects/warp_effect.tscn").instantiate() as Node3D
 				#eff.transform.origin = TileMap2D.to_scene_pos(get_mouse_tile())
 				#game_state.add_child(eff)
-				fake_explode_at(get_mouse_tile(), 3)
+				#fake_explode_at(get_mouse_tile(), 3)
+				explode_at(get_mouse_tile(), 3)
 			#if event.pressed:
 				#var tile = Enum.TileType.WALL if event.button_index == 1 else Enum.TileType.FLOOR
 				#game_state.tile_map.set_tile(get_mouse_tile(), tile)

@@ -63,12 +63,10 @@ func start_game() -> void:
 	get_parent().add_child(game)
 
 func level_size_changed(button: Button):
-	print("Size change ", button.get_instance_id(), " index ", button.get_index() - 1)
 	selected_level_size = button.get_index() - 1
 	update_debug()
 
 func difficulty_changed(button: Button):
-	print("Diff change ", button.get_instance_id(), " index ", button.get_index() - 1)
 	selected_difficulty = button.get_index() - 1
 	update_debug()
 

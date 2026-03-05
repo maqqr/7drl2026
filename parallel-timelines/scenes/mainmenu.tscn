@@ -242,11 +242,11 @@ text = "Start game"
 
 [node name="Button_Tutorial" type="Button" parent="Control_LevelSelect" unique_id=1779040068]
 layout_mode = 0
-offset_left = 132.0
-offset_top = 339.0
-offset_right = 313.0
-offset_bottom = 395.0
-text = "View tutorial"
+offset_left = 150.0
+offset_top = 335.0
+offset_right = 292.0
+offset_bottom = 391.0
+text = "View help"
 
 [node name="PanelContainer_Size" type="PanelContainer" parent="Control_LevelSelect" unique_id=421565058]
 layout_mode = 0
@@ -365,11 +365,20 @@ grow_vertical = 2
 [node name="VBoxContainer" type="VBoxContainer" parent="Control_Tutorial/PanelContainer" unique_id=1325945873]
 layout_mode = 2
 
-[node name="RichTextLabel" type="RichTextLabel" parent="Control_Tutorial/PanelContainer/VBoxContainer" unique_id=1190431526]
+[node name="MarginContainer" type="MarginContainer" parent="Control_Tutorial/PanelContainer/VBoxContainer" unique_id=2100296454]
+layout_mode = 2
+
+[node name="RichTextLabel" type="RichTextLabel" parent="Control_Tutorial/PanelContainer/VBoxContainer/MarginContainer" unique_id=1190431526]
 layout_mode = 2
 size_flags_vertical = 3
 bbcode_enabled = true
-text = "Tutorial"
+text = "The ship is about to explode and you are the only one left. Find the keycards and bring them to the escape shuttle before time runs out.
+[img]res://textures/items/green_keycard.png[/img][i]You can deliver the keycards one by one or all at once.[/i]
+[img]res://textures/timewarp.png[/img][i]You can travel back in time. Dying also throws you back in time.
+[color=red]You lose the game if any of your past selves sees the current you.[/color][/i]
+[img]res://textures/tutorial/tutorial_crate.png[/img][i]Walk towards a crate to open it and get items. You can only carry 5 of them. Click on an item to use, throw or drop it.[/i]
+[img]res://textures/tutorial/tutorial_computer.png[/img][i]Find and use computers to delay the ship's destruction.[/i]
+[i]Use WASD or arrow keys to move. Space bar waits one turn. Press G to jump back in time.[/i]"
 fit_content = true
 
 [node name="Button_CloseTutorial" type="Button" parent="Control_Tutorial/PanelContainer/VBoxContainer" unique_id=1576388608]
