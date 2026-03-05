@@ -22,6 +22,7 @@ func can_execute(_game_manager: GameManager, _character: Character) -> bool:
 func execute(game_manager: GameManager, character: Character, delta: float) -> bool:
 	if not started:
 		started = true
+		character.look_direction = direction
 		character.animation_player.play(character.USE_ANIM)
 		if game_manager.game_state.player == character:
 			duration = 0.3

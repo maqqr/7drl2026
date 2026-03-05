@@ -19,5 +19,8 @@ func on_interact(character: Character) -> void:
 	var turn_count = 15
 	game_manager.set_remaining_turns(game_manager.game_state.remaining_turns + turn_count)
 
+	character.audio_player.stream = preload("res://audio/computer_use.ogg")
+	character.audio_player.play()
+
 	if game_manager.game_state.player == character:
 		game_manager.add_message(MessageBuffer.MSG_COMPUTER.format({ "turn_count": turn_count }))

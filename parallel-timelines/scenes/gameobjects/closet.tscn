@@ -1,6 +1,7 @@
 [gd_scene format=3 uid="uid://cs24omnpnn3f6"]
 
 [ext_resource type="Script" uid="uid://jorfhltkcrul" path="res://scripts/game/closet.gd" id="1_422r3"]
+[ext_resource type="PackedScene" uid="uid://bibq5go5pxn87" path="res://models/closet_model.tscn" id="2_ef5l4"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_0pwos"]
 albedo_color = Color(1, 0.37480474, 0.38972723, 1)
@@ -14,4 +15,7 @@ rotate_away_from_wall = true
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=627394733]
 transform = Transform3D(1, 0, 0, 0, 1.4312372, 0, 0, 0, 0.49108052, 0, 0.7103623, 0)
+visible = false
 mesh = SubResource("BoxMesh_422r3")
+
+[node name="closet" parent="." unique_id=883099725 instance=ExtResource("2_ef5l4")]

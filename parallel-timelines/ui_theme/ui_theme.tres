@@ -101,6 +101,8 @@ texture_margin_top = 6.0
 texture_margin_right = 6.0
 texture_margin_bottom = 6.0
 
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_sob2e"]
+
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_8cn0g"]
 bg_color = Color(0.671875, 0.671875, 0.671875, 1)
 
@@ -149,6 +151,7 @@ RichTextLabel/font_sizes/normal_font_size = 23
 RichTextLabel/fonts/bold_font = ExtResource("6_8cn0g")
 RichTextLabel/fonts/italics_font = ExtResource("7_f1yd7")
 RichTextLabel/fonts/normal_font = ExtResource("1_nn3af")
+TooltipPanel/styles/panel = SubResource("StyleBoxEmpty_sob2e")
 VScrollBar/styles/grabber = SubResource("StyleBoxFlat_8cn0g")
 VScrollBar/styles/grabber_highlight = SubResource("StyleBoxFlat_f1yd7")
 VScrollBar/styles/grabber_pressed = SubResource("StyleBoxFlat_sob2e")

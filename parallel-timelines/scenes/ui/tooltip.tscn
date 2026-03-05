@@ -1,0 +1,24 @@
+[gd_scene format=3 uid="uid://dqtv7qkg61nty"]
+
+[node name="Tooltip" type="PanelContainer" unique_id=1617171861]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_type_variation = &"PanelContainerSimple"
+
+[node name="MarginContainer" type="MarginContainer" parent="." unique_id=685463429]
+layout_mode = 2
+theme_override_constants/margin_left = 4
+theme_override_constants/margin_top = 4
+theme_override_constants/margin_right = 4
+theme_override_constants/margin_bottom = 4
+
+[node name="RichTextLabel" type="RichTextLabel" parent="MarginContainer" unique_id=28175295]
+texture_filter = 1
+custom_minimum_size = Vector2(400, 0)
+layout_mode = 2
+bbcode_enabled = true
+text = "Text"
+fit_content = true

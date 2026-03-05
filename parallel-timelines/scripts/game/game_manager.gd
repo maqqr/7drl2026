@@ -35,6 +35,7 @@ class ScreenShake:
 		shake_time = 0.0
 
 @onready var message_buffer: MessageBuffer = $CanvasLayer_GUI/MessageBuffer
+@onready var invisibility_label: Label = $CanvasLayer_GUI/Stats/PanelContainer/VBoxContainer/Label_Invisible
 @onready var turns_label: Label = $CanvasLayer_GUI/Stats/PanelContainer/VBoxContainer/Label_Turns
 @onready var health_label: Label = $CanvasLayer_GUI/Stats/PanelContainer/VBoxContainer/Label_Health
 @onready var inventory_ui: InventoryUi = $CanvasLayer_GUI/Inventory
@@ -67,6 +68,7 @@ var timewarp_queued = false
 
 var targeting = false
 var aim_line_unblocked = false
+var aim_tile: Vector2i
 var item_throw_index = Vector2i.MAX.x
 @export var green_aim_line_material: Material
 @export var red_aim_line_material: Material
@@ -133,6 +135,7 @@ func _process(delta: float) -> void:
 			var look_vec = TileMap2D.to_scene_pos(target_tile) - TileMap2D.to_scene_pos(start_tile)
 			aim_line.scale.z = look_vec.length()
 			aim_line_unblocked = game_state.can_see(game_state.player, target_tile, true)
+			aim_tile = target_tile
 			if not game_state.can_move_to(target_tile):
 				aim_line_unblocked = false
 			var aim_mesh = aim_line.get_child(0) as MeshInstance3D
@@ -248,18 +251,18 @@ func _process(delta: float) -> void:
 				else:
 					_trigger_action_starts(past_player, past_player.ongoing_action)
 
-	if Input.is_action_just_pressed("debug"):
-		for y in range(darkness.height):
-			for x in range(darkness.width):
-				var pos = Vector2i(x, y)
-				if darkness.get_value(pos) == 1:
-					darkness.set_value(pos, 0)
-					remove_child(darkness_nodes[pos])
-					darkness_nodes.erase(pos)
-		for pos in map_generator.debug_path:
-			var d = debug_rect_green_scene.instantiate() as DebugRect
-			d.set_rect(Rect2i(pos, Vector2i.ONE))
-			debug_rects.add_child(d)
+	#if Input.is_action_just_pressed("debug"):
+		#for y in range(darkness.height):
+			#for x in range(darkness.width):
+				#var pos = Vector2i(x, y)
+				#if darkness.get_value(pos) == 1:
+					#darkness.set_value(pos, 0)
+					#remove_child(darkness_nodes[pos])
+					#darkness_nodes.erase(pos)
+		#for pos in map_generator.debug_path:
+			#var d = debug_rect_green_scene.instantiate() as DebugRect
+			#d.set_rect(Rect2i(pos, Vector2i.ONE))
+			#debug_rects.add_child(d)
 
 func is_input_enabled() -> bool:
 	return not game_over and \
@@ -293,10 +296,9 @@ func _unhandled_input(event: InputEvent) -> void:
 		if event.pressed and (event.button_index == 1 or event.button_index == 2):
 			if targeting:
 				targeting = false
-				var target_tile = get_mouse_tile()
-				if event.button_index == 1 and aim_line_unblocked and game_state.player.map_position != target_tile:
+				if event.button_index == 1 and aim_line_unblocked and game_state.player.map_position != aim_tile:
 					var item_type = game_state.player.items[item_throw_index]
-					queued_action = ThrowItemAction.new(target_tile, item_type, item_throw_index)
+					queued_action = ThrowItemAction.new(aim_tile, item_type, item_throw_index)
 
 	if DEV_MODE:
 		if event is InputEventMouseButton:
@@ -416,7 +418,13 @@ func set_remaining_turns(turns: int) -> void:
 	turns_label.self_modulate = Color.WHITE if turns > 10 else Color.YELLOW
 
 func update_stats_ui(character: Character):
+	if character != game_state.player:
+		return
+
 	health_label.text = "Health: " + str(character.health) + " / " + str(character.max_health)
+	invisibility_label.visible = character.invisibility_turns > 0
+	if character.invisibility_turns > 0:
+		invisibility_label.text = "Invisibility: " + str(character.invisibility_turns)
 
 func lose_due_to_sight() -> void:
 	add_message(MessageBuffer.MSG_LOSE)
@@ -463,8 +471,8 @@ func timewarp() -> void:
 			character.items.push_back(item)
 		game_state.past_players.push_back(character)
 
+	update_stats_ui(game_state.player)
 	add_message(MessageBuffer.MSG_WAKE_UP)
-	#print("Time warp done")
 
 func restart_game() -> void:
 	remove_child(game_state)
@@ -536,6 +544,9 @@ func start_new_game() -> void:
 	set_remaining_turns(game_state.remaining_turns)
 
 	add_message(MessageBuffer.MSG_NEW_GAME)
+
+	game_state.player.audio_player.stream = preload("res://audio/ship_alarm.ogg")
+	game_state.player.audio_player.play()
 
 	# Look in all directions to see the initial room
 	for key in MOVE_KEYS:

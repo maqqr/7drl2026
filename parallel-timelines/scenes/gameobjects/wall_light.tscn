@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://b61wdeyerm0au"]
 
-[ext_resource type="Script" uid="uid://csas6qa6p1m32" path="res://scripts/game/game_object.gd" id="1_te8oc"]
+[ext_resource type="Script" uid="uid://bvfjfv0ivcqd1" path="res://scripts/game/wall_light.gd" id="1_85cl1"]
 [ext_resource type="Script" uid="uid://gs2tle13hqje" path="res://scripts/effect/light_flicker.gd" id="2_85cl1"]
 
 [sub_resource type="BoxMesh" id="BoxMesh_e8bbj"]
@@ -14,13 +14,35 @@ emission = Color(0.71083194, 0.9925387, 1, 1)
 material = SubResource("StandardMaterial3D_te8oc")
 size = Vector3(0.3, 0.15, 0.15)
 
+[sub_resource type="CylinderMesh" id="CylinderMesh_85cl1"]
+top_radius = 1.3
+bottom_radius = 0.1
+height = 1.3
+radial_segments = 16
+cap_top = false
+cap_bottom = false
+
+[sub_resource type="Gradient" id="Gradient_85cl1"]
+offsets = PackedFloat32Array(0, 0.7990654)
+colors = PackedColorArray(1, 1, 1, 0.23529412, 0, 0, 0, 0)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_0i1dm"]
+gradient = SubResource("Gradient_85cl1")
+fill_from = Vector2(1, 0.491453)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_xxedu"]
+transparency = 1
+albedo_color = Color(0.7635509, 0.9700709, 1, 1)
+albedo_texture = SubResource("GradientTexture2D_0i1dm")
+rim_enabled = true
+
 [sub_resource type="FastNoiseLite" id="FastNoiseLite_0i1dm"]
 
 [sub_resource type="NoiseTexture3D" id="NoiseTexture3D_xxedu"]
 noise = SubResource("FastNoiseLite_0i1dm")
 
 [node name="WallLight" type="Node3D" unique_id=2044326142]
-script = ExtResource("1_te8oc")
+script = ExtResource("1_85cl1")
 rotate_away_from_wall = true
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=150017797]
@@ -30,6 +52,11 @@ mesh = SubResource("BoxMesh_e8bbj")
 [node name="MeshInstance3D2" type="MeshInstance3D" parent="MeshInstance3D" unique_id=895241324]
 transform = Transform3D(0.8001441, 0, 0, 0, 0.8459339, 0, 0, 0, 0.2739511, 0, 0, 0.08478165)
 mesh = SubResource("BoxMesh_85cl1")
+
+[node name="MeshInstance3D_Volume" type="MeshInstance3D" parent="MeshInstance3D" unique_id=2096962646]
+transform = Transform3D(0.999999, 0, 0, 0, -0.68121904, -0.7320792, 0, 0.73207825, -0.6812182, 0, -0.46867585, 0.526423)
+mesh = SubResource("CylinderMesh_85cl1")
+surface_material_override/0 = SubResource("StandardMaterial3D_xxedu")
 
 [node name="SpotLight3D" type="SpotLight3D" parent="MeshInstance3D" unique_id=1279672786]
 transform = Transform3D(-0.9999998, 2.2670154e-08, -7.950691e-08, -3.0424395e-08, 1.2702104, 0.72569495, 7.950445e-08, 0.44662353, -0.85222584, 0, 0, 0.15042192)

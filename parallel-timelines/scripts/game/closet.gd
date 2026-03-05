@@ -8,5 +8,6 @@ func _ready() -> void:
 
 func on_character_move_finish(character: Character) -> void:
 	if character.map_position == _map_position:
+		character.visible = false
 		if game_manager.game_state.player == character:
 			game_manager.add_message(MessageBuffer.MSG_HIDE)

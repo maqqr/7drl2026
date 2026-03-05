@@ -63,7 +63,7 @@ func update(character: Character) -> void:
 		var button = item_button.instantiate() as Button
 		button.icon = item.inventory_icon
 		button.pressed.connect(on_item_button_pressed.bind(character, i))
-		button.tooltip_text = item.name[0].to_upper() + item.name.substr(1)
+		button.tooltip_text = "[b]" + item.name[0].to_upper() + item.name.substr(1) + "[/b]"
 		if item.tooltip_text.length() > 0:
 			button.tooltip_text += "\n" + item.tooltip_text
 		item_button_container.add_child(button)

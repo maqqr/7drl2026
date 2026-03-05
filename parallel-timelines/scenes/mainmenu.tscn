@@ -376,7 +376,7 @@ text = "The ship is about to explode and you are the only one left. Find the key
 [img]res://textures/items/green_keycard.png[/img][i]You can deliver the keycards one by one or all at once.[/i]
 [img]res://textures/timewarp.png[/img][i]You can travel back in time. Dying also throws you back in time.
 [color=red]You lose the game if any of your past selves sees the current you.[/color][/i]
-[img]res://textures/tutorial/tutorial_crate.png[/img][i]Walk towards a crate to open it and get items. You can only carry 5 of them. Click on an item to use, throw or drop it.[/i]
+[img]res://textures/tutorial/tutorial_crate.png[/img][i]Walk towards a crate to open it and get items. You can only carry 5 items. Click on an item to use, throw or drop it.[/i]
 [img]res://textures/tutorial/tutorial_computer.png[/img][i]Find and use computers to delay the ship's destruction.[/i]
 [i]Use WASD or arrow keys to move. Space bar waits one turn. Press G to jump back in time.[/i]"
 fit_content = true

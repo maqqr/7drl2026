@@ -30,6 +30,7 @@ func execute(game_manager: GameManager, character: Character, delta: float) -> b
 				game_manager.add_message(MessageBuffer.MSG_USE_ITEM.format({ "item": target_item_type.name }))
 			if target_item_type.invisibility_turns_on_use > 0:
 				character.make_invisible(target_item_type.invisibility_turns_on_use)
+				game_manager.update_stats_ui(character)
 				character.audio_player.stream = preload("res://audio/cloak_activate.ogg")
 				character.audio_player.play()
 	return done

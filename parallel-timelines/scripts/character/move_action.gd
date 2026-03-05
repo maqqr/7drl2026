@@ -26,6 +26,7 @@ func execute(game_manager: GameManager, character: Character, delta: float) -> b
 		started = true
 		character.map_position = to
 		character.look_direction = direction
+		character.visible = true
 		game_manager.need_sight_check = true
 		game_manager.reveal_darkness()
 

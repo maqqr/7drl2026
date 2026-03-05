@@ -1,0 +1,10 @@
+[gd_scene format=3 uid="uid://bibq5go5pxn87"]
+
+[ext_resource type="PackedScene" uid="uid://cppwl86cv0wwm" path="res://models/closet.glb" id="1_wib8m"]
+[ext_resource type="Material" uid="uid://dxscctjlx51uy" path="res://models/basic_palette.tres" id="2_mpam5"]
+
+[node name="closet" unique_id=883099725 instance=ExtResource("1_wib8m")]
+
+[node name="Closet" parent="." index="0" unique_id=1233238019]
+transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 0, 0, 0)
+material_override = ExtResource("2_mpam5")

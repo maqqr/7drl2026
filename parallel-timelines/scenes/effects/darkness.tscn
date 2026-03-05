@@ -1,8 +1,10 @@
 [gd_scene format=3 uid="uid://vmytub6mxrkf"]
 
+[ext_resource type="Script" uid="uid://2dvtc1a73k7c" path="res://scripts/effect/darkness_fade.gd" id="1_5j32q"]
 [ext_resource type="ArrayMesh" uid="uid://iq6j1ya7jveh" path="res://models/darkness_mesh.res" id="1_phdn0"]
 
 [node name="Darkness" type="Node3D" unique_id=924265394]
+script = ExtResource("1_5j32q")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=665803989]
 transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 0, 0, 0)

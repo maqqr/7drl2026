@@ -54,6 +54,7 @@ func execute_action(game_manager: GameManager, delta: float) -> void:
 					if invisibility_turns == 0 and invisibility_effect_node:
 						invisibility_effect_node.queue_free()
 						invisibility_effect_node = null
+				game_manager.update_stats_ui(self)
 				game_manager.game_state.on_character_move_finish(self)
 			ongoing_action = null
 
