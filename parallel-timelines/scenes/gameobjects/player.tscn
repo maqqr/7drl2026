@@ -1,6 +1,7 @@
 [gd_scene format=3 uid="uid://de4owti6ig3tp"]
 
 [ext_resource type="Script" uid="uid://c4uduvqaq7bdq" path="res://scripts/character/character.gd" id="1_l7kf8"]
+[ext_resource type="PackedScene" uid="uid://g6r4prj4pra2" path="res://models/character_model.tscn" id="2_3b1c8"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_l7kf8"]
 albedo_color = Color(0.52224463, 1, 0.3613789, 1)
@@ -22,16 +23,21 @@ script = ExtResource("1_l7kf8")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=2013637082]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.80045015, 0)
+visible = false
 mesh = SubResource("CapsuleMesh_rlgfs")
 
 [node name="MeshInstance3D2" type="MeshInstance3D" parent="." unique_id=553795514]
 transform = Transform3D(0.40981513, 0, 0, 0, 0.43203276, 0, 0, 0, 0.17000067, 0, 1.2387772, 0.3179893)
+visible = false
 mesh = SubResource("BoxMesh_2s7gj")
 
 [node name="SpotLight3D" type="SpotLight3D" parent="." unique_id=2017693619]
 transform = Transform3D(-1, 0, 8.742278e-08, 3.4548854e-08, 0.9185982, 0.3951928, -8.030641e-08, 0.3951928, -0.9185982, 0, 1.3545687, 0.43466663)
+light_color = Color(0.8286852, 1, 0.8112024, 1)
 light_energy = 0.0
 spot_angle = 63.837288
 
 [node name="AudioStreamPlayer3D" type="AudioStreamPlayer3D" parent="." unique_id=2073793541]
 unit_size = 6.0
+
+[node name="character_model" parent="." unique_id=2068212204 instance=ExtResource("2_3b1c8")]

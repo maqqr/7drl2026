@@ -1,0 +1,36 @@
+[gd_scene format=3 uid="uid://coxwm66tw2o1"]
+
+[ext_resource type="Texture2D" uid="uid://5rvrhf55d0br" path="res://textures/vfx_circle.PNG" id="1_n58qc"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_hwlav"]
+transparency = 1
+blend_mode = 1
+shading_mode = 0
+vertex_color_use_as_albedo = true
+albedo_texture = ExtResource("1_n58qc")
+billboard_mode = 1
+billboard_keep_scale = true
+
+[sub_resource type="QuadMesh" id="QuadMesh_ppuo6"]
+material = SubResource("StandardMaterial3D_hwlav")
+
+[sub_resource type="Gradient" id="Gradient_5wmfm"]
+offsets = PackedFloat32Array(0, 0.118421055, 1)
+colors = PackedColorArray(0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 1)
+
+[node name="ShuttleThruster" type="Node3D" unique_id=1128540223]
+
+[node name="CPUParticles3D" type="CPUParticles3D" parent="." unique_id=1291831435]
+amount = 16
+mesh = SubResource("QuadMesh_ppuo6")
+emission_shape = 1
+emission_sphere_radius = 0.3
+direction = Vector3(0, 0, 1)
+spread = 1.0
+gravity = Vector3(0, 0, 0)
+initial_velocity_min = 5.0
+initial_velocity_max = 8.0
+scale_amount_min = 0.4
+scale_amount_max = 0.6
+color = Color(0.44864348, 0.6645187, 0.78431374, 1)
+color_ramp = SubResource("Gradient_5wmfm")

@@ -1,0 +1,51 @@
+[gd_scene format=3 uid="uid://cx1k1hfvldxh4"]
+
+[sub_resource type="Curve" id="Curve_lbhrr"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(0.71282053, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="CurveTexture" id="CurveTexture_iywne"]
+curve = SubResource("Curve_lbhrr")
+
+[sub_resource type="Curve" id="Curve_lnu2h"]
+_limits = [0.0, 3.0, 0.0, 1.6153848]
+_data = [Vector2(0, 0.64222), 0.0, 0.0, 0, 0, Vector2(0.103550315, 3), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_lbhrr"]
+curve = SubResource("Curve_lnu2h")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_lnu2h"]
+emission_shape_scale = Vector3(60, 1, 1)
+emission_shape = 3
+emission_box_extents = Vector3(1, 1, 1)
+direction = Vector3(0, 0, 1)
+spread = 0.0
+initial_velocity_min = 15.0
+initial_velocity_max = 60.0
+gravity = Vector3(0, 0, 0)
+scale_over_velocity_min = 10.75
+scale_over_velocity_max = 1000.0
+scale_over_velocity_curve = SubResource("CurveTexture_lbhrr")
+alpha_curve = SubResource("CurveTexture_iywne")
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_lnu2h"]
+transparency = 3
+alpha_hash_scale = 1.0
+alpha_antialiasing_mode = 0
+blend_mode = 1
+shading_mode = 0
+vertex_color_use_as_albedo = true
+
+[sub_resource type="QuadMesh" id="QuadMesh_lbhrr"]
+material = SubResource("StandardMaterial3D_lnu2h")
+size = Vector2(0.05, 0.3)
+orientation = 1
+
+[node name="BackgroundStars" type="GPUParticles3D" unique_id=1816344847]
+amount = 64
+lifetime = 2.0
+preprocess = 1.5
+visibility_aabb = AABB(-4, -4, -4, 8, 8, 150)
+process_material = SubResource("ParticleProcessMaterial_lnu2h")
+draw_pass_1 = SubResource("QuadMesh_lbhrr")

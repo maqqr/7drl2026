@@ -1,0 +1,9 @@
+[gd_scene format=3 uid="uid://piptj6wjwf83"]
+
+[ext_resource type="PackedScene" uid="uid://g6r4prj4pra2" path="res://models/character_model.tscn" id="1_2bsin"]
+[ext_resource type="Script" uid="uid://bo0gdkb60wlh7" path="res://scripts/effect/dying_player.gd" id="1_8gpuo"]
+
+[node name="DyingPlayer" type="Node3D" unique_id=326453894]
+script = ExtResource("1_8gpuo")
+
+[node name="character_model" parent="." unique_id=1390956712 instance=ExtResource("1_2bsin")]

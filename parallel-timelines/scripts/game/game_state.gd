@@ -123,10 +123,15 @@ func create_character_at(pos: Vector2i) -> Character:
 	character.teleport_to(pos)
 	return character
 
-func kill_character(character: Character):
+func kill_character(character: Character, destroy_items = false):
+	var dying = preload("res://scenes/effects/dying_player.tscn").instantiate()
+	dying.transform.origin = character.transform.origin
+	dying.rotation = character.rotation
+	add_child(dying)
 	remove_character(character)
 	for item in character.items:
-		create_item_at(item, character.map_position, false)
+		if not destroy_items or item.is_keycard:
+			create_item_at(item, character.map_position, false)
 
 func remove_character(character: Character):
 	if player == character:

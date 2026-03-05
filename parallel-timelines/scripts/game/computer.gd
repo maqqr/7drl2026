@@ -9,6 +9,8 @@ func _ready() -> void:
 
 func on_interact(character: Character) -> void:
 	if used:
+		if game_manager.game_state.player == character:
+			game_manager.add_message(MessageBuffer.MSG_COMPUTER_USED)
 		return
 
 	used = true

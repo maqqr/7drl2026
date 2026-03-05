@@ -1,0 +1,35 @@
+[gd_scene format=3 uid="uid://beww858bvi3p7"]
+
+[ext_resource type="PackedScene" uid="uid://y0kitiwndva7" path="res://models/shuttle_model.tscn" id="1_4buhj"]
+[ext_resource type="Script" uid="uid://b4ymy66svi6x2" path="res://scripts/effect/mainmenu_ship.gd" id="2_3w3qg"]
+[ext_resource type="PackedScene" uid="uid://cx1k1hfvldxh4" path="res://scenes/effects/background_stars.tscn" id="2_fjpcm"]
+[ext_resource type="PackedScene" uid="uid://coxwm66tw2o1" path="res://scenes/effects/shuttle_thruster.tscn" id="3_kgioy"]
+[ext_resource type="PackedScene" uid="uid://dgnf45qjke22o" path="res://scenes/effects/flame_square.tscn" id="4_4c3i0"]
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_3w3qg"]
+frequency = 0.05
+fractal_lacunarity = 1.1
+
+[sub_resource type="NoiseTexture3D" id="NoiseTexture3D_kgioy"]
+noise = SubResource("FastNoiseLite_3w3qg")
+
+[node name="Mainmenu3d" type="Node3D" unique_id=2128013695]
+
+[node name="shuttle" parent="." unique_id=1793861449 instance=ExtResource("1_4buhj")]
+transform = Transform3D(-1, 0, 1.509958e-07, 0, 1, 0, -1.509958e-07, 0, -1, 0, 0, 0)
+script = ExtResource("2_3w3qg")
+amplitude = Vector3(1, 0.2, 0.2)
+speed = Vector3(2, 5, 1)
+noise_texture = SubResource("NoiseTexture3D_kgioy")
+
+[node name="ShuttleThruster" parent="shuttle" unique_id=1128540223 instance=ExtResource("3_kgioy")]
+transform = Transform3D(-1, 0, -1.509958e-07, 0, 1, 0, 1.509958e-07, 0, -1, 0.5471291, 0.28971076, -1.3387406)
+
+[node name="ShuttleThruster2" parent="shuttle" unique_id=733748995 instance=ExtResource("3_kgioy")]
+transform = Transform3D(-1, 0, -1.509958e-07, 0, 1, 0, 1.509958e-07, 0, -1, -0.5517319, 0.28971076, -1.3387403)
+
+[node name="FlameSquare" parent="shuttle" unique_id=454317896 instance=ExtResource("4_4c3i0")]
+transform = Transform3D(0.19658062, -2.968285e-08, -2.9682852e-08, 2.9682848e-08, 0, 0.19658065, -2.9682848e-08, -0.19658065, 4.481986e-15, -1.928366e-07, 0.06717646, -1.277099)
+
+[node name="BackgroundStars" parent="." unique_id=1816344847 instance=ExtResource("2_fjpcm")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -3.7223425, -31.540451)

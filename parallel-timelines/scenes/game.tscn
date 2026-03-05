@@ -5,6 +5,7 @@
 [ext_resource type="Script" uid="uid://bwstuco036cun" path="res://scripts/game/message_buffer.gd" id="2_yqjtg"]
 [ext_resource type="Material" uid="uid://bx3vtju7y3aml" path="res://models/debug_rect_mat.tres" id="3_iywne"]
 [ext_resource type="PackedScene" uid="uid://nppsj3un683g" path="res://scenes/ui/inventory/inventory.tscn" id="3_lnu2h"]
+[ext_resource type="PackedScene" uid="uid://cx1k1hfvldxh4" path="res://scenes/effects/background_stars.tscn" id="4_u5sy4"]
 [ext_resource type="Texture2D" uid="uid://cm3ed0vsl86of" path="res://textures/timewarp.png" id="6_p57ef"]
 
 [sub_resource type="BoxMesh" id="BoxMesh_8cj0n"]
@@ -12,48 +13,6 @@ size = Vector3(0.1, 0.1, 1)
 
 [sub_resource type="QuadMesh" id="QuadMesh_iywne"]
 size = Vector2(0.1, 1)
-orientation = 1
-
-[sub_resource type="Curve" id="Curve_lbhrr"]
-_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(0.71282053, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
-point_count = 3
-
-[sub_resource type="CurveTexture" id="CurveTexture_iywne"]
-curve = SubResource("Curve_lbhrr")
-
-[sub_resource type="Curve" id="Curve_lnu2h"]
-_limits = [0.0, 3.0, 0.0, 1.6153848]
-_data = [Vector2(0, 0.64222), 0.0, 0.0, 0, 0, Vector2(0.103550315, 3), 0.0, 0.0, 0, 0]
-point_count = 2
-
-[sub_resource type="CurveTexture" id="CurveTexture_lbhrr"]
-curve = SubResource("Curve_lnu2h")
-
-[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_lnu2h"]
-emission_shape_scale = Vector3(60, 1, 1)
-emission_shape = 3
-emission_box_extents = Vector3(1, 1, 1)
-direction = Vector3(0, 0, 1)
-spread = 0.0
-initial_velocity_min = 15.0
-initial_velocity_max = 60.0
-gravity = Vector3(0, 0, 0)
-scale_over_velocity_min = 10.75
-scale_over_velocity_max = 1000.0
-scale_over_velocity_curve = SubResource("CurveTexture_lbhrr")
-alpha_curve = SubResource("CurveTexture_iywne")
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_lnu2h"]
-transparency = 3
-alpha_hash_scale = 1.0
-alpha_antialiasing_mode = 0
-blend_mode = 1
-shading_mode = 0
-vertex_color_use_as_albedo = true
-
-[sub_resource type="QuadMesh" id="QuadMesh_lbhrr"]
-material = SubResource("StandardMaterial3D_lnu2h")
-size = Vector2(0.05, 0.3)
 orientation = 1
 
 [node name="Game" type="Node3D" unique_id=1579276341]
@@ -88,14 +47,8 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0.5)
 mesh = SubResource("QuadMesh_iywne")
 surface_material_override/0 = ExtResource("2_lbhrr")
 
-[node name="BackgroundStars" type="GPUParticles3D" parent="." unique_id=1133706144]
+[node name="BackgroundStars" parent="." unique_id=1816344847 instance=ExtResource("4_u5sy4")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -6.832199, -29.888079)
-amount = 64
-lifetime = 2.0
-preprocess = 1.5
-visibility_aabb = AABB(-4, -4, -4, 8, 8, 150)
-process_material = SubResource("ParticleProcessMaterial_lnu2h")
-draw_pass_1 = SubResource("QuadMesh_lbhrr")
 
 [node name="CanvasLayer_GUI" type="CanvasLayer" parent="." unique_id=144319471]
 

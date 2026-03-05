@@ -152,6 +152,7 @@ func _process(delta: float) -> void:
 		need_sight_check = true
 		game_state.kill_character(past_player)
 	if game_state.player.health <= 0 and not game_over:
+		game_state.player.animation_player.play(game_state.player.DIE_ANIM)
 		add_message(MessageBuffer.MSG_DEAD)
 		game_over = true
 		timewarp_queued = true
@@ -374,10 +375,7 @@ func explode_at(pos: Vector2i, radius: int):
 		if past_player.map_position.distance_squared_to(pos) <= radius * radius:
 			remove_players.push_back(past_player)
 	for player: Character in remove_players:
-		game_state.remove_character(player)
-		for item in player.items:
-			if item.is_keycard:
-				game_state.create_item_at(item, player.map_position, false)
+		game_state.kill_character(player, true)
 
 	need_sight_check = true
 
@@ -393,6 +391,7 @@ func explode_at(pos: Vector2i, radius: int):
 	screen_shake.shake(intensity, 4.0)
 
 	if game_state.player.map_position.distance_squared_to(pos) <= radius * radius:
+		game_state.player.animation_player.play(game_state.player.DIE_ANIM)
 		add_message(MessageBuffer.MSG_EXPLODED)
 		game_over = true
 		timewarp_queued = true
@@ -464,8 +463,7 @@ func timewarp() -> void:
 		game_state.past_players.push_back(character)
 
 	add_message(MessageBuffer.MSG_WAKE_UP)
-
-	print("Time warp done")
+	#print("Time warp done")
 
 func restart_game() -> void:
 	remove_child(game_state)
@@ -595,7 +593,10 @@ func _update_camera(delta: float) -> void:
 			z,
 		)
 		screen_shake.intensity = max(0.0, screen_shake.intensity - screen_shake.shake_decay * delta)
-	get_viewport().get_camera_3d().global_position = game_state.player.global_position + camera_offset + shake_offset
+
+	var camera = get_viewport().get_camera_3d()
+	camera.global_position = game_state.player.global_position + camera_offset + shake_offset
+	camera.rotation = Vector3(deg_to_rad(-67.0), 0.0, 0.0)
 
 func _on_item_use(index: int) -> void:
 	if not is_input_enabled():

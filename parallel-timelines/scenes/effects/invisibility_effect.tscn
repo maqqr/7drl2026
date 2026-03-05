@@ -11,7 +11,7 @@ rim = 0.2
 [sub_resource type="SphereMesh" id="SphereMesh_gj58h"]
 material = SubResource("StandardMaterial3D_6yw41")
 radius = 0.7
-height = 2.3
+height = 2.0
 
 [node name="InvisibilityEffect" type="Node3D" unique_id=998227732]
 

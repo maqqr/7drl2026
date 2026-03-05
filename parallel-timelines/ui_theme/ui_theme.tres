@@ -3,8 +3,10 @@
 [ext_resource type="FontFile" uid="uid://hx72vnusp726" path="res://ui_theme/Eldring.ttf" id="1_nn3af"]
 [ext_resource type="Texture2D" uid="uid://ctfvx3iepdald" path="res://ui_theme/button.png" id="2_8ugpu"]
 [ext_resource type="Texture2D" uid="uid://b0mjprv56t5j5" path="res://ui_theme/button_hover.png" id="2_v6fjb"]
+[ext_resource type="Texture2D" uid="uid://dc3s7830jv415" path="res://ui_theme/check_on.png" id="4_sob2e"]
 [ext_resource type="Texture2D" uid="uid://rdacunj4jy0s" path="res://ui_theme/panel.png" id="4_v6fjb"]
 [ext_resource type="Texture2D" uid="uid://dvkqfqiwnyhv7" path="res://ui_theme/simple_panel.png" id="5_82c4i"]
+[ext_resource type="Texture2D" uid="uid://cffu8nww3oh6w" path="res://ui_theme/check_off.png" id="5_dxh6r"]
 [ext_resource type="FontFile" uid="uid://vca7s2uoqb2a" path="res://ui_theme/EldringBold.ttf" id="6_8cn0g"]
 [ext_resource type="FontFile" uid="uid://c3ty6ucyesqug" path="res://ui_theme/EldringCondensed.ttf" id="7_f1yd7"]
 
@@ -59,6 +61,20 @@ texture_margin_top = 14.0
 texture_margin_right = 14.0
 texture_margin_bottom = 14.0
 modulate_color = Color(0.636719, 0.636719, 0.636719, 1)
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_8npef"]
+texture = ExtResource("2_v6fjb")
+texture_margin_left = 14.0
+texture_margin_top = 14.0
+texture_margin_right = 14.0
+texture_margin_bottom = 14.0
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_8fajn"]
+texture = ExtResource("2_v6fjb")
+texture_margin_left = 14.0
+texture_margin_top = 14.0
+texture_margin_right = 14.0
+texture_margin_bottom = 14.0
 
 [sub_resource type="StyleBoxLine" id="StyleBoxLine_8cn0g"]
 color = Color(0.589844, 0.589844, 0.589844, 1)
@@ -115,6 +131,10 @@ ButtonItem/base_type = &"Button"
 ButtonItem/styles/hover = SubResource("StyleBoxTexture_dxh6r")
 ButtonItem/styles/normal = SubResource("StyleBoxTexture_sob2e")
 ButtonItem/styles/pressed = SubResource("StyleBoxTexture_flppx")
+CheckButton/icons/checked = ExtResource("4_sob2e")
+CheckButton/icons/unchecked = ExtResource("5_dxh6r")
+CheckButton/styles/hover = SubResource("StyleBoxTexture_8npef")
+CheckButton/styles/hover_pressed = SubResource("StyleBoxTexture_8fajn")
 HSeparator/styles/separator = SubResource("StyleBoxLine_8cn0g")
 Label/font_sizes/font_size = 23
 Label/fonts/font = ExtResource("1_nn3af")

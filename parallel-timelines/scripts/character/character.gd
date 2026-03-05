@@ -1,6 +1,11 @@
 extends Node3D
 class_name Character
 
+const IDLE_ANIM = &"Idle"
+const WALK_ANIM = &"StepRight"
+const USE_ANIM = &"Use"
+const DIE_ANIM = &"Die"
+
 var ongoing_action = null
 var past_actions = []
 var map_position: Vector2i
@@ -17,7 +22,10 @@ var health = 3
 
 @onready var spotlight = $SpotLight3D
 @onready var audio_player = $AudioStreamPlayer3D
+@onready var animation_player: AnimationPlayer = $character_model/AnimationPlayer
+var anim_step_right = true
 
+@warning_ignore("unused_signal")
 signal health_changed(character: Character)
 signal inventory_changed(character: Character)
 

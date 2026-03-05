@@ -1,98 +1,378 @@
 [gd_scene format=3 uid="uid://d1ca7hji0ju4w"]
 
 [ext_resource type="Script" uid="uid://ccolkt4tpkem5" path="res://scripts/ui/mainmenu.gd" id="1_5mbse"]
+[ext_resource type="Script" uid="uid://u8w7s0td2uy5" path="res://scripts/effect/play_animation.gd" id="3_3vvtq"]
+[ext_resource type="FontFile" uid="uid://bjgmm0x8cb3b5" path="res://ui_theme/BoreBlastersAllCaps21.ttf" id="3_r3g3c"]
+[ext_resource type="FontFile" uid="uid://vca7s2uoqb2a" path="res://ui_theme/EldringBold.ttf" id="4_3vvtq"]
 
 [sub_resource type="ButtonGroup" id="ButtonGroup_5mbse"]
 
 [sub_resource type="ButtonGroup" id="ButtonGroup_natt5"]
 
-[node name="Mainmenu" type="CanvasLayer" unique_id=9516903 node_paths=PackedStringArray("start_button", "debug_label")]
+[sub_resource type="Animation" id="Animation_natt5"]
+length = 0.001
+tracks/0/type = "bezier"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Label:position:x")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"handle_modes": PackedInt32Array(0),
+"points": PackedFloat32Array(308, -0.25, 0, 0.25, 0),
+"times": PackedFloat32Array(0)
+}
+tracks/1/type = "bezier"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Label:position:y")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"handle_modes": PackedInt32Array(0),
+"points": PackedFloat32Array(56, -0.25, 0, 0.25, 0),
+"times": PackedFloat32Array(0)
+}
+tracks/2/type = "bezier"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Label2:position:x")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"handle_modes": PackedInt32Array(0),
+"points": PackedFloat32Array(190, -0.25, 0, 0.25, 0),
+"times": PackedFloat32Array(0)
+}
+tracks/3/type = "bezier"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("Label2:position:y")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"handle_modes": PackedInt32Array(0),
+"points": PackedFloat32Array(110, -0.25, 0, 0.25, 0),
+"times": PackedFloat32Array(0)
+}
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("ColorRect:size")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(800, 4)]
+}
+tracks/5/type = "value"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("Button_ShowMenu:visible")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+
+[sub_resource type="Animation" id="Animation_r3g3c"]
+resource_name = "menu_anim"
+length = 3.0
+tracks/0/type = "bezier"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Label:position:x")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"handle_modes": PackedInt32Array(0, 0),
+"points": PackedFloat32Array(-320, 0, 0, 0, 87.5, 314.5, -1.7, 2, 0.25, 0),
+"times": PackedFloat32Array(1, 3)
+}
+tracks/1/type = "bezier"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Label:position:y")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"handle_modes": PackedInt32Array(0),
+"points": PackedFloat32Array(56, -0.25, 0, 0.25, 0),
+"times": PackedFloat32Array(3)
+}
+tracks/2/type = "bezier"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Label2:position:x")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"handle_modes": PackedInt32Array(0, 0),
+"points": PackedFloat32Array(806, 0, 0, 0, -96.5, 190, -1.6666666, 2.5, 0.25, 0),
+"times": PackedFloat32Array(1, 3)
+}
+tracks/3/type = "bezier"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("Label2:position:y")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"handle_modes": PackedInt32Array(0),
+"points": PackedFloat32Array(110, -0.25, 0, 0.25, 0),
+"times": PackedFloat32Array(3)
+}
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("ColorRect:size")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0.33333334, 1),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector2(0, 0), Vector2(800, 4)]
+}
+tracks/5/type = "value"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("Button_ShowMenu:visible")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = {
+"times": PackedFloat32Array(0, 3),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [false, true]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_3vvtq"]
+_data = {
+&"RESET": SubResource("Animation_natt5"),
+&"menu_anim": SubResource("Animation_r3g3c")
+}
+
+[node name="Mainmenu" type="CanvasLayer" unique_id=9516903 node_paths=PackedStringArray("start_button", "intro_button", "show_tutorial_button", "close_tutorial_button", "intro_control", "level_select_control", "tutorial_control", "debug_label")]
 script = ExtResource("1_5mbse")
 level_size_group = SubResource("ButtonGroup_5mbse")
 difficulty_group = SubResource("ButtonGroup_natt5")
-start_button = NodePath("Button")
-debug_label = NodePath("DebugLabel")
+start_button = NodePath("Control_LevelSelect/Button_Start")
+intro_button = NodePath("Intro/Button_ShowMenu")
+show_tutorial_button = NodePath("Control_LevelSelect/Button_Tutorial")
+close_tutorial_button = NodePath("Control_Tutorial/PanelContainer/VBoxContainer/Button_CloseTutorial")
+intro_control = NodePath("Intro")
+level_select_control = NodePath("Control_LevelSelect")
+tutorial_control = NodePath("Control_Tutorial")
+debug_label = NodePath("Control_LevelSelect/DebugLabel")
+camera_position = Vector3(1.4889904, 1.4121621, -3.2072694)
+camera_rotation = Vector3(-0.08940744, 2.6467729, -7.48046e-09)
 
-[node name="Button" type="Button" parent="." unique_id=1875562157]
-offset_left = 54.0
-offset_top = 283.0
-offset_right = 208.0
-offset_bottom = 339.0
+[node name="Intro" type="Control" parent="." unique_id=1648479336]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="Label" type="Label" parent="Intro" unique_id=1783195095]
+layout_mode = 0
+offset_left = 308.0
+offset_top = 56.0
+offset_right = 620.00104
+offset_bottom = 121.0
+theme_override_fonts/font = ExtResource("3_r3g3c")
+theme_override_font_sizes/font_size = 64
+text = "Parallel"
+
+[node name="Label2" type="Label" parent="Intro" unique_id=1889290898]
+layout_mode = 0
+offset_left = 190.0
+offset_top = 110.0
+offset_right = 541.00073
+offset_bottom = 175.0
+theme_override_fonts/font = ExtResource("3_r3g3c")
+theme_override_font_sizes/font_size = 64
+text = "Timelines"
+
+[node name="ColorRect" type="ColorRect" parent="Intro" unique_id=1071925554]
+layout_mode = 0
+offset_top = 115.380005
+offset_right = 800.0
+offset_bottom = 119.380005
+
+[node name="Button_ShowMenu" type="Button" parent="Intro" unique_id=794832783]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = 336.5
+offset_top = 404.0
+offset_right = 423.5
+offset_bottom = 460.0
+grow_horizontal = 2
+grow_vertical = 0
+text = "Play"
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="Intro" unique_id=51969712]
+libraries/ = SubResource("AnimationLibrary_3vvtq")
+script = ExtResource("3_3vvtq")
+animation = &"menu_anim"
+
+[node name="Control_LevelSelect" type="Control" parent="." unique_id=404783994]
+visible = false
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="Button_Start" type="Button" parent="Control_LevelSelect" unique_id=1875562157]
+layout_mode = 0
+offset_left = 144.0
+offset_top = 415.0
+offset_right = 298.0
+offset_bottom = 471.0
 text = "Start game"
 
-[node name="PanelContainer" type="PanelContainer" parent="." unique_id=421565058]
-offset_left = 40.0
-offset_top = 37.0
-offset_right = 218.0
-offset_bottom = 269.0
+[node name="Button_Tutorial" type="Button" parent="Control_LevelSelect" unique_id=1779040068]
+layout_mode = 0
+offset_left = 132.0
+offset_top = 339.0
+offset_right = 313.0
+offset_bottom = 395.0
+text = "View tutorial"
 
-[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer" unique_id=659507332]
+[node name="PanelContainer_Size" type="PanelContainer" parent="Control_LevelSelect" unique_id=421565058]
+layout_mode = 0
+offset_left = 132.0
+offset_top = 34.0
+offset_right = 310.0
+offset_bottom = 280.0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Control_LevelSelect/PanelContainer_Size" unique_id=659507332]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="PanelContainer/VBoxContainer" unique_id=292947647]
+[node name="Label" type="Label" parent="Control_LevelSelect/PanelContainer_Size/VBoxContainer" unique_id=292947647]
+custom_minimum_size = Vector2(0, 42)
 layout_mode = 2
+theme_override_fonts/font = ExtResource("4_3vvtq")
 text = "Level size"
+horizontal_alignment = 1
+vertical_alignment = 1
 
-[node name="CheckButton" type="CheckButton" parent="PanelContainer/VBoxContainer" unique_id=457771185]
+[node name="CheckButton" type="CheckButton" parent="Control_LevelSelect/PanelContainer_Size/VBoxContainer" unique_id=457771185]
 layout_mode = 2
+focus_mode = 0
 button_pressed = true
 button_group = SubResource("ButtonGroup_5mbse")
 text = "Small"
 
-[node name="CheckButton2" type="CheckButton" parent="PanelContainer/VBoxContainer" unique_id=265103052]
+[node name="CheckButton2" type="CheckButton" parent="Control_LevelSelect/PanelContainer_Size/VBoxContainer" unique_id=265103052]
 layout_mode = 2
+focus_mode = 0
 button_group = SubResource("ButtonGroup_5mbse")
 text = "Medium"
 
-[node name="CheckButton3" type="CheckButton" parent="PanelContainer/VBoxContainer" unique_id=1487873430]
+[node name="CheckButton3" type="CheckButton" parent="Control_LevelSelect/PanelContainer_Size/VBoxContainer" unique_id=1487873430]
 layout_mode = 2
+focus_mode = 0
 button_group = SubResource("ButtonGroup_5mbse")
 text = "Large"
 
-[node name="PanelContainer2" type="PanelContainer" parent="." unique_id=1206576346]
-offset_left = 243.0
-offset_top = 39.0
-offset_right = 540.0
-offset_bottom = 331.0
+[node name="PanelContainer_Difficulty" type="PanelContainer" parent="Control_LevelSelect" unique_id=1206576346]
+layout_mode = 0
+offset_left = 441.0
+offset_top = 34.0
+offset_right = 738.0
+offset_bottom = 400.0
 
-[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer2" unique_id=2063170647]
+[node name="VBoxContainer" type="VBoxContainer" parent="Control_LevelSelect/PanelContainer_Difficulty" unique_id=2063170647]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="PanelContainer2/VBoxContainer" unique_id=504125441]
+[node name="Label" type="Label" parent="Control_LevelSelect/PanelContainer_Difficulty/VBoxContainer" unique_id=504125441]
+custom_minimum_size = Vector2(0, 42)
 layout_mode = 2
+theme_override_fonts/font = ExtResource("4_3vvtq")
 text = "Difficulty"
+horizontal_alignment = 1
+vertical_alignment = 1
 
-[node name="CheckButton" type="CheckButton" parent="PanelContainer2/VBoxContainer" unique_id=343181356]
+[node name="CheckButton" type="CheckButton" parent="Control_LevelSelect/PanelContainer_Difficulty/VBoxContainer" unique_id=343181356]
 layout_mode = 2
-button_pressed = true
+focus_mode = 0
 button_group = SubResource("ButtonGroup_natt5")
 text = "Easy"
 
-[node name="CheckButton2" type="CheckButton" parent="PanelContainer2/VBoxContainer" unique_id=553116898]
+[node name="CheckButton2" type="CheckButton" parent="Control_LevelSelect/PanelContainer_Difficulty/VBoxContainer" unique_id=553116898]
 layout_mode = 2
+focus_mode = 0
+button_pressed = true
 button_group = SubResource("ButtonGroup_natt5")
 text = "Normal"
 
-[node name="CheckButton3" type="CheckButton" parent="PanelContainer2/VBoxContainer" unique_id=1533714671]
+[node name="CheckButton3" type="CheckButton" parent="Control_LevelSelect/PanelContainer_Difficulty/VBoxContainer" unique_id=1533714671]
 layout_mode = 2
+focus_mode = 0
 button_group = SubResource("ButtonGroup_natt5")
 text = "Hard"
 
-[node name="CheckButton4" type="CheckButton" parent="PanelContainer2/VBoxContainer" unique_id=1969257421]
+[node name="CheckButton4" type="CheckButton" parent="Control_LevelSelect/PanelContainer_Difficulty/VBoxContainer" unique_id=1969257421]
 layout_mode = 2
+focus_mode = 0
+button_group = SubResource("ButtonGroup_natt5")
+text = "Very Hard"
+
+[node name="CheckButton5" type="CheckButton" parent="Control_LevelSelect/PanelContainer_Difficulty/VBoxContainer" unique_id=72467338]
+layout_mode = 2
+focus_mode = 0
 button_group = SubResource("ButtonGroup_natt5")
 text = "Almost impossible"
 
-[node name="CheckButton5" type="CheckButton" parent="PanelContainer2/VBoxContainer" unique_id=72467338]
-layout_mode = 2
-button_group = SubResource("ButtonGroup_natt5")
-text = "Impossible"
-
-[node name="DebugLabel" type="RichTextLabel" parent="." unique_id=872536381]
-offset_left = 546.0
-offset_top = 39.0
-offset_right = 796.0
-offset_bottom = 139.0
+[node name="DebugLabel" type="RichTextLabel" parent="Control_LevelSelect" unique_id=872536381]
+visible = false
+layout_mode = 0
+offset_left = 819.0
+offset_top = 8.0
+offset_right = 1069.0
+offset_bottom = 108.0
 bbcode_enabled = true
 text = "Debug info:"
 fit_content = true
+
+[node name="Control_Tutorial" type="Control" parent="." unique_id=1576065681]
+visible = false
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="PanelContainer" type="PanelContainer" parent="Control_Tutorial" unique_id=271829601]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Control_Tutorial/PanelContainer" unique_id=1325945873]
+layout_mode = 2
+
+[node name="RichTextLabel" type="RichTextLabel" parent="Control_Tutorial/PanelContainer/VBoxContainer" unique_id=1190431526]
+layout_mode = 2
+size_flags_vertical = 3
+bbcode_enabled = true
+text = "Tutorial"
+fit_content = true
+
+[node name="Button_CloseTutorial" type="Button" parent="Control_Tutorial/PanelContainer/VBoxContainer" unique_id=1576388608]
+layout_mode = 2
+size_flags_horizontal = 4
+text = "Close"

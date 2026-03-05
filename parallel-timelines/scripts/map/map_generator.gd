@@ -330,9 +330,12 @@ func _run_task() -> void:
 	_make_doors_for_rooms()
 	_cover_floors()
 	_mirror_map()
-	
+
+	var storage_done = false
 	for random_room in random_room_rects:
-		_decorate_random_room(random_room, _get_random_room_theme())
+		var theme = RoomTheme.STORAGE if not storage_done else _get_random_room_theme()
+		storage_done = true
+		_decorate_random_room(random_room, theme)
 	
 	_make_keycards()
 	_calculate_allowed_turns()

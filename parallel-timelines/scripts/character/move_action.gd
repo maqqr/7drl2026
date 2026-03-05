@@ -29,6 +29,12 @@ func execute(game_manager: GameManager, character: Character, delta: float) -> b
 		game_manager.need_sight_check = true
 		game_manager.reveal_darkness()
 
+		if character.anim_step_right:
+			character.animation_player.play(character.WALK_ANIM)
+		else:
+			character.animation_player.play_backwards(character.WALK_ANIM)
+		character.anim_step_right = !character.anim_step_right
+
 	progress = min(1.0, progress + delta / duration)
 	character.global_position = TileMap2D.to_scene_pos(from).lerp(TileMap2D.to_scene_pos(to), progress)
 	character.global_rotation.y = lerp_angle(character.global_rotation.y, target_angle, progress)

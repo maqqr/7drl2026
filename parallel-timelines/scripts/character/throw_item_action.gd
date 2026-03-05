@@ -45,6 +45,7 @@ func execute(game_manager: GameManager, character: Character, delta: float) -> b
 			character.add_child(flying_node)
 			character.audio_player.stream = preload("res://audio/throw_item.ogg")
 			character.audio_player.play()
+			character.animation_player.play(character.USE_ANIM)
 
 	progress = min(1.0, progress + delta / duration)
 	if flying_node:
@@ -65,10 +66,12 @@ func execute(game_manager: GameManager, character: Character, delta: float) -> b
 			if character == game_manager.game_state.player:
 				game_manager.screen_shake.shake(0.4, 3.0)
 
+		var killed_target = false
 		if target_item_type.kill_on_throw and kill_target:
 			kill_target.health = 0
+			killed_target = true
 
-		if not target_item_type.consumed_on_throw:
+		if not target_item_type.consumed_on_throw and not killed_target:
 			game_manager.game_state.create_item_at(target_item_type, target_tile, true)
 
 	return done

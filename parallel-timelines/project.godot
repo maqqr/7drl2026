@@ -13,7 +13,10 @@ config_version=5
 config/name="ParallelTimelines"
 run/main_scene="uid://bpx25rgxyxxwd"
 config/features=PackedStringArray("4.6", "GL Compatibility")
-boot_splash/show_image=false
+boot_splash/bg_color=Color(0, 0, 0, 1)
+boot_splash/stretch_mode=3
+boot_splash/use_filter=false
+boot_splash/image="uid://cthte1c0lq126"
 config/icon="res://icon.svg"
 
 [display]

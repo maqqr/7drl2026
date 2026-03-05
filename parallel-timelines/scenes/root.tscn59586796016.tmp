@@ -5,6 +5,7 @@
 [ext_resource type="Shader" uid="uid://dehpq8aqecjog" path="res://shaders/blur_y.gdshader" id="3_kycxp"]
 [ext_resource type="Shader" uid="uid://c8fyamgl2l2r4" path="res://shaders/colorrect_dither_glow.gdshader" id="4_j287u"]
 [ext_resource type="PackedScene" uid="uid://d1ca7hji0ju4w" path="res://scenes/mainmenu.tscn" id="5_jh1ax"]
+[ext_resource type="PackedScene" uid="uid://beww858bvi3p7" path="res://scenes/mainmenu_3d.tscn" id="6_3hfy5"]
 [ext_resource type="PackedScene" uid="uid://dffeynk4lyb3g" path="res://scenes/effects/warp_effect.tscn" id="6_kycxp"]
 [ext_resource type="AudioStream" uid="uid://by32sy6j1vr77" path="res://audio/ambient.mp3" id="7_j287u"]
 [ext_resource type="Script" uid="uid://4yu06x4fa108" path="res://scripts/game/music.gd" id="8_5sfjl"]
@@ -52,9 +53,9 @@ shader_parameter/use_palette = false
 shader_parameter/glow_texture = SubResource("ViewportTexture_dinhu")
 shader_parameter/glow_strength = 1.0
 
-[sub_resource type="ButtonGroup" id="ButtonGroup_5sfjl"]
+[sub_resource type="ButtonGroup" id="ButtonGroup_7pvxh"]
 
-[sub_resource type="ButtonGroup" id="ButtonGroup_3hfy5"]
+[sub_resource type="ButtonGroup" id="ButtonGroup_y3xxt"]
 
 [node name="Root" type="Node3D" unique_id=1229380050]
 
@@ -62,7 +63,7 @@ shader_parameter/glow_strength = 1.0
 environment = SubResource("Environment_gee14")
 
 [node name="Camera3D" type="Camera3D" parent="." unique_id=1474577654]
-transform = Transform3D(-0.88005424, -0.04240064, 0.47297633, -7.450581e-09, 0.9960058, 0.08928836, -0.47487307, 0.078578606, -0.87653923, 1.4889904, 1.4121621, -3.2072694)
+transform = Transform3D(1, 0, 0, 0, 0.39073107, 0.92050487, 0, -0.92050487, 0.39073107, 7.8, 7.8, 8)
 cull_mask = 1047583
 
 [node name="RemoteTransform3D" type="RemoteTransform3D" parent="Camera3D" unique_id=426359186]
@@ -109,7 +110,7 @@ custom_aabb = AABB(0, 0, 0, 1000, 1000, 1000)
 mesh = SubResource("QuadMesh_0tnpc")
 
 [node name="Camera3D" type="Camera3D" parent="PostProcessing/Control/SubViewportContainer/SubViewport" unique_id=44427725]
-transform = Transform3D(-0.8800543, -0.04240065, 0.4729764, -7.4505815e-09, 0.99600583, 0.08928837, -0.4748731, 0.07857861, -0.87653923, 1.4889904, 1.4121621, -3.2072694)
+transform = Transform3D(1, 0, 0, 0, 0.39073107, 0.92050487, 0, -0.92050487, 0.39073107, 7.8, 7.8, 8)
 cull_mask = 1048559
 
 [node name="CanvasLayer" type="CanvasLayer" parent="PostProcessing/Control/SubViewportContainer/SubViewport" unique_id=1825013091]
@@ -157,11 +158,13 @@ grow_vertical = 2
 mouse_filter = 2
 
 [node name="Mainmenu" parent="." unique_id=1660149479 instance=ExtResource("5_jh1ax")]
-level_size_group = SubResource("ButtonGroup_5sfjl")
-difficulty_group = SubResource("ButtonGroup_3hfy5")
+level_size_group = SubResource("ButtonGroup_7pvxh")
+difficulty_group = SubResource("ButtonGroup_y3xxt")
+
+[node name="Mainmenu3d" parent="." unique_id=2128013695 instance=ExtResource("6_3hfy5")]
 
 [node name="WarpEffect" parent="." unique_id=95820578 instance=ExtResource("6_kycxp")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.6779847, 1.4710511, -3.3988252)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8, 0, 5)
 
 [node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="." unique_id=720740724]
 stream = ExtResource("7_j287u")
